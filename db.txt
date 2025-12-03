@@ -1,3 +1,12 @@
+db 인스턴스 식별자 : team-db
+
+host : team-db.cf4wuo0gsigf.ap-southeast-2.rds.amazonaws.com
+port : 3306
+id : root
+pw :  dnjsgmlwhgdk ( 원희좋아 )
+
+================================================================================
+
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(100) DEFAULT NULL,
