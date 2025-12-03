@@ -2,7 +2,7 @@ db 인스턴스 식별자 : team-db
 
 host : team-db.cf4wuo0gsigf.ap-southeast-2.rds.amazonaws.com
 port : 3306
-id : root
+id : admin
 pw :  dnjsgmlwhgdk ( 원희좋아 )
 
 ================================================================================
