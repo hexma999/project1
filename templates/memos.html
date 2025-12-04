@@ -2,301 +2,242 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>나의 메모</title>
+    <title>경수오빠못해조 - 게시판</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
     <style>
-        .container { 
-            margin-top: 20px; 
-            max-width: 800px;
-        }
+        .container { margin-top: 30px; max-width: 900px; }
         
+        /* 카드 스타일 */
         .card {
             margin-bottom: 20px;
             border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             background-color: #fff;
+            transition: transform 0.2s;
         }
+        .card:hover { transform: translateY(-3px); }
 
-        .card-body {
-            position: relative;
-            padding: 10px;
+        .card-header-custom {
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        .author-info { font-size: 0.9rem; color: #666; font-weight: bold; }
+        .author-info i { margin-right: 5px; color: #E74C3C; }
 
         .memo-title, .memo-content {
             width: 100%;
-            margin-bottom: 10px;
             border: 1px solid #ddd;
-            background-color: #fff;
+            background-color: #fcfcfc;
             padding: 10px;
-        }
-
-        .memo-title {
-            font-size: 1.1rem;
-        }
-
-        .memo-content {
-            min-height: 100px;
-        }
-
-        .edit-buttons {
-            margin: 10px;
-            text-align: right;
-            margin-right: 0px;
-            margin-bottom: 0px;
-        }
-
-        .edit-buttons .btn {
-            background-color: #f8f9fa;
-            border: none;
             border-radius: 5px;
-            margin-left: 5px;
-            padding: 5px 10px;
-            color: #495057;
-            transition: all 0.3s ease;
         }
+        .memo-content { min-height: 100px; margin-top: 10px; }
 
-        .edit-buttons .btn:hover {
-            background-color: #e2e6ea;
-            transform: scale(1.1);
-        }
+        /* 버튼 스타일 */
+        .edit-buttons { text-align: right; margin-top: 10px; }
+        .btn-edit { background-color: #E74C3C; color: #fff; border: none; }
+        .btn-delete { background-color: #3498DB; color: #fff; border: none; }
+        .btn-edit:hover, .btn-delete:hover { opacity: 0.8; color: white; }
 
-        .edit-buttons .btn-edit {
-            background-color: #E74C3C;
-            color: #fff;
-        }
-
-        .edit-buttons .btn-edit:hover {
-            background-color: #C0392B;
-        }
-
-        .edit-buttons .btn-delete {
-            background-color: #3498DB;
-            color: #fff;
-        }
-
-        .edit-buttons .btn-delete:hover {
-            background-color: #2980B9;
-        }
-
-        .btn-primary {
-            background-color: #3F464D;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-
-        .btn-block {
-            display: block;
-            width: 100%;
-        }
-    
+        /* 헤더바 스타일 */
         .header-bar {
-            background-color: #FF8066; /* 변경된 헤더바 배경색 */
-            padding: 10px 0; /* 상하 패딩 */
-            text-align: center; /* 텍스트 가운데 정렬 */
-            border-radius: 10px; /* 둥근 꼭지점 */
-            box-shadow: 0 4px 6px rgba(0,0,0,.1); /* 그림자 효과 */
-            animation: slideDown 0.5s ease-out; /* 슬라이드 다운 애니메이션 */
-            margin: 10px;
-            position: relative;
-            display: flex; /* 플렉스박스 레이아웃 적용 */
-            justify-content: center; /* 가로 중앙 정렬 */
-            align-items: center; /* 세로 중앙 정렬 */            
-        }
-        
-        .header-item {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-    
-        .header-item:first-child {
-            left: 20px;
-        }
-    
-        .header-item:last-child {
-            right: 20px;
-        }
-    
-        .username-button, .logout-button {
+            background-color: #E74C3C;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            color: white;
         }
-    
-        .username-button i, .logout-button i {
-            margin-right: 5px;
-        }        
-    
-        .header-bar h1 {
-            color: white; /* 헤더바 텍스트 색상 */
-            margin: 0; /* 여백 제거 */
-            font-size: 1.3em; /* 폰트 크기 조정 */
-            font-weight: bold;
-            transition: all 0.3s ease-in-out; /* 부드러운 변화 효과 */
-        }
+        .header-bar h1 { margin: 0; font-size: 1.5rem; font-weight: bold; }
 
-        .header-content {
-            text-align: center;
+        /* 검색창 스타일 */
+        .search-container {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-    
-        .user-info {
-            position: absolute; /* 절대 위치 지정 */
-            top: 10px;
-            right: 20px;
-            font-size: 0.9rem; /* 폰트 크기 조정 */
-        }
-    
-        .logout-button {
-            margin-left: 10px; /* 로그아웃 버튼과 사용자 ID 사이의 간격 */
-        }
-
-        .btn-sm {
-            padding: 0.15rem 0.5rem;
-            font-size: .8rem;
-            line-height: 1.5;
-            border-radius: 0.2rem;
-        }     
-    
-        /* 슬라이드 다운 애니메이션 효과 */
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }       
     </style>
     <script>
+        // 메모 작성
         function createMemo() {
             var title = document.getElementById('new-title').value;
             var content = document.getElementById('new-content').value;
 
+            if(!title || !content) { alert('제목과 내용을 입력해주세요.'); return; }
+
             fetch('/memos/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title: title, content: content })
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                window.location.reload(); // 페이지 새로고침
+                window.location.reload(); 
             })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+            .catch((error) => console.error('Error:', error));
         }
 
+        // 수정 모드 전환
         function toggleEdit(id) {
             var titleEl = document.getElementById('title-' + id);
             var contentEl = document.getElementById('content-' + id);
+            var btnDiv = document.getElementById('btn-group-' + id);
+            
             var isReadOnly = titleEl.readOnly;
-
             titleEl.readOnly = !isReadOnly;
             contentEl.readOnly = !isReadOnly;
 
             if (!isReadOnly) {
+                // 저장 로직
                 updateMemo(id);
+            } else {
+                // 수정 모드 진입 시 시각적 효과 (선택 사항)
+                titleEl.focus();
+                // 버튼 아이콘 변경 로직 등을 추가할 수 있음
             }
         }
 
+        // 메모 업데이트
         function updateMemo(id) {
             var title = document.getElementById('title-' + id).value;
             var content = document.getElementById('content-' + id).value;
 
             fetch('/memos/' + id, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title: title, content: content })
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                alert('메모가 업데이트되었습니다.');
-            })
-            .catch((error) => {
-                console.error('Error:', error);
+            .then(response => {
+                if (response.ok) {
+                    alert('메모가 수정되었습니다.');
+                    window.location.reload(); // 읽기 전용으로 되돌리기 위해 리로드
+                } else {
+                    alert('수정 권한이 없습니다.');
+                    window.location.reload();
+                }
             });
         }
 
+        // 메모 삭제
         function deleteMemo(id) {
-            if (!confirm('메모를 삭제하시겠습니까?')) return;
+            if (!confirm('정말 삭제하시겠습니까?')) return;
 
             fetch('/memos/' + id, {
                 method: 'DELETE',
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                window.location.reload(); // 페이지 새로고침
-            })
-            .catch((error) => {
-                console.error('Error:', error);
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('삭제 권한이 없습니다.');
+                }
             });
         }
 
         function logout() {
-            fetch('/auth/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                window.location.href = '/'; // 로그아웃 후 홈페이지로 리다이렉트
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }        
+            fetch('/auth/logout', { method: 'POST' })
+            .then(() => window.location.href = '/');
+        }
+
+        // 검색 폼 제출 (GET 방식)
+        function submitSearch() {
+            const form = document.getElementById('searchForm');
+            form.submit();
+        }
+
+        // 내 글만 보기 토글
+        function toggleMyPosts() {
+            const checkBox = document.getElementById('showMineCheck');
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (checkBox.checked) {
+                urlParams.set('show_mine', 'true');
+            } else {
+                urlParams.delete('show_mine');
+            }
+            window.location.search = urlParams.toString();
+        }
     </script>
 </head>
 
 <body>
     <div class="container">
-        <!-- 헤더바 추가 -->
         <div class="header-bar">
-            <div class="header-item">
-                <a href="#" class="btn btn-sm btn-danger username-button">
-                    <i class="fas fa-user"></i> {{ username }}
-                </a>
+            <div>
+                <a href="/main" class="btn btn-light btn-sm mr-2"><i class="fas fa-home"></i> 메인으로</a>
             </div>
-            <h1>나의 메모</h1>
-            <div class="header-item">
-                <button onclick="logout()" class="btn btn-sm btn-danger logout-button">
-                    <i class="fas fa-sign-out-alt"></i> 로그아웃
-                </button>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <input type="text" id="new-title" placeholder="새 메모 제목" class="form-control memo-title">
-                <textarea id="new-content" placeholder="내용을 입력하세요" class="form-control memo-content"></textarea>
-                <button onclick="createMemo()" class="btn btn-primary btn-block">메모 추가</button>
+            <h1><i class="fas fa-clipboard-list"></i> 자유 게시판</h1>
+            <div>
+                <span class="mr-2"><i class="fas fa-user"></i> {{ username }}</span>
+                <button onclick="logout()" class="btn btn-outline-light btn-sm">로그아웃</button>
             </div>
         </div>
 
+        <div class="search-container">
+            <form id="searchForm" method="GET" action="/memos/" class="form-inline justify-content-between">
+                <div class="custom-control custom-switch my-1">
+                    <input type="checkbox" class="custom-control-input" id="showMineCheck" onchange="toggleMyPosts()" 
+                           {% if show_mine %}checked{% endif %}>
+                    <label class="custom-control-label font-weight-bold" for="showMineCheck">내 글만 보기</label>
+                </div>
+
+                <div class="input-group my-1">
+                    <select name="search_type" class="custom-select">
+                        <option value="title" {% if search_type == 'title' %}selected{% endif %}>제목</option>
+                        <option value="username" {% if search_type == 'username' %}selected{% endif %}>작성자(ID)</option>
+                        <option value="content" {% if search_type == 'content' %}selected{% endif %}>내용</option>
+                    </select>
+                    <input type="text" name="keyword" class="form-control" placeholder="검색어 입력" value="{{ keyword }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> 검색</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card bg-light border-primary">
+            <div class="card-body">
+                <h5 class="card-title text-primary"><i class="fas fa-pencil-alt"></i> 새 글 작성</h5>
+                <input type="text" id="new-title" placeholder="제목을 입력하세요" class="form-control mb-2">
+                <textarea id="new-content" placeholder="내용을 자유롭게 작성하세요" class="form-control mb-2" rows="3"></textarea>
+                <button onclick="createMemo()" class="btn btn-primary btn-block">등록하기</button>
+            </div>
+        </div>
+
+        <hr>
+
+        {% if not memos %}
+            <div class="alert alert-warning text-center">검색 결과가 없거나 게시글이 없습니다.</div>
+        {% endif %}
+
         {% for memo in memos %}
-        <div class="card memo">
+        <div class="card">
+            <div class="card-header-custom">
+                <span class="author-info">
+                    <i class="fas fa-user-circle"></i> {{ memo.username }}
+                </span>
+                <small class="text-muted">No. {{ memo.id }}</small>
+            </div>
             <div class="card-body">               
-                <input type="text" id="title-{{ memo.id }}" value="{{ memo.title }}" class="form-control memo-title" readonly>
+                <input type="text" id="title-{{ memo.id }}" value="{{ memo.title }}" class="form-control memo-title mb-2" readonly>
                 <textarea id="content-{{ memo.id }}" class="form-control memo-content" readonly>{{ memo.content }}</textarea>
-                <div class="edit-buttons">
-                    <button onclick="toggleEdit({{ memo.id }})"  class="btn btn-edit"><i class="fas fa-edit"></i></button>
-                    <button onclick="deleteMemo({{ memo.id }})" class="btn btn-delete"><i class="fas fa-trash-alt"></i></button>
-                </div>                  
+                
+                {% if memo.user_id == current_user_id %}
+                <div class="edit-buttons" id="btn-group-{{ memo.id }}">
+                    <button onclick="toggleEdit({{ memo.id }})"  class="btn btn-sm btn-edit"><i class="fas fa-edit"></i> 수정</button>
+                    <button onclick="deleteMemo({{ memo.id }})" class="btn btn-sm btn-delete"><i class="fas fa-trash-alt"></i> 삭제</button>
+                </div>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
