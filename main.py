@@ -5,7 +5,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from fastapi.templating import Jinja2Templates
 from routers import auth, memos
 from database import Base, engine
-
+from fastapi.responses import RedirectResponse
 # .env 파일 로드
 load_dotenv()
 
@@ -26,6 +26,17 @@ Base.metadata.create_all(bind=engine)
 # 라우터 등록
 app.include_router(auth.router)
 app.include_router(memos.router)
+
+@app.get("/main")
+async def main_page(request: Request):
+    # 로그인 여부 확인 (세션에 username이 있는지)
+    username = request.session.get("username")
+    
+    # 로그인이 안 되어 있다면 로그인 페이지로 튕겨내기 (선택사항)
+    if not username:
+        return RedirectResponse(url="/")
+
+    return templates.TemplateResponse("main.html", {"request": request, "username": username})
 
 @app.get("/")
 async def read_root(request: Request):

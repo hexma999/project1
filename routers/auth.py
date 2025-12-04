@@ -1,30 +1,24 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from sqlalchemy import text
 from schemas import UserCreate, UserLogin
 from dependencies import get_db, get_password_hash, verify_password
+# 데이터 레이어 임포트
+from data import auth as auth_data
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/signup")
 async def signup(signup_data: UserCreate, db: Session = Depends(get_db)):
-    # username 중복 확인 (raw SQL)
-    existing_user = db.execute(
-        text("SELECT * FROM users WHERE username = :username"),
-        {"username": signup_data.username}
-    ).fetchone()
+    # 1. 중복 확인 (Data 레이어 호출)
+    existing_user = auth_data.get_user_by_username(db, signup_data.username)
     if existing_user:
         raise HTTPException(status_code=400, detail="이미 동일 사용자 이름이 가입되어 있습니다.")
 
     hashed_password = get_password_hash(signup_data.password)
 
-    # 회원 삽입 (raw SQL)
+    # 2. 회원 저장 (Data 레이어 호출)
     try:
-        db.execute(
-            text("INSERT INTO users (username, email, hashed_password) VALUES (:username, :email, :hashed_password)"),
-            {"username": signup_data.username, "email": signup_data.email, "hashed_password": hashed_password}
-        )
-        db.commit()
+        auth_data.create_user(db, signup_data.username, signup_data.email, hashed_password)
     except Exception:
         db.rollback()
         raise HTTPException(status_code=500, detail="회원가입 실패")
@@ -33,15 +27,13 @@ async def signup(signup_data: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login")
 async def login(request: Request, signin_data: UserLogin, db: Session = Depends(get_db)):
-    # 사용자 조회 (raw SQL)
-    user = db.execute(
-        text("SELECT * FROM users WHERE username = :username"),
-        {"username": signin_data.username}
-    ).fetchone()
+    # 1. 사용자 조회 (Data 레이어 호출)
+    user = auth_data.get_user_by_username(db, signin_data.username)
 
     if user and verify_password(signin_data.password, user.hashed_password):
         request.session["username"] = user.username
         return {"message": "로그인 성공"}
+    
     raise HTTPException(status_code=401, detail="로그인 실패")
 
 @router.post("/logout")
