@@ -5,6 +5,7 @@ pip install sqlalchemy==1.4.39
 pip install pymysql==1.1.0
 pip install jinja2==3.1.2
 pip install itsdangerous
+pip install "passlib[bcrypt]"
 pip install bcrypt==3.2.0
 
 // 서버 시작
