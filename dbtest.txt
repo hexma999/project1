@@ -1,0 +1,49 @@
+CREATE TABLE `pet_item` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `category` varchar(50) NOT NULL COMMENT '대분류: dog, cat, bird, etc',
+  `sub_category` varchar(50) NOT NULL COMMENT '소분류: food, snack, clothes, hamster, etc',
+  `name` varchar(200) NOT NULL COMMENT '상품명',
+  `price` int NOT NULL COMMENT '가격',
+  `description` text COMMENT '상품 간단 설명 (부제목)',
+  `detail` text COMMENT '상품 상세 설명 (HTML 포함 가능)',
+  `image_url` varchar(500) DEFAULT NULL COMMENT '상품 이미지 경로',
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_category_sub` (`category`, `sub_category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- 1. 사진 속 강아지 사료 (Good Poodle)
+INSERT INTO pet_item (category, sub_category, name, price, description, detail, image_url) 
+VALUES 
+('dog', 'food', '[♥래핑찰리♥] 기능성사료 굿 푸들 2kg', 22000, '푸들 친구를 위한 기능성 사료', '눈 건강, 면역력 강화, 스트레스 완화까지 챙겨주는 푸들 전용 사료입니다.', 'https://via.placeholder.com/300x300?text=Good+Poodle');
+
+-- 2. 강아지 사료 추가 데이터
+INSERT INTO pet_item (category, sub_category, name, price, description, image_url) 
+VALUES 
+('dog', 'food', '프리미엄 닭가슴살 사료 1kg', 15000, '국내산 닭가슴살로 만든 고단백 사료', 'https://via.placeholder.com/300?text=Dog+Food+1'),
+('dog', 'food', '유기농 야채 사료 2kg', 18000, '알러지 걱정 없는 비건 사료', 'https://via.placeholder.com/300?text=Dog+Food+2');
+
+-- 3. 고양이 간식 데이터
+INSERT INTO pet_item (category, sub_category, name, price, description, image_url) 
+VALUES 
+('cat', 'snack', '참치 츄르 20p', 11000, '고양이가 환장하는 마성의 간식', 'https://via.placeholder.com/300?text=Cat+Churu'),
+('cat', 'snack', '동결건조 닭가슴살 트릿', 8000, '물에 불려 먹일 수 있는 영양 간식', 'https://via.placeholder.com/300?text=Cat+Treat');
+
+-- 4. 기타 동물 (햄스터) 데이터
+INSERT INTO pet_item (category, sub_category, name, price, description, image_url) 
+VALUES 
+('etc', 'hamster', '햄스터 믹스 사료 500g', 7500, '해바라기씨와 곡물이 가득', 'https://via.placeholder.com/300?text=Hamster+Food'),
+('etc', 'hamster', '무소음 쳇바퀴 (자주색)', 12000, '밤에도 조용한 쳇바퀴', 'https://via.placeholder.com/300?text=Hamster+Wheel');
+
+SELECT * FROM pet_item
+
+CREATE TABLE `reviews` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `content` text NOT NULL,
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_product` (`product_id`),
+  KEY `idx_user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

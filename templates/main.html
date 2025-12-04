@@ -165,15 +165,30 @@
                 <i class="fas fa-dog"></i> 강아지
               </a>
               <div class="dropdown-menu" aria-labelledby="navDog">
-                <a class="dropdown-item" href="#">옷</a>
-                <a class="dropdown-item" href="#">끈 (리드줄)</a>
-                <a class="dropdown-item" href="#">사료</a>
-                <a class="dropdown-item" href="#">간식</a>
-                <a class="dropdown-item" href="#">방석</a>
-                <a class="dropdown-item" href="#">집 (하우스)</a>
+                <a
+                  class="dropdown-item"
+                  href="/products?category=dog&sub=clothes"
+                  >👚 옷</a
+                >
+                <a class="dropdown-item" href="/products?category=dog&sub=leash"
+                  >🪢 끈 (리드줄)</a
+                >
+                <a class="dropdown-item" href="/products?category=dog&sub=food"
+                  >🍚 사료</a
+                >
+                <a class="dropdown-item" href="/products?category=dog&sub=snack"
+                  >🍪 간식</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=dog&sub=cushion"
+                  >🛌 방석</a
+                >
+                <a class="dropdown-item" href="/products?category=dog&sub=house"
+                  >🛖 집 (하우스)</a
+                >
               </div>
             </li>
-
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -185,12 +200,30 @@
                 <i class="fas fa-cat"></i> 고양이
               </a>
               <div class="dropdown-menu" aria-labelledby="navCat">
-                <a class="dropdown-item" href="#">옷</a>
-                <a class="dropdown-item" href="#">끈 (하네스)</a>
-                <a class="dropdown-item" href="#">사료</a>
-                <a class="dropdown-item" href="#">간식</a>
-                <a class="dropdown-item" href="#">방석</a>
-                <a class="dropdown-item" href="#">집 (숨숨집)</a>
+                <a
+                  class="dropdown-item"
+                  href="/products?category=cat&sub=clothes"
+                  >👚 옷</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=cat&sub=harness"
+                  >🪢 끈 (하네스)</a
+                >
+                <a class="dropdown-item" href="/products?category=cat&sub=food"
+                  >🍚 사료</a
+                >
+                <a class="dropdown-item" href="/products?category=cat&sub=snack"
+                  >🍪 간식</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=cat&sub=cushion"
+                  >🛌 방석</a
+                >
+                <a class="dropdown-item" href="/products?category=cat&sub=house"
+                  >🛖 집 (숨숨집)</a
+                >
               </div>
             </li>
 
@@ -205,11 +238,29 @@
                 <i class="fas fa-dove"></i> 새 (조류)
               </a>
               <div class="dropdown-menu" aria-labelledby="navBird">
-                <a class="dropdown-item" href="#">옷 (윙수트)</a>
-                <a class="dropdown-item" href="#">사료</a>
-                <a class="dropdown-item" href="#">간식</a>
-                <a class="dropdown-item" href="#">방석 (둥지)</a>
-                <a class="dropdown-item" href="#">집 (새장)</a>
+                <a
+                  class="dropdown-item"
+                  href="/products?category=bird&sub=bird_clothes"
+                  >👚 옷 (윙수트)</a
+                >
+                <a class="dropdown-item" href="/products?category=bird&sub=food"
+                  >🍚 사료</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=bird&sub=snack"
+                  >🍪 간식</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=bird&sub=cushion"
+                  >🛌 방석 (둥지)</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=bird&sub=bird_house"
+                  >🛖 집 (새장)</a
+                >
               </div>
             </li>
 
@@ -224,14 +275,35 @@
                 <i class="fas fa-otter"></i> 기타 동물
               </a>
               <div class="dropdown-menu" aria-labelledby="navEtc">
-                <a class="dropdown-item" href="#">햄스터</a>
-                <a class="dropdown-item" href="#">기니피그</a>
-                <a class="dropdown-item" href="#">토끼</a>
-                <a class="dropdown-item" href="#">페럿</a>
+                <a
+                  class="dropdown-item"
+                  href="/products?category=etc&sub=hamster"
+                  >🐹 햄스터</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=etc&sub=guinea_pig"
+                  >🐹 기니피그</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=etc&sub=rabbit"
+                  >🐰 토끼</a
+                >
+                <a
+                  class="dropdown-item"
+                  href="/products?category=etc&sub=ferret"
+                  >🦦 페럿</a
+                >
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">물고기 (관상어)</a>
-                <a class="dropdown-item" href="#">뱀 (파충류)</a>
-                <a class="dropdown-item" href="#">거북</a>
+                <a class="dropdown-item" href="/products?category=etc&sub=fish"
+                  >🐠 물고기
+                </a>
+                <a
+                  class="dropdown-item"
+                  href="/products?category=etc&sub=reptile"
+                  >🦎 파충류
+                </a>
               </div>
             </li>
           </ul>
@@ -255,58 +327,39 @@
         <i class="fas fa-star text-warning"></i> MD 추천 상품
       </h3>
       <div class="row">
+        {% for product in featured_products %}
         <div class="col-md-3 mb-4">
-          <div class="card product-card">
+          <div
+            class="card product-card"
+            onclick="location.href='/products/{{ product.id }}'"
+            style="cursor: pointer"
+          >
             <div
               class="card-img-top d-flex align-items-center justify-content-center bg-light"
+              style="overflow: hidden"
             >
-              <i class="fas fa-bone fa-3x text-secondary"></i>
+              {% if product.image_url %}
+              <img
+                src="{{ product.image_url }}"
+                alt="{{ product.name }}"
+                style="width: 100%; height: 100%; object-fit: cover"
+              />
+              {% else %}
+              <i class="fas fa-gift fa-3x text-secondary"></i>
+              {% endif %}
             </div>
+
             <div class="card-body text-center">
-              <h5 class="card-title">강아지 수제 간식</h5>
-              <p class="product-price">9,900원</p>
+              <h5 class="card-title text-truncate">{{ product.name }}</h5>
+              <p class="product-price">{{ product.price }}원</p>
             </div>
           </div>
         </div>
-        <div class="col-md-3 mb-4">
-          <div class="card product-card">
-            <div
-              class="card-img-top d-flex align-items-center justify-content-center bg-light"
-            >
-              <i class="fas fa-fish fa-3x text-secondary"></i>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title">고양이 츄르 세트</h5>
-              <p class="product-price">15,000원</p>
-            </div>
-          </div>
+        {% else %}
+        <div class="col-12 text-center">
+          <p>추천 상품 준비 중입니다.</p>
         </div>
-        <div class="col-md-3 mb-4">
-          <div class="card product-card">
-            <div
-              class="card-img-top d-flex align-items-center justify-content-center bg-light"
-            >
-              <i class="fas fa-home fa-3x text-secondary"></i>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title">폭신 마약 방석</h5>
-              <p class="product-price">28,900원</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 mb-4">
-          <div class="card product-card">
-            <div
-              class="card-img-top d-flex align-items-center justify-content-center bg-light"
-            >
-              <i class="fas fa-carrot fa-3x text-secondary"></i>
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title">토끼 건초 티모시</h5>
-              <p class="product-price">7,500원</p>
-            </div>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
 
