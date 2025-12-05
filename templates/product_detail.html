@@ -17,13 +17,12 @@
         background-color: #f8f9fa;
       }
 
-      /* 상단 헤더 스타일 (products.html과 통일) */
+      /* ... 기존 스타일 유지 ... */
       .header-bar {
         background-color: #e74c3c;
         color: white;
         padding: 15px 0;
         margin-bottom: 30px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
       .logo {
         font-size: 1.5rem;
@@ -31,29 +30,6 @@
         color: white;
         text-decoration: none;
       }
-      .logo:hover {
-        color: #ffecec;
-        text-decoration: none;
-      }
-
-      /* 헤더 아이콘 메뉴 스타일 */
-      .header-icons {
-        display: flex;
-        align-items: center;
-      }
-      .header-icons .btn {
-        color: white;
-        margin-left: 10px;
-        transition: color 0.2s;
-      }
-      .header-icons .btn:hover {
-        color: #ffecec;
-      }
-      .header-icons span {
-        font-weight: 500;
-      }
-
-      /* 상품 컨테이너 */
       .product-container {
         background: white;
         padding: 30px;
@@ -66,27 +42,17 @@
         object-fit: cover;
         border-radius: 10px;
         background-color: #eee;
-        border: 1px solid #eee;
       }
       .product-title {
         font-weight: bold;
         font-size: 1.8rem;
         margin-bottom: 10px;
-        word-break: keep-all; /* 단어 단위 줄바꿈 */
       }
       .product-price {
         color: #e74c3c;
         font-weight: bold;
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         margin-bottom: 20px;
-      }
-      .badge-category {
-        background-color: #333;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        display: inline-block;
       }
 
       /* ★ 플로팅 버튼 스타일 (우측 하단 고정) ★ */
@@ -150,45 +116,22 @@
     </style>
   </head>
   <body>
-    <!-- 상단 헤더 -->
     <div class="header-bar">
       <div class="container d-flex justify-content-between align-items-center">
-        <a href="/" class="logo"><i class="fas fa-paw"></i> 경수오빠못해조</a>
-
-        <!-- ★ 로그인 여부에 따른 버튼 표시 영역 (수정됨) ★ -->
-        <div class="header-icons">
-          {% if username %}
-          <span class="mr-3"
-            ><i class="fas fa-user-circle"></i> {{ username }}님</span
-          >
-          <a href="/" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-home"></i> 메인
-          </a>
-          <a href="/memos" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-clipboard-list"></i> 게시판
-          </a>
+        <a href="/main" class="logo"
+          ><i class="fas fa-paw"></i> 경수오빠못해조</a
+        >
+        <div>
+          <a href="/main" class="btn btn-outline-light btn-sm">메인으로</a>
           <button
-            onclick="logout()"
-            class="btn btn-sm btn-light text-danger font-weight-bold"
+            onclick="history.back()"
+            class="btn btn-outline-light btn-sm ml-2"
           >
-            <i class="fas fa-sign-out-alt"></i> 로그아웃
+            뒤로가기
           </button>
-          {% else %}
-          <a href="/" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-home"></i> 메인
-          </a>
-          <a
-            href="/login"
-            class="btn btn-sm btn-light text-danger font-weight-bold"
-          >
-            <i class="fas fa-sign-in-alt"></i> 로그인
-          </a>
-          {% endif %}
         </div>
       </div>
     </div>
-
-    <!-- 기존 뒤로가기 버튼 영역 제거 (상단 헤더에 통합됨) -->
 
     <div class="container mb-5">
       <div class="product-container">
@@ -201,41 +144,29 @@
             />
           </div>
           <div class="col-md-6">
-            <span class="badge-category">{{ product.category | upper }}</span>
+            <span class="badge badge-danger mb-2"
+              >{{ product.category | upper }}</span
+            >
             <h1 class="product-title">{{ product.name }}</h1>
             <p class="text-muted">{{ product.description }}</p>
-            <hr />
             <p class="product-price">{{ product.price }}원</p>
 
-            <!-- 수량 조절 -->
-            <div class="d-flex align-items-center mb-4">
-              <span class="mr-3 font-weight-bold">수량</span>
-              <div class="input-group" style="width: 140px">
-                <div class="input-group-prepend">
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    id="btnMinus"
-                  >
-                    -
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  class="form-control text-center"
-                  value="1"
-                  id="quantityInput"
-                  readonly
-                />
-                <div class="input-group-append">
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    id="btnPlus"
-                  >
-                    +
-                  </button>
-                </div>
+            <div class="input-group mb-3" style="max-width: 150px">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" type="button">
+                  -
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control text-center"
+                value="1"
+                readonly
+              />
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button">
+                  +
+                </button>
               </div>
             </div>
 
@@ -248,22 +179,21 @@
 
         <div class="mt-5">
           <h4>상품 상세 정보</h4>
-          <div class="mt-4 mb-5">
+          <div class="mt-5 mb-5">
+            <hr />
             <div
-              class="product-detail-box bg-light p-4 rounded"
-              style="min-height: 200px; line-height: 1.6"
+              class="product-detail-box bg-light p-3 rounded"
+              style="min-height: 200px"
             >
               {% if product.detail %} {{ product.detail | safe }} {% else %}
               <p class="text-muted text-center py-5">
-                <i class="fas fa-info-circle fa-2x mb-3"></i><br />
                 상세 설명이 준비 중입니다.
               </p>
               {% endif %}
             </div>
           </div>
-
           <h4>
-            <i class="fas fa-comments text-warning"></i> 구매 후기
+            <i class="fas fa-comments"></i> 구매 후기
             <span class="badge badge-warning">{{ reviews|length }}</span>
           </h4>
           <hr />
@@ -272,18 +202,15 @@
             {% for review in reviews %}
             <div class="card mb-3">
               <div class="card-body">
-                <div
-                  class="d-flex justify-content-between align-items-center mb-2"
-                >
-                  <h6 class="card-subtitle text-dark font-weight-bold">
-                    <i class="fas fa-user-circle text-secondary"></i> {{
-                    review.username }}
+                <div class="d-flex justify-content-between">
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    <i class="fas fa-user-circle"></i> {{ review.username }}님
                   </h6>
                   <small class="text-secondary"
                     >{{ review.created_at.strftime('%Y-%m-%d %H:%M') }}</small
                   >
                 </div>
-                <p class="card-text text-secondary">{{ review.content }}</p>
+                <p class="card-text mt-2">{{ review.content }}</p>
               </div>
             </div>
             {% else %}
@@ -300,7 +227,6 @@
       </div>
     </div>
 
-    <!-- 플로팅 버튼 -->
     <div class="floating-buttons">
       <button
         class="float-btn btn-review"
@@ -314,7 +240,6 @@
       </button>
     </div>
 
-    <!-- 리뷰 모달 -->
     <div id="reviewModal" class="modal-overlay">
       <div class="review-modal">
         <h4><i class="fas fa-pen"></i> 이 상품 어때요?</h4>
@@ -348,57 +273,48 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      // 2. 모달 열기/닫기
+      // 2. 모달 열기
       function openReviewModal() {
         document.getElementById("reviewModal").style.display = "flex";
       }
+
+      // 3. 모달 닫기
       function closeReviewModal() {
         document.getElementById("reviewModal").style.display = "none";
       }
 
-      // 3. 로그아웃 기능 (추가됨)
-      function logout() {
-        fetch("/auth/logout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            window.location.reload(); // 새로고침
-          })
-          .catch((error) => console.error("Error:", error));
-      }
-
-      // 4. 리뷰 전송
+      // 4. 리뷰 전송 (AJAX Fetch)
       function submitReview(productId) {
         let content = document.getElementById("reviewContent").value;
-        if (!content) {
-          alert("내용을 입력해주세요.");
-          return;
-        }
 
         fetch("/products/" + productId + "/review", {
+          // URL은 예시입니다
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: content }),
         })
           .then((res) => res.json())
           .then((data) => {
+            console.log(data); // ★ 콘솔에서 서버가 준 진짜 변수명을 확인하세요!
+
+            // 예: 만약 콘솔에 { result: "success" } 라고 뜬다면
+            // alert(data.result); 라고 써야 합니다.
+
             if (data.message) {
               alert(data.message);
-              location.reload();
+              location.reload(); // 성공 후 새로고침
             } else {
+              // 만약 메시지가 없다면 그냥 직접 텍스트를 띄우세요
               alert("리뷰가 등록되었습니다!");
               location.reload();
             }
           });
       }
-
       // 5. 수량 변경 기능 (+, - 버튼)
       document.addEventListener("DOMContentLoaded", function () {
-        const minusBtn = document.getElementById("btnMinus");
-        const plusBtn = document.getElementById("btnPlus");
-        const quantityInput = document.getElementById("quantityInput");
+        const minusBtn = document.querySelector(".input-group-prepend button");
+        const plusBtn = document.querySelector(".input-group-append button");
+        const quantityInput = document.querySelector(".input-group input");
 
         if (minusBtn && plusBtn && quantityInput) {
           minusBtn.addEventListener("click", function () {
@@ -410,6 +326,7 @@
 
           plusBtn.addEventListener("click", function () {
             let currentValue = parseInt(quantityInput.value);
+            // 재고 제한이 있다면 여기에 조건을 추가할 수 있습니다 (예: if(currentValue < 10)...)
             quantityInput.value = currentValue + 1;
           });
         }

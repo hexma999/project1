@@ -2,156 +2,89 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>경수오빠못해조 - 로그인</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-      rel="stylesheet"
-    />
+    <title>마이 메모 앱</title>
     <style>
-      /* 1. 전체 배경 및 레이아웃 */
       body {
         font-family: "Noto Sans KR", sans-serif;
-        background: #f0f2f5; /* 부드러운 회색 배경 */
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
-        margin: 0;
-      }
-
-      /* 2. 메인 컨테이너 (카드 스타일) */
-      .container {
-        background-color: #fff;
-        border-radius: 15px; /* 둥근 모서리 */
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-        width: 100%;
-        max-width: 420px;
-        padding: 40px;
-        box-sizing: border-box;
         text-align: center;
-        position: relative;
-        overflow: hidden;
       }
-
-      /* 3. 타이틀 및 로고 */
+      .container {
+        max-width: 400px;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 1rem;
+        width: 100%;
+      }
       h1 {
-        color: #e74c3c; /* 브랜드 컬러 */
-        font-size: 1.8rem;
-        margin-bottom: 10px;
-        font-weight: 700;
+        font-size: 1.5rem;
+        color: #007bff;
+        margin-bottom: 2rem;
       }
-      .subtitle {
+      p {
+        margin-bottom: 2rem;
         color: #666;
-        font-size: 0.95rem;
-        margin-bottom: 30px;
       }
-
-      /* 4. 입력 폼 스타일 */
       .form-group {
-        margin-bottom: 15px;
-        text-align: left;
+        margin-bottom: 1rem;
+        width: 100%;
       }
       .form-group label {
+        margin-bottom: 0.5rem;
+        color: #888;
+        text-align: left;
         display: block;
-        margin-bottom: 5px;
-        color: #333;
-        font-weight: bold;
-        font-size: 0.9rem;
       }
       .form-group input {
+        padding: 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
         width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
         box-sizing: border-box;
-        font-size: 1rem;
-        transition: border-color 0.3s;
       }
       .form-group input:focus {
-        border-color: #e74c3c;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        border-color: #80bdff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
       }
-
-      /* 5. 버튼 스타일 */
-      .btn-submit {
-        width: 100%;
-        padding: 12px;
-        background-color: #e74c3c;
-        color: white;
+      .buttons button {
+        width: 100%; /* Adjusting button width based on padding */
+        padding: 0.75rem;
         border: none;
-        border-radius: 8px;
-        font-size: 1.1rem;
-        font-weight: bold;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        margin-top: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
         cursor: pointer;
-        margin-top: 10px;
-        transition: background-color 0.3s;
+        box-sizing: border-box;
       }
-      .btn-submit:hover {
-        background-color: #c0392b;
+      .buttons button:hover {
+        background-color: #0056b3;
       }
-
-      /* 6. 전환 링크 (로그인 <-> 회원가입) */
-      .toggle-text {
-        margin-top: 20px;
-        font-size: 0.9rem;
-        color: #666;
-      }
-      .toggle-link {
-        color: #e74c3c;
-        font-weight: bold;
-        cursor: pointer;
-        text-decoration: none;
-      }
-      .toggle-link:hover {
-        text-decoration: underline;
-      }
-
-      /* 7. 숨김 클래스 (화면 전환용) */
-      .hidden {
-        display: none;
-      }
-
-      /* 애니메이션 효과 (선택사항) */
-      .fade-in {
-        animation: fadeIn 0.5s;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
+      @media (max-width: 768px) {
+        .container {
+          width: 90%;
+          padding: 1.5rem;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        h1 {
+          font-size: 1.25rem;
         }
       }
     </style>
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <script>
-      // 1. 화면 전환 함수 (로그인 <-> 회원가입)
-      function toggleForms() {
-        const loginBox = document.getElementById("login-box");
-        const signupBox = document.getElementById("signup-box");
-
-        // hidden 클래스를 토글(껐다 켰다)합니다.
-        if (loginBox.classList.contains("hidden")) {
-          loginBox.classList.remove("hidden");
-          loginBox.classList.add("fade-in"); // 애니메이션 재실행
-          signupBox.classList.add("hidden");
-        } else {
-          loginBox.classList.add("hidden");
-          signupBox.classList.remove("hidden");
-          signupBox.classList.add("fade-in"); // 애니메이션 재실행
-        }
-      }
-
-      // 2. 로그인 제출 로직 (기존 유지)
       function submitLoginForm(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -161,7 +94,9 @@
         };
         fetch("/auth/login", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(data),
         })
           .then((response) =>
@@ -171,20 +106,17 @@
           )
           .then((result) => {
             if (result.status === 200) {
-              alert(result.body.message);
-              // 로그인 성공 시 메인 페이지로 이동 (수정된 라우터 반영)
-              window.location.href = "/";
+              alert(result.body.message); // 성공 메시지 표시
+              window.location.href = "/main"; // 성공 시 리다이렉트
             } else {
-              throw new Error(result.body.detail || "로그인을 실패했습니다.");
+              throw new Error(result.body.detail || "로그인을 실패했습니다."); // 서버가 제공하는 오류 메시지 또는 기본 메시지
             }
           })
           .catch((error) => {
             console.error("Error:", error);
-            alert(error.message);
+            alert(error.message); // 오류 메시지 표시
           });
       }
-
-      // 3. 회원가입 제출 로직 (기존 유지)
       function submitSignupForm(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -195,7 +127,9 @@
         };
         fetch("/auth/signup", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(data),
         })
           .then((response) =>
@@ -205,100 +139,60 @@
           )
           .then((result) => {
             if (result.status === 200) {
-              alert("회원가입 성공! 이제 로그인해주세요.");
-              toggleForms(); // 회원가입 성공하면 바로 로그인 화면으로 전환
+              alert(result.body.message); // 회원가입 성공 메시지 표시
+              window.location.href = "/"; // 성공 시 리다이렉트
             } else {
-              throw new Error(result.body.detail || "회원가입을 실패했습니다.");
+              throw new Error(result.body.detail || "회원가입을 실패했습니다."); // 서버가 제공하는 오류 메시지 또는 기본 메시지
             }
           })
           .catch((error) => {
             console.error("Error:", error);
-            alert(error.message);
+            alert(error.message); // 오류 메시지 표시
           });
       }
     </script>
   </head>
   <body>
     <div class="container">
-      <div id="login-box" class="fade-in">
-        <h1><i class="fas fa-paw"></i> 경수오빠못해조</h1>
-        <p class="subtitle">반려동물을 위한 모든 것이 여기에!</p>
+      <h1>마이 메모 앱에 오신 것을 환영합니다!</h1>
+      <p>간단한 메모를 작성하고 관리할 수 있는 앱입니다.</p>
 
-        <form id="loginForm" onsubmit="submitLoginForm(event)">
-          <div class="form-group">
-            <label for="username">아이디 (Username)</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              placeholder="아이디를 입력하세요"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="password">비밀번호 (Password)</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="비밀번호를 입력하세요"
-              required
-            />
-          </div>
-          <button type="submit" class="btn-submit">로그인</button>
-        </form>
-
-        <div class="toggle-text">
-          아직 계정이 없으신가요?
-          <span class="toggle-link" onclick="toggleForms()">회원가입 하기</span>
+      <form id="loginForm" onsubmit="submitLoginForm(event)">
+        <div class="form-group">
+          <label for="username">사용자 이름:</label>
+          <input type="text" id="username" name="username" required />
         </div>
-      </div>
-
-      <div id="signup-box" class="hidden">
-        <h1>회원가입</h1>
-        <p class="subtitle">경수오빠못해조의 가족이 되어주세요!</p>
-
-        <form id="signupForm" onsubmit="submitSignupForm(event)">
-          <div class="form-group">
-            <label for="signup_username">아이디</label>
-            <input
-              type="text"
-              id="signup_username"
-              name="username"
-              placeholder="사용할 아이디"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="signup_email">이메일</label>
-            <input
-              type="email"
-              id="signup_email"
-              name="email"
-              placeholder="example@email.com"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="signup_password">비밀번호</label>
-            <input
-              type="password"
-              id="signup_password"
-              name="password"
-              placeholder="비밀번호 설정"
-              required
-            />
-          </div>
-          <button type="submit" class="btn-submit">가입하기</button>
-        </form>
-
-        <div class="toggle-text">
-          이미 계정이 있으신가요?
-          <span class="toggle-link" onclick="toggleForms()"
-            >로그인 하러가기</span
-          >
+        <div class="form-group">
+          <label for="password">비밀번호:</label>
+          <input type="password" id="password" name="password" required />
         </div>
-      </div>
+        <div class="buttons">
+          <button type="submit">로그인</button>
+        </div>
+      </form>
+      <br /><br />
+      <form id="signupForm" onsubmit="submitSignupForm(event)">
+        <div class="form-group">
+          <label for="signup_username">사용자 이름:</label>
+          <input type="text" id="signup_username" name="username" required />
+        </div>
+        <div class="form-group">
+          <label for="signup_email">이메일:</label>
+          <input type="email" id="signup_email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="signup_password">비밀번호:</label>
+          <input
+            type="password"
+            id="signup_password"
+            name="password"
+            required
+          />
+        </div>
+        <div class="buttons">
+          <button type="submit">회원가입</button>
+        </div>
+      </form>
     </div>
   </body>
 </html>

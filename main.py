@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi import FastAPI, Request, Depends, HTTPException # Depends, HTTPException 추가 필요
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.templating import Jinja2Templates
 from routers import auth, memos
@@ -34,32 +34,34 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)
 app.include_router(memos.router)
 
-@app.get("/") 
-async def main_page(request: Request, db: Session = Depends(get_db)):
+@app.get("/")
+async def read_root(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
+
+@app.get("/main")
+async def main_page(request: Request, db: Session = Depends(get_db)): # db 추가됨
+    # 1. 로그인 여부 확인
     username = request.session.get("username")
     
+    if not username:
+        return RedirectResponse(url="/")
+
+    # 2. ★ MD 추천 상품 데이터 가져오기 (추가된 부분) ★
     featured_products = product_data.get_featured_products(db)
 
-    # 템플릿 렌더링 (username이 None이면 로그인 안 된 상태로 처리됨)
+    # 3. 템플릿에 데이터 전달
     return templates.TemplateResponse("main.html", {
         "request": request, 
         "username": username,
-        "featured_products": featured_products
+        "featured_products": featured_products # HTML로 리스트를 보냅니다
     })
-
 
 @app.get("/about")
 async def about():
     return {"message": "이것은 마이 메모 앱의 소개 페이지입니다."}
 
-@app.get("/login")
-async def login_page(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
-
 @app.get("/products")
 async def product_list(request: Request, category: str, sub: str, db: Session = Depends(get_db)):
-    username = request.session.get("username")
-
     # 1. 화면에 보여줄 소분류 이름 한글 변환 맵
     sub_names = {
         "clothes": "옷",
@@ -85,7 +87,6 @@ async def product_list(request: Request, category: str, sub: str, db: Session = 
 
     return templates.TemplateResponse("products.html", {
         "request": request,
-        "username": username,
         "category": category,      # 예: dog
         "sub": sub,                # 예: food
         "sub_name": sub_names.get(sub, sub), # 예: 맛있는 사료 (없으면 영어 그대로)
@@ -101,7 +102,7 @@ async def product_detail(request: Request, product_id: int, db: Session = Depend
     if not product:
         raise HTTPException(status_code=404, detail="상품을 찾을 수 없습니다.")
 
-    # 2. ★ 리뷰 목록 조회 ★
+    # 2. ★ 리뷰 목록 조회 (추가된 부분) ★
     reviews = product_data.get_reviews_by_product_id(db, product_id)
 
     # 3. 템플릿에 product와 reviews 둘 다 전달
