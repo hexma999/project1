@@ -14,6 +14,7 @@ from data import auth as auth_data
 
 # .env 파일 로드
 load_dotenv()
+
 class ReviewRequest(BaseModel):
     content: str
 app = FastAPI()
@@ -21,7 +22,6 @@ app = FastAPI()
 # 환경 변수에서 SECRET_KEY 가져오기
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-# (선택 사항) 키가 없을 경우를 대비한 기본값 설정 (혹은 에러 처리)
 if not SECRET_KEY:
     SECRET_KEY = "default-secret-key" # 혹은 raise ValueError("SECRET_KEY missing")
 
@@ -93,6 +93,7 @@ async def product_list(request: Request, category: str, sub: str, db: Session = 
         "products": products # 상품 리스트
     })
 
+#상세 제품 페이지
 @app.get("/products/{product_id}")
 async def product_detail(request: Request, product_id: int, db: Session = Depends(get_db)):
     # 1. 상품 정보 조회
@@ -135,3 +136,23 @@ async def create_review(request: Request, product_id: int, review: ReviewRequest
     print(f"상품: {product_id}, 작성자: {user.username}(ID:{user.id})")
 
     return {"message": "소중한 후기가 등록되었습니다!"}
+
+#팀 소개 페이지(프로젝트 소개, 활용기술, 팀원, 코드 구성, )
+@app.get("/teamIntroduce")
+async def teamIntroduce():
+    print("팀 소개 페이지입니다.")
+
+#제휴브랜드 소개 페이지
+@app.get("/brands")
+async def brands():
+    print("제휴 브랜드 페이지입니다.")
+
+#고객센터 페이지
+@app.get("/serviceCenter")
+async def brands():
+    print("고객센터 페이지입니다.")
+
+#운영자 관리 페이지
+@app.get("/operator")
+async def brands():
+    print("운영자 관리 페이지입니다.")

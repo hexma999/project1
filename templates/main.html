@@ -54,17 +54,43 @@
 
       /* 네비게이션 바 (드롭다운 스타일) */
       .nav-bar {
+        background-color: white;
         border-bottom: 1px solid #eee;
-        padding: 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); /* 부드러운 그림자 */
       }
+
+      .navbar-nav {
+        width: 100%;
+        justify-content: center; /* 가운데 정렬 */
+        align-items: center;
+      }
+
+      .nav-item {
+        position: relative;
+      }
+
       .navbar-nav .nav-link {
-        color: #333;
-        font-weight: bold;
-        font-size: 1.1rem;
-        padding: 15px 20px;
+        color: #444;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 15px 20px !important;
+        transition: all 0.3s;
+        border-bottom: 3px solid transparent;
       }
+
       .navbar-nav .nav-link:hover {
         color: #e74c3c;
+        background-color: #fff5f5;
+
+        border-bottom: 3px solid #e74c3c;
+      }
+
+      /* 구분선 스타일 */
+      .nav-divider {
+        width: 1px;
+        height: 25px;
+        background-color: #ddd;
+        margin: 0 15px;
       }
       .dropdown-menu {
         border: none;
@@ -162,7 +188,7 @@
                 role="button"
                 data-toggle="dropdown"
               >
-                <i class="fas fa-dog"></i> 강아지
+                <i class="fas fa-dog text-danger"></i> 강아지
               </a>
               <div class="dropdown-menu" aria-labelledby="navDog">
                 <a
@@ -189,6 +215,7 @@
                 >
               </div>
             </li>
+
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -197,7 +224,7 @@
                 role="button"
                 data-toggle="dropdown"
               >
-                <i class="fas fa-cat"></i> 고양이
+                <i class="fas fa-cat text-warning"></i> 고양이
               </a>
               <div class="dropdown-menu" aria-labelledby="navCat">
                 <a
@@ -235,7 +262,7 @@
                 role="button"
                 data-toggle="dropdown"
               >
-                <i class="fas fa-dove"></i> 새 (조류)
+                <i class="fas fa-dove text-info"></i> 새 (조류)
               </a>
               <div class="dropdown-menu" aria-labelledby="navBird">
                 <a
@@ -272,7 +299,7 @@
                 role="button"
                 data-toggle="dropdown"
               >
-                <i class="fas fa-otter"></i> 기타 동물
+                <i class="fas fa-otter text-success"></i> 기타 동물
               </a>
               <div class="dropdown-menu" aria-labelledby="navEtc">
                 <a
@@ -297,13 +324,95 @@
                 >
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="/products?category=etc&sub=fish"
-                  >🐠 물고기
-                </a>
+                  >🐠 물고기</a
+                >
                 <a
                   class="dropdown-item"
                   href="/products?category=etc&sub=reptile"
-                  >🦎 파충류
-                </a>
+                  >🦎 파충류</a
+                >
+              </div>
+            </li>
+
+            <li
+              class="nav-divider d-none d-lg-block"
+              style="
+                width: 1px;
+                height: 25px;
+                background-color: #ddd;
+                margin: 0 15px;
+              "
+            ></li>
+
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navTeamIntroduce"
+                role="button"
+                data-toggle="dropdown"
+              >
+                <i class="fas fa-users text-secondary"></i> 팀
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navTeamIntroduce">
+                <a class="dropdown-item" href="#">팀소개1</a>
+                <a class="dropdown-item" href="#">팀소개2</a>
+                <a class="dropdown-item" href="#">팀소개3</a>
+                <a class="dropdown-item" href="#">팀소개4</a>
+              </div>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navBrands"
+                role="button"
+                data-toggle="dropdown"
+              >
+                <i class="fas fa-tags text-secondary"></i> 브랜드
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navBrands">
+                <a class="dropdown-item" href="#">브랜드1</a>
+                <a class="dropdown-item" href="#">브랜드2</a>
+                <a class="dropdown-item" href="#">브랜드3</a>
+                <a class="dropdown-item" href="#">브랜드4</a>
+              </div>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navServiceCenter"
+                role="button"
+                data-toggle="dropdown"
+              >
+                <i class="fas fa-headset text-secondary"></i> 서비스
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navServiceCenter">
+                <a class="dropdown-item" href="#">고객센터1</a>
+                <a class="dropdown-item" href="#">고객센터2</a>
+                <a class="dropdown-item" href="#">고객센터3</a>
+                <a class="dropdown-item" href="#">고객센터4</a>
+              </div>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navOperator"
+                role="button"
+                data-toggle="dropdown"
+              >
+                <i class="fas fa-user-cog text-secondary"></i> 운영자
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navOperator">
+                <a class="dropdown-item" href="#">운영자1</a>
+                <a class="dropdown-item" href="#">운영자2</a>
+                <a class="dropdown-item" href="#">운영자3</a>
+                <a class="dropdown-item" href="#">운영자4</a>
               </div>
             </li>
           </ul>
