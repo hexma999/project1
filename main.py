@@ -95,6 +95,9 @@ async def product_list(request: Request, category: str, sub: str, db: Session = 
 #상세 제품 페이지
 @app.get("/products/{product_id}")
 async def product_detail(request: Request, product_id: int, db: Session = Depends(get_db)):
+    # 0. 로그인 여부
+    username = request.session.get("username")
+
     # 1. 상품 정보 조회
     product = product_data.get_product_by_id(db, product_id)
     
@@ -107,6 +110,7 @@ async def product_detail(request: Request, product_id: int, db: Session = Depend
     # 3. 템플릿에 product와 reviews 둘 다 전달
     return templates.TemplateResponse("product_detail.html", {
         "request": request,
+        "username": username,
         "product": product,
         "reviews": reviews  # 리뷰 데이터 전달
     })
