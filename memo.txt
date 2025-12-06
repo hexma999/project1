@@ -13,3 +13,12 @@ pip install python-dotenv //251204 1614 업데이트
 uvicorn main:app --reload
 
 지라테스트//2025-12-06
+
+//스테이징 올리기
+git add memo.txt
+
+//로컬 푸시
+git commit -m "KAN-14 지라테스트2"
+
+//리모트에 PUSH
+git push origin KAN-14-테스트1
