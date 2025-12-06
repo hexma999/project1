@@ -11,3 +11,5 @@ pip install python-dotenv //251204 1614 업데이트
 
 // 서버 시작
 uvicorn main:app --reload
+
+지라테스트//2025-12-06
