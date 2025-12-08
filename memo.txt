@@ -9,6 +9,7 @@ pip install itsdangerous
 pip install "passlib[bcrypt]"
 pip install bcrypt==3.2.0
 pip install python-dotenv //251204 1614 업데이트
+pip install openai //251208 Install the OpenAI SDK(챗봇기능)
 
 // 서버 시작
 uvicorn main:app --reload
