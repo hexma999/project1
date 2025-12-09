@@ -64,42 +64,6 @@ async def about():
 async def login_page(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
-@app.get("/products")
-async def product_list(request: Request, category: str, sub: str, db: Session = Depends(get_db)):
-    username = request.session.get("username")
-
-    # 1. 화면에 보여줄 소분류 이름 한글 변환 맵
-    sub_names = {
-        "clothes": "옷",
-        "food": "사료",
-        "snack": "간식",
-        "leash": "끈 (리드줄)",
-        "cushion": "방석",
-        "house": "집 (하우스)",
-        "harness": "하네스",
-        "bird_clothes": "새 옷",
-        "bird_house": "집 (새장)",
-
-        # 기타 동물 (동물 이름)
-        "hamster": "햄스터 전용관",
-        "guinea_pig": "기니피그 전용관",
-        "rabbit": "토끼 전용관",
-        "ferret": "페럿 전용관",
-        "fish": "물고기 수족관",
-        "reptile": "파충류/양서류"
-    }
-    
-    products = product_data.get_products_by_category(db, category, sub)
-
-    return templates.TemplateResponse("products.html", {
-        "request": request,
-        "username": username,
-        "category": category,      # 예: dog
-        "sub": sub,                # 예: food
-        "sub_name": sub_names.get(sub, sub), # 예: 맛있는 사료 (없으면 영어 그대로)
-        "products": products # 상품 리스트
-    })
-
 #상세 제품 페이지
 @app.get("/products/{product_id}")
 async def product_detail(request: Request, product_id: int, db: Session = Depends(get_db)):
@@ -172,7 +136,7 @@ async def mypage(request: Request, db: Session = Depends(get_db)):
         "orders": my_orders
     })
 
-# ★ [수정] 상품 목록 및 검색 라우터
+#  상품 목록 및 검색 라우터
 @app.get("/products")
 async def product_list(
     request: Request, 
