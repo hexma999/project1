@@ -1,4 +1,5 @@
 gunicorn
+requests
 fastapi==0.104.1
 uvicorn==0.27.0.post1
 sqlalchemy==1.4.39
