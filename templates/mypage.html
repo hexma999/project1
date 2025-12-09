@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>마이페이지 - 경수오빠못해조</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="/static/css/common.css" rel="stylesheet" />
+
+    <style>
+      /* --- 마이페이지 전용 스타일 --- */
+
+      .mypage-title {
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 30px;
+        position: relative;
+        display: inline-block;
+        font-size: 1.8rem;
+      }
+      .mypage-title::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 4px;
+        background: #e74c3c;
+        border-radius: 2px;
+        margin-top: 5px;
+      }
+
+      /* 프로필 카드 & 주문내역 박스 공통 스타일 (common.css 테마 적용) */
+      .content-box {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+      }
+      .content-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 왼쪽 프로필 섹션 */
+      .profile-header {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      .profile-icon {
+        font-size: 4rem;
+        color: #e74c3c;
+        background: #fff0f0;
+        width: 100px;
+        height: 100px;
+        line-height: 100px;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .profile-name {
+        font-weight: 800;
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      .profile-email {
+        color: #777;
+        font-size: 0.95rem;
+      }
+
+      /* 정보 리스트 */
+      .info-list {
+        list-style: none;
+        padding: 0;
+      }
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px dashed #eee;
+        font-size: 0.95rem;
+        color: #555;
+      }
+      .info-item:last-child {
+        border-bottom: none;
+      }
+      .info-label {
+        font-weight: 600;
+        color: #555;
+      }
+      .info-label i {
+        width: 25px;
+        color: #e74c3c;
+        text-align: center;
+      }
+
+      /* 수정 폼 (숨김 상태) */
+      .edit-form-container {
+        display: none;
+        background: #fdfdfd;
+        border: 1px solid #eee;
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 20px;
+        animation: slideDown 0.3s ease-out;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 버튼 스타일 */
+      .btn-custom-black {
+        background: #333;
+        color: white;
+        border-radius: 50px;
+        padding: 10px 0;
+        font-weight: bold;
+        width: 100%;
+        border: none;
+        transition: 0.3s;
+      }
+      .btn-custom-black:hover {
+        background: #555;
+        transform: scale(1.02);
+        color: white;
+      }
+
+      .btn-save {
+        background: #e74c3c;
+        color: white;
+        border-radius: 20px;
+        border: none;
+      }
+      .btn-save:hover {
+        background: #c0392b;
+        color: white;
+      }
+
+      .btn-cancel {
+        background: #95a5a6;
+        color: white;
+        border-radius: 20px;
+        border: none;
+      }
+      .btn-cancel:hover {
+        background: #7f8c8d;
+        color: white;
+      }
+
+      /* 오른쪽 주문 내역 테이블 */
+      .table thead th {
+        border-top: none;
+        border-bottom: 2px solid #e74c3c;
+        font-weight: 700;
+        color: #333;
+        background: transparent;
+      }
+      .table td {
+        vertical-align: middle;
+        font-size: 0.95rem;
+        border-top: 1px solid #eee;
+      }
+      .order-date {
+        font-weight: bold;
+        color: #555;
+      }
+      .order-time {
+        font-size: 0.8rem;
+        color: #999;
+      }
+      .product-link {
+        color: #333;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .product-link:hover {
+        color: #e74c3c;
+        text-decoration: none;
+      }
+      .total-price {
+        color: #e74c3c;
+        font-weight: 800;
+        font-size: 1.1rem;
+      }
+
+      /* 빈 주문 내역 스타일 */
+      .empty-orders {
+        text-align: center;
+        padding: 50px 0;
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-bar">
+      <div class="container">
+        <a href="/" class="logo"><i class="fas fa-paw"></i> 경수오빠못해조</a>
+
+        <div class="search-container d-none d-md-block">
+          <form action="/products" method="get">
+            <div class="search-input-group">
+              <input
+                type="text"
+                name="keyword"
+                class="search-input"
+                placeholder="찾으시는 상품이 있나요?"
+                value="{{ keyword if keyword else '' }}"
+              />
+              <button class="search-btn" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="header-nav">
+          {% if username %}
+          <span class="user-greeting d-none d-lg-block">
+            <i class="fas fa-user-circle"></i> {{ username }}님
+          </span>
+          <div class="dropdown">
+            <a href="#" class="menu-btn dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-bars"></i> 메뉴
+            </a>
+            <div class="dropdown-menu custom-dropdown">
+              <a href="/" class="dropdown-item"
+                ><i class="fas fa-home"></i> 메인</a
+              >
+              <a href="/mypage" class="dropdown-item"
+                ><i class="fas fa-user-cog"></i> 마이페이지</a
+              >
+              <a href="/memos" class="dropdown-item"
+                ><i class="fas fa-clipboard-list"></i> 게시판</a
+              >
+              <div class="dropdown-divider"></div>
+              <a href="#" onclick="logout()" class="dropdown-item text-danger"
+                ><i class="fas fa-sign-out-alt"></i> 로그아웃</a
+              >
+            </div>
+          </div>
+          {% else %}
+          <script>
+            window.location.href = "/login";
+          </script>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% include "navbar.html" %}
+
+    <div class="container my-5">
+      <h2 class="mypage-title"><i class="fas fa-user-cog"></i> 마이페이지</h2>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="content-box">
+            <div class="profile-header">
+              <div class="profile-icon">
+                {% if user.gender == '남성' or user.gender == 'M' %}
+                <i class="fas fa-user-tie"></i>
+                {% elif user.gender == '여성' or user.gender == 'F' %}
+                <i class="fas fa-user-alt"></i>
+                {% else %}
+                <i class="fas fa-user"></i>
+                {% endif %}
+              </div>
+              <h4 class="profile-name">{{ user.username }}</h4>
+              <p class="profile-email">{{ user.email }}</p>
+              <span class="badge badge-danger px-3 py-2">Family Member</span>
+            </div>
+
+            <hr />
+
+            <div id="view-mode">
+              <ul class="info-list">
+                <li class="info-item">
+                  <span class="info-label"
+                    ><i class="fas fa-phone-alt"></i> 연락처</span
+                  >
+                  <span>{{ user.phone_number }}</span>
+                </li>
+                <li class="info-item">
+                  <span class="info-label"
+                    ><i class="fas fa-birthday-cake"></i> 생년월일</span
+                  >
+                  <span>{{ user.birthdate }}</span>
+                </li>
+                <li class="info-item">
+                  <span class="info-label"
+                    ><i class="fas fa-venus-mars"></i> 성별</span
+                  >
+                  <span>{{ user.gender }}</span>
+                </li>
+              </ul>
+              <button
+                class="btn btn-custom-black mt-3"
+                onclick="toggleEditMode()"
+              >
+                <i class="fas fa-edit"></i> 내 정보 수정하기
+              </button>
+            </div>
+
+            <div id="edit-mode" class="edit-form-container">
+              <h6 class="font-weight-bold mb-3 text-danger">
+                <i class="fas fa-user-edit"></i> 정보 수정
+              </h6>
+
+              <div class="alert alert-secondary small p-2 mb-3">
+                <i class="fas fa-info-circle"></i> 변경할 항목만 입력하세요.
+              </div>
+
+              <div class="form-group mb-2">
+                <label class="small font-weight-bold">이메일</label>
+                <input
+                  type="email"
+                  id="edit-email"
+                  class="form-control form-control-sm"
+                  placeholder="{{ user.email }}"
+                />
+              </div>
+
+              <div class="form-group mb-2">
+                <label class="small font-weight-bold">전화번호</label>
+                <input
+                  type="tel"
+                  id="edit-phone"
+                  class="form-control form-control-sm"
+                  placeholder="{{ user.phone_number }}"
+                  oninput="autoHyphen(this)"
+                  maxlength="13"
+                />
+              </div>
+
+              <div class="form-group mb-3">
+                <label class="small font-weight-bold">새 비밀번호</label>
+                <input
+                  type="password"
+                  id="edit-pw"
+                  class="form-control form-control-sm"
+                  placeholder="변경 시에만 입력"
+                />
+              </div>
+
+              <div class="d-flex justify-content-between">
+                <button
+                  class="btn btn-cancel btn-sm px-3"
+                  onclick="toggleEditMode()"
+                >
+                  취소
+                </button>
+                <button class="btn btn-save btn-sm px-3" onclick="saveMyInfo()">
+                  저장
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <div class="content-box">
+            <h4 class="font-weight-bold mb-4">
+              <i class="fas fa-shopping-bag text-danger"></i> 최근 주문 내역
+            </h4>
+
+            {% if orders %}
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th width="20%">주문일자</th>
+                    <th>상품정보</th>
+                    <th width="15%" class="text-center">수량</th>
+                    <th width="20%" class="text-right">결제금액</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for order in orders %}
+                  <tr>
+                    <td>
+                      <div class="order-date">
+                        {{ order.created_at.strftime('%Y.%m.%d') }}
+                      </div>
+                      <div class="order-time">
+                        {{ order.created_at.strftime('%H:%M') }}
+                      </div>
+                    </td>
+                    <td>
+                      <a
+                        href="/products/{{ order.product_id }}"
+                        class="product-link"
+                      >
+                        {{ order.product_name_snap }}
+                      </a>
+                      <div class="small text-muted mt-1">
+                        <span class="badge badge-light border"
+                          >{{ order.category_snap }}</span
+                        >
+                        {{ order.sub_category_snap }}
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge badge-pill badge-secondary px-2 py-1"
+                        >{{ order.quantity }}개</span
+                      >
+                    </td>
+                    <td class="text-right">
+                      <span class="total-price">{{ order.total_price }}원</span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="empty-orders">
+              <i
+                class="fas fa-cart-arrow-down fa-4x mb-3"
+                style="opacity: 0.3"
+              ></i>
+              <h5>아직 주문 내역이 없습니다.</h5>
+              <p class="small">아이들에게 맛있는 간식을 선물해보세요!</p>
+              <a
+                href="/"
+                class="btn btn-danger mt-2 px-4 py-2"
+                style="border-radius: 30px"
+              >
+                쇼핑하러 가기
+              </a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+      function logout() {
+        fetch("/auth/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            window.location.href = "/";
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      // 수정 모드 토글
+      function toggleEditMode() {
+        const viewMode = document.getElementById("view-mode");
+        const editMode = document.getElementById("edit-mode");
+
+        if (
+          editMode.style.display === "none" ||
+          editMode.style.display === ""
+        ) {
+          viewMode.style.display = "none";
+          editMode.style.display = "block";
+        } else {
+          editMode.style.display = "none";
+          viewMode.style.display = "block";
+        }
+      }
+
+      // 전화번호 자동 하이픈
+      function autoHyphen(target) {
+        target.value = target.value
+          .replace(/[^0-9]/g, "")
+          .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+          .replace(/(\-{1,2})$/g, "");
+      }
+
+      // 정보 저장 요청
+      function saveMyInfo() {
+        const emailInput = document.getElementById("edit-email").value;
+        const phoneInput = document.getElementById("edit-phone").value;
+        const pwInput = document.getElementById("edit-pw").value;
+
+        const data = {};
+
+        // --- 1. 이메일 유효성 검사 ---
+        if (emailInput) {
+          // 이메일 정규식 (간단 버전: 문자@문자.문자)
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(emailInput)) {
+            alert("올바른 이메일 형식이 아닙니다.");
+            return;
+          }
+          data.email = emailInput;
+        }
+
+        // --- 2. 전화번호 유효성 검사 ---
+        if (phoneInput) {
+          // 전화번호 정규식 (010-XXXX-XXXX 형식)
+          const phoneRegex = /^010-\d{4}-\d{4}$/;
+          if (!phoneRegex.test(phoneInput)) {
+            alert("전화번호 형식이 올바르지 않습니다.\n예: 010-1234-5678");
+            return;
+          }
+          data.phone_number = phoneInput;
+        }
+
+        // --- 3. 비밀번호 (선택 사항) ---
+        if (pwInput) {
+          data.password = pwInput;
+        }
+
+        // 아무것도 입력하지 않았을 때
+        if (Object.keys(data).length === 0) {
+          alert("변경할 내용을 입력해주세요.");
+          return;
+        }
+
+        // 서버 전송
+        fetch("/auth/me", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        })
+          .then((response) =>
+            response
+              .json()
+              .then((body) => ({ status: response.status, body: body }))
+          )
+          .then((result) => {
+            if (result.status === 200) {
+              alert(result.body.message);
+              window.location.reload();
+            } else if (result.status === 409) {
+              // 이메일 중복 에러 처리
+              alert("수정 실패: " + result.body.detail); // "이미 사용 중인 이메일입니다."
+            } else {
+              alert("수정 실패: " + (result.body.detail || "알 수 없는 오류"));
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("서버 통신 중 오류가 발생했습니다.");
+          });
+      }
+    </script>
+  </body>
+</html>

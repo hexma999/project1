@@ -2,72 +2,305 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>경수오빠못해조 - 게시판</title>
+    <title>게시판 - 경수오빠못해조</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/common.css" rel="stylesheet">
+
     <style>
-        .container { margin-top: 30px; max-width: 900px; }
+        /* --- 게시판 전용 스타일 --- */
         
-        /* 카드 스타일 */
-        .card {
-            margin-bottom: 20px;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background-color: #fff;
-            transition: transform 0.2s;
+        .board-title {
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+            font-size: 1.8rem;
         }
-        .card:hover { transform: translateY(-3px); }
-
-        .card-header-custom {
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .author-info { font-size: 0.9rem; color: #666; font-weight: bold; }
-        .author-info i { margin-right: 5px; color: #E74C3C; }
-
-        .memo-title, .memo-content {
+        .board-title::after {
+            content: '';
+            display: block;
             width: 100%;
-            border: 1px solid #ddd;
-            background-color: #fcfcfc;
-            padding: 10px;
-            border-radius: 5px;
+            height: 4px;
+            background: #e74c3c;
+            border-radius: 2px;
+            margin-top: 5px;
         }
-        .memo-content { min-height: 100px; margin-top: 10px; }
 
-        /* 버튼 스타일 */
-        .edit-buttons { text-align: right; margin-top: 10px; }
-        .btn-edit { background-color: #E74C3C; color: #fff; border: none; }
-        .btn-delete { background-color: #3498DB; color: #fff; border: none; }
-        .btn-edit:hover, .btn-delete:hover { opacity: 0.8; color: white; }
-
-        /* 헤더바 스타일 */
-        .header-bar {
-            background-color: #E74C3C;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        /* 검색 및 필터 박스 */
+        .filter-box {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             margin-bottom: 30px;
             display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* 글쓰기 카드 */
+        .write-box {
+            background: #fff5f5;
+            border: 2px dashed #ffdcdc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 40px;
+            transition: all 0.3s;
+        }
+        .write-box:focus-within {
+            background: white;
+            border-color: #e74c3c;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.1);
+        }
+        .write-input {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+        .write-input:focus {
+            border-color: #e74c3c;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        /* 메모 카드 리스트 */
+        .memo-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 0;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: none;
+            transition: transform 0.3s;
+        }
+        .memo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .memo-header {
+            background: #fcfcfc;
+            padding: 15px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white;
         }
-        .header-bar h1 { margin: 0; font-size: 1.5rem; font-weight: bold; }
+        .memo-author {
+            font-weight: 700;
+            color: #555;
+            display: flex; align-items: center;
+        }
+        .memo-author i { margin-right: 8px; color: #e74c3c; font-size: 1.2rem; }
+        .memo-id { font-size: 0.85rem; color: #aaa; }
 
-        /* 검색창 스타일 */
-        .search-container {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        .memo-body { padding: 25px; }
+        .memo-title-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 15px;
+            display: block;
+            width: 100%;
+            border: none;
+            background: transparent;
+        }
+        .memo-content-text {
+            line-height: 1.6;
+            color: #666;
+            width: 100%;
+            border: none;
+            background: transparent;
+            resize: none;
+            min-height: 80px;
+        }
+
+        /* 수정 모드 스타일 */
+        .editing .memo-title-text, .editing .memo-content-text {
+            border: 1px solid #ddd;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .editing .memo-title-text:focus, .editing .memo-content-text:focus {
+            border-color: #e74c3c; outline: none;
+        }
+
+        /* 버튼 그룹 */
+        .btn-action-group button {
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 5px 15px;
+            margin-left: 5px;
+        }
+        .btn-edit-custom { background: #fff; border: 1px solid #ddd; color: #555; }
+        .btn-edit-custom:hover { background: #333; color: white; border-color: #333; }
+        
+        .btn-delete-custom { background: #fff; border: 1px solid #ffcccc; color: #e74c3c; }
+        .btn-delete-custom:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
+
+        /* 등록 버튼 */
+        .btn-regist {
+            background: #e74c3c; color: white; border: none; padding: 12px;
+            border-radius: 12px; font-weight: bold; width: 100%; transition: 0.3s;
+        }
+        .btn-regist:hover { background: #c0392b; transform: translateY(-2px); }
+
+        /* 토글 스위치 커스텀 */
+        .custom-control-input:checked ~ .custom-control-label::before {
+            border-color: #e74c3c;
+            background-color: #e74c3c;
         }
     </style>
+</head>
+
+<body>
+    <div class="header-bar">
+      <div class="container">
+        <a href="/" class="logo"><i class="fas fa-paw"></i> 경수오빠못해조</a>
+
+        <div class="search-container d-none d-md-block">
+          <form action="/products" method="get">
+            <div class="search-input-group">
+              <input
+                type="text"
+                name="keyword"
+                class="search-input"
+                placeholder="찾으시는 상품이 있나요?"
+                value="{{ keyword if keyword else '' }}"
+              />
+              <button class="search-btn" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="header-nav">
+          {% if username %}
+            <span class="user-greeting d-none d-lg-block">
+                <i class="fas fa-user-circle"></i> {{ username }}님
+            </span>
+            <div class="dropdown">
+                <a href="#" class="menu-btn dropdown-toggle" data-toggle="dropdown">
+                    <i class="fas fa-bars"></i> 메뉴
+                </a>
+                <div class="dropdown-menu custom-dropdown">
+                    <a href="/" class="dropdown-item"><i class="fas fa-home"></i> 메인</a>
+                    <a href="/mypage" class="dropdown-item"><i class="fas fa-user-cog"></i> 마이페이지</a>
+                    <a href="/memos" class="dropdown-item"><i class="fas fa-clipboard-list"></i> 게시판</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" onclick="logout()" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
+                </div>
+            </div>
+          {% else %}
+            <script>window.location.href='/login';</script>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% include "navbar.html" %}
+
+    <div class="container my-5" style="max-width: 900px;">
+        <h2 class="board-title"><i class="fas fa-clipboard-list"></i> 자유 게시판</h2>
+
+        <div class="filter-box">
+            <form id="searchForm" method="GET" action="/memos/" class="w-100 d-flex justify-content-between align-items-center flex-wrap">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="showMineCheck" onchange="toggleMyPosts()" 
+                           {% if show_mine %}checked{% endif %}>
+                    <label class="custom-control-label font-weight-bold text-secondary" for="showMineCheck">
+                        <i class="fas fa-user-check"></i> 내 글만 보기
+                    </label>
+                </div>
+
+                <div class="input-group" style="max-width: 400px;">
+                    <div class="input-group-prepend">
+                        <select name="search_type" class="custom-select border-0 bg-light" style="border-radius: 20px 0 0 20px;">
+                            <option value="title" {% if search_type == 'title' %}selected{% endif %}>제목</option>
+                            <option value="username" {% if search_type == 'username' %}selected{% endif %}>작성자</option>
+                            <option value="content" {% if search_type == 'content' %}selected{% endif %}>내용</option>
+                        </select>
+                    </div>
+                    <input type="text" name="keyword" class="form-control border-0 bg-light" placeholder="검색어를 입력하세요" value="{{ keyword }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-dark" type="submit" style="border-radius: 0 20px 20px 0;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="write-box">
+            <h5 class="font-weight-bold text-danger mb-3"><i class="fas fa-pen-fancy"></i> 새로운 이야기 쓰기</h5>
+            <input type="text" id="new-title" placeholder="제목을 입력해 주세요" class="write-input font-weight-bold">
+            <textarea id="new-content" placeholder="오늘 있었던 즐거운 일을 공유해보세요!" class="write-input" rows="3" style="resize: none;"></textarea>
+            <div class="text-right mt-2">
+                <button onclick="createMemo()" class="btn-regist">
+                    <i class="fas fa-paper-plane"></i> 등록하기
+                </button>
+            </div>
+        </div>
+
+        <hr class="mb-4">
+
+        {% if not memos %}
+            <div class="text-center py-5 text-muted">
+                <i class="far fa-folder-open fa-3x mb-3" style="opacity: 0.3;"></i>
+                <p>등록된 게시글이 없습니다.<br>첫 번째 글을 남겨보세요!</p>
+            </div>
+        {% endif %}
+
+        {% for memo in memos %}
+        <div class="card memo-card" id="card-{{ memo.id }}">
+            <div class="memo-header">
+                <div class="memo-author">
+                    <i class="fas fa-user-circle"></i> {{ memo.username }}
+                </div>
+                <div class="memo-id">No. {{ memo.id }}</div>
+            </div>
+            
+            <div class="memo-body">
+                <input type="text" id="title-{{ memo.id }}" value="{{ memo.title }}" class="memo-title-text" readonly>
+                <textarea id="content-{{ memo.id }}" class="memo-content-text" readonly>{{ memo.content }}</textarea>
+                
+                {% if memo.user_id == current_user_id %}
+                <div class="text-right mt-3 btn-action-group" id="btn-group-{{ memo.id }}">
+                    <button onclick="toggleEdit({{ memo.id }})" class="btn btn-edit-custom">
+                        <i class="fas fa-edit"></i> 수정
+                    </button>
+                    <button onclick="deleteMemo({{ memo.id }})" class="btn btn-delete-custom">
+                        <i class="fas fa-trash-alt"></i> 삭제
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
     <script>
+        // 로그아웃
+        function logout() {
+            fetch('/auth/logout', { method: 'POST' })
+            .then(() => window.location.href = '/');
+        }
+
         // 메모 작성
         function createMemo() {
             var title = document.getElementById('new-title').value;
@@ -89,21 +322,27 @@
 
         // 수정 모드 전환
         function toggleEdit(id) {
+            var card = document.getElementById('card-' + id);
             var titleEl = document.getElementById('title-' + id);
             var contentEl = document.getElementById('content-' + id);
-            var btnDiv = document.getElementById('btn-group-' + id);
+            var btnGroup = document.getElementById('btn-group-' + id);
             
             var isReadOnly = titleEl.readOnly;
+            
+            // 상태 토글
             titleEl.readOnly = !isReadOnly;
             contentEl.readOnly = !isReadOnly;
 
             if (!isReadOnly) {
-                // 저장 로직
                 updateMemo(id);
             } else {
-                // 수정 모드 진입 시 시각적 효과 (선택 사항)
+                card.classList.add('editing');
                 titleEl.focus();
-                // 버튼 아이콘 변경 로직 등을 추가할 수 있음
+                
+                var editBtn = btnGroup.querySelector('.btn-edit-custom');
+                editBtn.innerHTML = '<i class="fas fa-save"></i> 저장';
+                editBtn.classList.remove('btn-edit-custom');
+                editBtn.classList.add('btn-dark'); 
             }
         }
 
@@ -120,7 +359,7 @@
             .then(response => {
                 if (response.ok) {
                     alert('메모가 수정되었습니다.');
-                    window.location.reload(); // 읽기 전용으로 되돌리기 위해 리로드
+                    window.location.reload();
                 } else {
                     alert('수정 권한이 없습니다.');
                     window.location.reload();
@@ -144,18 +383,7 @@
             });
         }
 
-        function logout() {
-            fetch('/auth/logout', { method: 'POST' })
-            .then(() => window.location.href = '/');
-        }
-
-        // 검색 폼 제출 (GET 방식)
-        function submitSearch() {
-            const form = document.getElementById('searchForm');
-            form.submit();
-        }
-
-        // 내 글만 보기 토글
+        // 내 글만 보기 필터
         function toggleMyPosts() {
             const checkBox = document.getElementById('showMineCheck');
             const urlParams = new URLSearchParams(window.location.search);
@@ -168,79 +396,5 @@
             window.location.search = urlParams.toString();
         }
     </script>
-</head>
-
-<body>
-    <div class="container">
-        <div class="header-bar">
-            <div>
-                <a href="/" class="btn btn-light btn-sm mr-2"><i class="fas fa-home"></i> 메인으로</a>
-            </div>
-            <h1><i class="fas fa-clipboard-list"></i> 자유 게시판</h1>
-            <div>
-                <span class="mr-2"><i class="fas fa-user"></i> {{ username }}</span>
-                <button onclick="logout()" class="btn btn-outline-light btn-sm">로그아웃</button>
-            </div>
-        </div>
-
-        <div class="search-container">
-            <form id="searchForm" method="GET" action="/memos/" class="form-inline justify-content-between">
-                <div class="custom-control custom-switch my-1">
-                    <input type="checkbox" class="custom-control-input" id="showMineCheck" onchange="toggleMyPosts()" 
-                           {% if show_mine %}checked{% endif %}>
-                    <label class="custom-control-label font-weight-bold" for="showMineCheck">내 글만 보기</label>
-                </div>
-
-                <div class="input-group my-1">
-                    <select name="search_type" class="custom-select">
-                        <option value="title" {% if search_type == 'title' %}selected{% endif %}>제목</option>
-                        <option value="username" {% if search_type == 'username' %}selected{% endif %}>작성자(ID)</option>
-                        <option value="content" {% if search_type == 'content' %}selected{% endif %}>내용</option>
-                    </select>
-                    <input type="text" name="keyword" class="form-control" placeholder="검색어 입력" value="{{ keyword }}">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> 검색</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div class="card bg-light border-primary">
-            <div class="card-body">
-                <h5 class="card-title text-primary"><i class="fas fa-pencil-alt"></i> 새 글 작성</h5>
-                <input type="text" id="new-title" placeholder="제목을 입력하세요" class="form-control mb-2">
-                <textarea id="new-content" placeholder="내용을 자유롭게 작성하세요" class="form-control mb-2" rows="3"></textarea>
-                <button onclick="createMemo()" class="btn btn-primary btn-block">등록하기</button>
-            </div>
-        </div>
-
-        <hr>
-
-        {% if not memos %}
-            <div class="alert alert-warning text-center">검색 결과가 없거나 게시글이 없습니다.</div>
-        {% endif %}
-
-        {% for memo in memos %}
-        <div class="card">
-            <div class="card-header-custom">
-                <span class="author-info">
-                    <i class="fas fa-user-circle"></i> {{ memo.username }}
-                </span>
-                <small class="text-muted">No. {{ memo.id }}</small>
-            </div>
-            <div class="card-body">               
-                <input type="text" id="title-{{ memo.id }}" value="{{ memo.title }}" class="form-control memo-title mb-2" readonly>
-                <textarea id="content-{{ memo.id }}" class="form-control memo-content" readonly>{{ memo.content }}</textarea>
-                
-                {% if memo.user_id == current_user_id %}
-                <div class="edit-buttons" id="btn-group-{{ memo.id }}">
-                    <button onclick="toggleEdit({{ memo.id }})"  class="btn btn-sm btn-edit"><i class="fas fa-edit"></i> 수정</button>
-                    <button onclick="deleteMemo({{ memo.id }})" class="btn btn-sm btn-delete"><i class="fas fa-trash-alt"></i> 삭제</button>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
 </body>
 </html>

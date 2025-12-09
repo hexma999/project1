@@ -49,3 +49,21 @@ def get_featured_products(db: Session, limit: int = 4):
     # RAND()를 사용해 매번 새로고침 할 때마다 다른 상품이 나오게 합니다.
     sql = "SELECT * FROM pet_item ORDER BY RAND() LIMIT :limit"
     return db.execute(text(sql), {"limit": limit}).fetchall()
+
+# 6. 구매 발생 시 재고 감소 및 판매량 증가
+def update_stock_and_sales(db: Session, product_id: int, quantity: int):
+    # 재고는 줄이고(stock - quantity), 판매량은 늘림(sales_count + quantity)
+    db.execute(
+        text("UPDATE pet_item SET stock = stock - :quantity, sales_count = sales_count + :quantity WHERE id = :product_id"),
+        {"quantity": quantity, "product_id": product_id}
+    )
+    db.commit()
+
+# 상품 검색 기능
+def search_products(db: Session, keyword: str):
+    # 상품명 또는 설명에 키워드가 포함된 경우 조회
+    sql = """
+        SELECT * FROM pet_item 
+        WHERE name LIKE :keyword OR description LIKE :keyword
+    """
+    return db.execute(text(sql), {"keyword": f"%{keyword}%"}).fetchall()

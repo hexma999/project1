@@ -11,489 +11,126 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Noto Sans KR", sans-serif;
-        background-color: #fff;
-      }
-
-      /* 상단 헤더 스타일 */
-      .header-bar {
-        background-color: #e74c3c;
-        color: white;
-        padding: 15px 0;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: white;
-        text-decoration: none;
-      }
-      .logo:hover {
-        color: #ffecec;
-        text-decoration: none;
-      }
-
-      /* 헤더 아이콘 메뉴 스타일  */
-      .header-icons {
-        display: flex;
-        align-items: center;
-      }
-      .header-icons .btn {
-        color: white;
-        margin-left: 10px;
-        transition: color 0.2s;
-      }
-      .header-icons .btn:hover {
-        color: #070505;
-      }
-      .header-icons span {
-        font-weight: 500;
-      }
-
-      /* 검색창 잠시 지워놓음 버튼이 안예뻐져서*/
-      /* .search-bar {
-        width: 100%;
-        max-width: 500px;
-        border-radius: 20px;
-        border: none;
-        padding: 10px 20px;
-      } */
-
-      /* 네비게이션 바 (드f롭다운 스타일) */
-      .nav-bar {
-        background-color: white;
-        border-bottom: 1px solid #eee;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); /* 부드러운 그림자 */
-      }
-
-      .navbar-nav {
-        width: 100%;
-        justify-content: center; /* 가운데 정렬 */
-        align-items: center;
-      }
-
-      .nav-item {
-        position: relative;
-      }
-
-      .navbar-nav .nav-link {
-        color: #444;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 15px 20px !important;
-        transition: all 0.3s;
-        border-bottom: 3px solid transparent;
-      }
-
-      .navbar-nav .nav-link:hover {
-        color: #e74c3c;
-        background-color: #fff5f5;
-
-        border-bottom: 3px solid #e74c3c;
-      }
-
-      /* 구분선 스타일 */
-      .nav-divider {
-        width: 1px;
-        height: 25px;
-        background-color: #ddd;
-        margin: 0 15px;
-      }
-      .dropdown-menu {
-        border: none;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-      .dropdown-item:hover {
-        background-color: #ffecec;
-        color: #e74c3c;
-      }
-
-      /* 메인 배너 */
-      .main-banner {
-        background-color: #fff8e1;
-        padding: 60px 0;
-        text-align: center;
-        margin-bottom: 40px;
-      }
-      .banner-title {
-        color: #e74c3c;
-        font-weight: bold;
-        font-size: 2.5rem;
-        margin-bottom: 20px;
-      }
-      .banner-text {
-        font-size: 1.2rem;
-        color: #555;
-        margin-bottom: 30px;
-      }
-
-      /* 상품 카드 */
-      .product-card {
-        border: none;
-        transition: transform 0.2s;
-      }
-      .product-card:hover {
-        transform: translateY(-5px);
-      }
-      .card-img-top {
-        height: 200px;
-        object-fit: cover;
-        background-color: #eee;
-      }
-      .product-price {
-        color: #e74c3c;
-        font-weight: bold;
-        font-size: 1.1rem;
-      }
-    </style>
+    <link href="/static/css/common.css" rel="stylesheet" />
   </head>
   <body>
-    <!-- 상단 헤더 -->
     <div class="header-bar">
-      <div class="container d-flex justify-content-between align-items-center">
-        <!-- 왼쪽 상단 사이트 로고 -->
-        <a href="/" class="logo"> <i class="fas fa-paw"></i> 경수오빠못해조 </a>
-
-        <!-- ★ 로그인 여부에 따른 버튼 표시 영역 ★ -->
-        <div class="header-icons">
+      <div class="container">
+        <a href="/" class="logo"><i class="fas fa-paw"></i> 경수오빠못해조</a>
+        <div class="search-container d-none d-md-block">
+          <form action="/products" method="get">
+            <div class="search-input-group">
+              <input
+                type="text"
+                name="keyword"
+                class="search-input"
+                placeholder="찾으시는 상품이 있나요?"
+                value="{{ keyword if keyword else '' }}"
+              />
+              <button class="search-btn" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="header-nav">
           {% if username %}
-          <span class="mr-3"
+          <span class="user-greeting d-none d-lg-block"
             ><i class="fas fa-user-circle"></i> {{ username }}님</span
           >
-          <a href="/" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-home"></i> 메인
-          </a>
-          <a href="/memos" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-clipboard-list"></i> 게시판
-          </a>
-          <!-- 로그아웃 버튼 -->
-          <button
-            onclick="logout()"
-            class="btn btn-sm btn-light text-danger font-weight-bold"
-          >
-            <i class="fas fa-sign-out-alt"></i> 로그아웃
-          </button>
+          <div class="dropdown">
+            <a href="#" class="menu-btn dropdown-toggle" data-toggle="dropdown"
+              ><i class="fas fa-bars"></i> 메뉴</a
+            >
+            <div class="dropdown-menu custom-dropdown">
+              <a href="/" class="dropdown-item"
+                ><i class="fas fa-home"></i> 메인</a
+              >
+              <a href="/mypage" class="dropdown-item"
+                ><i class="fas fa-user-cog"></i> 마이페이지</a
+              >
+              <a href="/memos" class="dropdown-item"
+                ><i class="fas fa-clipboard-list"></i> 게시판</a
+              >
+              <div class="dropdown-divider"></div>
+              <a href="#" onclick="logout()" class="dropdown-item text-danger"
+                ><i class="fas fa-sign-out-alt"></i> 로그아웃</a
+              >
+            </div>
+          </div>
           {% else %}
-          <a href="/" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-home"></i> 메인
-          </a>
-          <a
-            href="/login"
-            class="btn btn-sm btn-light text-danger font-weight-bold"
-          >
-            <i class="fas fa-sign-in-alt"></i> 로그인
-          </a>
+          <div class="dropdown">
+            <a href="#" class="menu-btn dropdown-toggle" data-toggle="dropdown"
+              ><i class="fas fa-user"></i> 시작하기</a
+            >
+            <div class="dropdown-menu custom-dropdown">
+              <a href="/login" class="dropdown-item"
+                ><i class="fas fa-sign-in-alt"></i> 로그인</a
+              >
+              <a href="/" class="dropdown-item"
+                ><i class="fas fa-home"></i> 메인 둘러보기</a
+              >
+            </div>
+          </div>
           {% endif %}
         </div>
       </div>
     </div>
 
-    <!-- 카테고리 (네비게이션바) -->
-    <!-- 카테고리 전체 감싼것 -->
-    <div class="container nav-bar">
-      <nav class="navbar navbar-expand-lg navbar-light bg-white p-0">
-        <!-- 카테고리 버튼(누르면 나열됨) -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div
-          class="collapse navbar-collapse justify-content-center"
-          id="navbarNav"
-        >
-          <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-              <!-- 누르면 sub 가 나열됨 -->
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navDog"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <i class="fas fa-dog text-danger"></i> 강아지
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navDog">
-                <!-- category와 sub를 받아 페이지이동 -->
-                <a
-                  class="dropdown-item"
-                  href="/products?category=dog&sub=clothes"
-                  >👚 옷</a
-                >
-                <a class="dropdown-item" href="/products?category=dog&sub=leash"
-                  >🪢 끈 (리드줄)</a
-                >
-                <a class="dropdown-item" href="/products?category=dog&sub=food"
-                  >🍚 사료</a
-                >
-                <a class="dropdown-item" href="/products?category=dog&sub=snack"
-                  >🍪 간식</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=dog&sub=cushion"
-                  >🛌 방석</a
-                >
-                <a class="dropdown-item" href="/products?category=dog&sub=house"
-                  >🛖 집 (하우스)</a
-                >
-              </div>
-            </li>
+    {% include "navbar.html" %}
 
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navCat"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <i class="fas fa-cat text-warning"></i> 고양이
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navCat">
-                <a
-                  class="dropdown-item"
-                  href="/products?category=cat&sub=clothes"
-                  >👚 옷</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=cat&sub=harness"
-                  >🪢 끈 (하네스)</a
-                >
-                <a class="dropdown-item" href="/products?category=cat&sub=food"
-                  >🍚 사료</a
-                >
-                <a class="dropdown-item" href="/products?category=cat&sub=snack"
-                  >🍪 간식</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=cat&sub=cushion"
-                  >🛌 방석</a
-                >
-                <a class="dropdown-item" href="/products?category=cat&sub=house"
-                  >🛖 집 (숨숨집)</a
-                >
-              </div>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navBird"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <i class="fas fa-dove text-info"></i> 새 (조류)
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navBird">
-                <a
-                  class="dropdown-item"
-                  href="/products?category=bird&sub=bird_clothes"
-                  >👚 옷 (윙수트)</a
-                >
-                <a class="dropdown-item" href="/products?category=bird&sub=food"
-                  >🍚 사료</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=bird&sub=snack"
-                  >🍪 간식</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=bird&sub=cushion"
-                  >🛌 방석 (둥지)</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=bird&sub=bird_house"
-                  >🛖 집 (새장)</a
-                >
-              </div>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navEtc"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <i class="fas fa-otter text-success"></i> 기타 동물
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navEtc">
-                <a
-                  class="dropdown-item"
-                  href="/products?category=etc&sub=hamster"
-                  >🐹 햄스터</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=etc&sub=guinea_pig"
-                  >🐹 기니피그</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=etc&sub=rabbit"
-                  >🐰 토끼</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=etc&sub=ferret"
-                  >🦦 페럿</a
-                >
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/products?category=etc&sub=fish"
-                  >🐠 물고기</a
-                >
-                <a
-                  class="dropdown-item"
-                  href="/products?category=etc&sub=reptile"
-                  >🦎 파충류</a
-                >
-              </div>
-            </li>
-
-            <li
-              class="nav-divider d-none d-lg-block"
-              style="
-                width: 1px;
-                height: 25px;
-                background-color: #ddd;
-                margin: 0 15px;
-              "
-            ></li>
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navTeamIntroduce"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <i class="fas fa-users text-secondary"></i> 팀
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navTeamIntroduce">
-                <a class="dropdown-item" href="#">팀소개1</a>
-                <a class="dropdown-item" href="#">팀소개2</a>
-                <a class="dropdown-item" href="#">팀소개3</a>
-                <a class="dropdown-item" href="#">팀소개4</a>
-              </div>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navBrands"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <i class="fas fa-tags text-secondary"></i> 브랜드
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navBrands">
-                <a class="dropdown-item" href="#">브랜드1</a>
-                <a class="dropdown-item" href="#">브랜드2</a>
-                <a class="dropdown-item" href="#">브랜드3</a>
-                <a class="dropdown-item" href="#">브랜드4</a>
-              </div>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navServiceCenter"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <i class="fas fa-headset text-secondary"></i> 서비스
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navServiceCenter">
-                <a class="dropdown-item" href="#">고객센터1</a>
-                <a class="dropdown-item" href="#">고객센터2</a>
-                <a class="dropdown-item" href="#">고객센터3</a>
-                <a class="dropdown-item" href="#">고객센터4</a>
-              </div>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navOperator"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <i class="fas fa-user-cog text-secondary"></i> 운영자
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navOperator">
-                <a class="dropdown-item" href="#">운영자1</a>
-                <a class="dropdown-item" href="#">운영자2</a>
-                <a class="dropdown-item" href="#">운영자3</a>
-                <a class="dropdown-item" href="#">운영자4</a>
-              </div>
-            </li>
-          </ul>
+    <div class="container">
+      <div class="main-banner">
+        <div class="banner-content">
+          <h2 class="banner-title">경수오빠못해조 오픈 기념!</h2>
+          <p class="banner-text">
+            우리집 반려동물을 위한 특별한 선물<br />
+            <strong>전 품목 최대 50% 할인 이벤트 중</strong>
+          </p>
+          <button
+            class="btn-shopping"
+            onclick="location.href='/products?category=dog&sub=food'"
+          >
+            <i class="fas fa-shopping-cart"></i> 지금 쇼핑하기
+          </button>
         </div>
-      </nav>
-    </div>
-
-    <!-- 광고용 -->
-    <div class="main-banner">
-      <div class="container">
-        <h2 class="banner-title">경수오빠못해조 오픈 기념!</h2>
-        <p class="banner-text">
-          우리집 반려동물을 위한 특별한 선물<br />
-          <strong>전 품목 최대 50% 할인</strong>
-        </p>
-        <button class="btn btn-danger btn-lg">쇼핑하러 가기</button>
       </div>
     </div>
 
-    <!-- 추천상품 (지금은 4개 랜덤 추출) -->
     <div class="container mb-5">
-      <h3 class="text-center mb-4">
-        <i class="fas fa-star text-warning"></i> MD 추천 상품
-      </h3>
+      <div class="section-header">
+        <h3 class="section-title">
+          <i class="fas fa-star text-warning"></i> MD 추천 상품
+        </h3>
+      </div>
+
       <div class="row">
-        <!-- 이 페이지에 들어오면 featured_products 를 서버가 보내줌 -->
-        <!-- product로 1개 씩 뽑아서 출력 -->
         {% for product in featured_products %}
         <div class="col-md-3 mb-4">
           <div
             class="card product-card"
             onclick="location.href='/products/{{ product.id }}'"
-            style="cursor: pointer"
           >
-            <div
-              class="card-img-top d-flex align-items-center justify-content-center bg-light"
-              style="overflow: hidden"
-            >
+            <div class="card-img-wrapper">
+              <div class="card-badge"><i class="fas fa-heart"></i></div>
+
               {% if product.image_url %}
               <img
                 src="{{ product.image_url }}"
                 alt="{{ product.name }}"
-                style="width: 100%; height: 100%; object-fit: cover"
+                class="card-img-top"
               />
               {% else %}
-              <i class="fas fa-gift fa-3x text-secondary"></i>
+              <div
+                class="d-flex align-items-center justify-content-center h-100 bg-light text-secondary"
+              >
+                <i class="fas fa-gift fa-3x"></i>
+              </div>
               {% endif %}
             </div>
 
-            <div class="card-body text-center">
-              <h5 class="card-title text-truncate">{{ product.name }}</h5>
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
               <p class="product-price">{{ product.price }}원</p>
             </div>
           </div>
@@ -505,23 +142,15 @@
         {% endfor %}
       </div>
     </div>
-
+    {% include "chatbot.html" %}
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
     <script>
-      // 로그아웃 함수 (서버와 연동)
       function logout() {
-        fetch("/auth/logout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            window.location.href = "/";
-          })
-          .catch((error) => console.error("Error:", error));
+        fetch("/auth/logout", { method: "POST" }).then(
+          () => (window.location.href = "/")
+        );
       }
     </script>
   </body>

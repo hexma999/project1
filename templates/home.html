@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>경수오빠못해조 - 로그인</title>
+    <title>경수오빠못해조 - 시작하기</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
       rel="stylesheet"
@@ -13,35 +13,32 @@
       rel="stylesheet"
     />
     <style>
-      /* 1. 전체 배경 및 레이아웃 */
       body {
         font-family: "Noto Sans KR", sans-serif;
-        background: #f0f2f5; /* 부드러운 회색 배경 */
+        background: #f0f2f5;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         margin: 0;
       }
-
-      /* 2. 메인 컨테이너 (카드 스타일) */
       .container {
         background-color: #fff;
-        border-radius: 15px; /* 둥근 모서리 */
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         width: 100%;
-        max-width: 420px;
-        padding: 40px;
+        max-width: 400px; /* 모바일 친화적 너비 */
+        padding: 40px 30px;
         box-sizing: border-box;
         text-align: center;
         position: relative;
-        overflow: hidden;
+        min-height: 500px; /* 높이 고정으로 덜컥거림 방지 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
-
-      /* 3. 타이틀 및 로고 */
       h1 {
-        color: #e74c3c; /* 브랜드 컬러 */
-        font-size: 1.8rem;
+        color: #e74c3c;
         margin-bottom: 10px;
         font-weight: 700;
       }
@@ -51,26 +48,26 @@
         margin-bottom: 30px;
       }
 
-      /* 4. 입력 폼 스타일 */
       .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         text-align: left;
       }
       .form-group label {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
         color: #333;
         font-weight: bold;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
       }
-      .form-group input {
+      .form-group input,
+      .form-group select {
         width: 100%;
-        padding: 12px;
+        padding: 14px;
         border: 1px solid #ddd;
         border-radius: 8px;
         box-sizing: border-box;
         font-size: 1rem;
-        transition: border-color 0.3s;
+        transition: all 0.2s;
       }
       .form-group input:focus {
         border-color: #e74c3c;
@@ -78,10 +75,10 @@
         box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
       }
 
-      /* 5. 버튼 스타일 */
-      .btn-submit {
+      .btn-submit,
+      .btn-next {
         width: 100%;
-        padding: 12px;
+        padding: 14px;
         background-color: #e74c3c;
         color: white;
         border: none;
@@ -90,13 +87,12 @@
         font-weight: bold;
         cursor: pointer;
         margin-top: 10px;
-        transition: background-color 0.3s;
       }
-      .btn-submit:hover {
+      .btn-submit:hover,
+      .btn-next:hover {
         background-color: #c0392b;
       }
 
-      /* 6. 전환 링크 (로그인 <-> 회원가입) */
       .toggle-text {
         margin-top: 20px;
         font-size: 0.9rem;
@@ -108,91 +104,414 @@
         cursor: pointer;
         text-decoration: none;
       }
-      .toggle-link:hover {
-        text-decoration: underline;
-      }
 
-      /* 7. 숨김 클래스 (화면 전환용) */
       .hidden {
-        display: none;
+        display: none !important;
       }
-
-      /* 애니메이션 효과 (선택사항) */
       .fade-in {
-        animation: fadeIn 0.5s;
+        animation: fadeIn 0.4s ease-out;
       }
       @keyframes fadeIn {
         from {
           opacity: 0;
-          transform: translateY(10px);
+          transform: translateY(5px);
         }
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
+
+      /* 단계 표시바 (Progress Bar) */
+      .progress-container {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+      }
+      .step-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #eee;
+        border-radius: 50%;
+        transition: all 0.3s;
+      }
+      .step-dot.active {
+        background-color: #e74c3c;
+        transform: scale(1.3);
+      }
+
+      /* 성별 선택 버튼 스타일 */
+      .gender-options {
+        display: flex;
+        gap: 10px;
+      }
+      .gender-btn {
+        flex: 1;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        font-weight: bold;
+        color: #555;
+        transition: all 0.2s;
+      }
+      .gender-btn.selected {
+        border-color: #e74c3c;
+        background-color: #fff5f5;
+        color: #e74c3c;
+      }
     </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="login-box" class="fade-in w-100">
+        <h1><i class="fas fa-paw"></i> 경수오빠못해조</h1>
+        <p class="subtitle">반려동물을 위한 모든 것이 여기에!</p>
+        <form id="loginForm" onsubmit="submitLoginForm(event)">
+          <div class="form-group">
+            <label>아이디</label>
+            <input
+              type="text"
+              name="username"
+              placeholder="아이디 입력"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>비밀번호</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="비밀번호 입력"
+              required
+            />
+          </div>
+          <button type="submit" class="btn-submit">로그인</button>
+        </form>
+        <div class="toggle-text">
+          아직 계정이 없으신가요?
+          <span class="toggle-link" onclick="toggleForms()">회원가입 하기</span>
+        </div>
+      </div>
+
+      <div id="signup-box" class="hidden w-100">
+        <h2 style="font-weight: bold; margin-bottom: 5px">회원가입</h2>
+        <p class="subtitle" id="step-title" style="margin-bottom: 20px">
+          정보 입력
+        </p>
+
+        <div class="progress-container">
+          <div class="step-dot active" id="dot-1"></div>
+          <div class="step-dot" id="dot-2"></div>
+          <div class="step-dot" id="dot-3"></div>
+          <div class="step-dot" id="dot-4"></div>
+          <div class="step-dot" id="dot-5"></div>
+          <div class="step-dot" id="dot-6"></div>
+        </div>
+
+        <form id="signupForm" onsubmit="return false;">
+          <div id="step-1" class="fade-in">
+            <div class="form-group">
+              <label>1. 아이디를 입력해주세요</label>
+              <input
+                type="text"
+                id="su_username"
+                placeholder="영문, 숫자 포함"
+              />
+              <small
+                id="id-msg"
+                style="
+                  display: block;
+                  margin-top: 5px;
+                  height: 20px;
+                  font-size: 0.8rem;
+                "
+              ></small>
+            </div>
+            <button type="button" class="btn-next" onclick="checkIdAndNext()">
+              중복 확인 및 다음
+            </button>
+          </div>
+
+          <div id="step-2" class="hidden fade-in">
+            <div class="form-group">
+              <label>2. 비밀번호를 설정해주세요</label>
+              <input
+                type="password"
+                id="su_password"
+                placeholder="비밀번호"
+                class="mb-2"
+              />
+              <input
+                type="password"
+                id="su_password_confirm"
+                placeholder="비밀번호 재입력"
+              />
+              <small
+                id="pw-msg"
+                style="
+                  color: red;
+                  display: block;
+                  margin-top: 5px;
+                  height: 20px;
+                "
+              ></small>
+            </div>
+            <button type="button" class="btn-next" onclick="checkPwAndNext()">
+              다음
+            </button>
+          </div>
+
+          <div id="step-3" class="hidden fade-in">
+            <div class="form-group">
+              <label>3. 생년월일을 입력해주세요</label>
+              <input type="date" id="su_birthdate" />
+            </div>
+            <button type="button" class="btn-next" onclick="simpleNext(3, 4)">
+              다음
+            </button>
+          </div>
+
+          <div id="step-4" class="hidden fade-in">
+            <div class="form-group">
+              <label>4. 성별을 선택해주세요</label>
+              <input type="hidden" id="su_gender" />
+              <div class="gender-options">
+                <button
+                  class="gender-btn"
+                  type="button"
+                  onclick="selectGender('M', this)"
+                >
+                  남성
+                </button>
+                <button
+                  class="gender-btn"
+                  type="button"
+                  onclick="selectGender('F', this)"
+                >
+                  여성
+                </button>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn-next"
+              onclick="checkGenderAndNext()"
+            >
+              다음
+            </button>
+          </div>
+
+          <div id="step-5" class="hidden fade-in">
+            <div class="form-group">
+              <label>5. 휴대폰 번호를 입력해주세요</label>
+              <input
+                type="tel"
+                id="su_phone"
+                placeholder="010-1234-5678"
+                maxlength="13"
+                oninput="autoHyphen(this)"
+              />
+            </div>
+            <button
+              type="button"
+              class="btn-next"
+              onclick="checkPhoneAndNext()"
+            >
+              다음
+            </button>
+          </div>
+
+          <div id="step-6" class="hidden fade-in">
+            <div class="form-group">
+              <label>6. 이메일을 입력해주세요</label>
+              <input
+                type="email"
+                id="su_email"
+                placeholder="example@naver.com"
+              />
+            </div>
+            <button
+              type="button"
+              class="btn-submit"
+              onclick="submitSignupFinal()"
+            >
+              가입 완료
+            </button>
+          </div>
+        </form>
+
+        <div class="toggle-text">
+          <span class="toggle-link" onclick="toggleForms()"
+            >로그인으로 돌아가기</span
+          >
+        </div>
+      </div>
+    </div>
 
     <script>
-      // 1. 화면 전환 함수 (로그인 <-> 회원가입)
+      // === 화면 전환 ===
       function toggleForms() {
         const loginBox = document.getElementById("login-box");
         const signupBox = document.getElementById("signup-box");
 
-        // hidden 클래스를 토글(껐다 켰다)합니다.
         if (loginBox.classList.contains("hidden")) {
           loginBox.classList.remove("hidden");
-          loginBox.classList.add("fade-in"); // 애니메이션 재실행
           signupBox.classList.add("hidden");
         } else {
           loginBox.classList.add("hidden");
           signupBox.classList.remove("hidden");
-          signupBox.classList.add("fade-in"); // 애니메이션 재실행
+          resetSignup();
         }
       }
 
-      // 2. 로그인 제출 로직 (기존 유지)
-      function submitLoginForm(event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const data = {
-          username: formData.get("username"),
-          password: formData.get("password"),
-        };
-        fetch("/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        })
-          .then((response) =>
-            response
-              .json()
-              .then((body) => ({ status: response.status, body: body }))
-          )
-          .then((result) => {
-            if (result.status === 200) {
-              alert(result.body.message);
-              // 로그인 성공 시 메인 페이지로 이동 (수정된 라우터 반영)
-              window.location.href = "/";
-            } else {
-              throw new Error(result.body.detail || "로그인을 실패했습니다.");
-            }
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert(error.message);
-          });
+      function resetSignup() {
+        showStep(1);
+        document.getElementById("signupForm").reset();
+        document.getElementById("id-msg").innerText = "";
+        document.getElementById("pw-msg").innerText = "";
+        // 성별 버튼 초기화
+        document
+          .querySelectorAll(".gender-btn")
+          .forEach((btn) => btn.classList.remove("selected"));
+        document.getElementById("su_gender").value = "";
       }
 
-      // 3. 회원가입 제출 로직 (기존 유지)
-      function submitSignupForm(event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
+      // === Wizard 단계 관리 ===
+      function showStep(step) {
+        // 모든 단계 숨김 & 점 초기화
+        for (let i = 1; i <= 6; i++) {
+          document.getElementById(`step-${i}`).classList.add("hidden");
+          document.getElementById(`dot-${i}`).classList.remove("active");
+        }
+        // 현재 단계 보임 & 점 활성화
+        document.getElementById(`step-${step}`).classList.remove("hidden");
+        for (let i = 1; i <= step; i++) {
+          document.getElementById(`dot-${i}`).classList.add("active");
+        }
+
+        // 단계별 타이틀 업데이트 (선택사항)
+        const titles = [
+          "ID 설정",
+          "비밀번호 설정",
+          "생년월일",
+          "성별 선택",
+          "연락처 입력",
+          "이메일 입력",
+        ];
+        document.getElementById("step-title").innerText = titles[step - 1];
+      }
+
+      // === [STEP 1] 아이디 중복 체크 ===
+      function checkIdAndNext() {
+        const username = document.getElementById("su_username").value;
+        const msgBox = document.getElementById("id-msg");
+
+        if (!username) {
+          alert("아이디를 입력해주세요.");
+          return;
+        }
+
+        fetch("/auth/check-id", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username }),
+        }).then((res) => {
+          if (res.status === 200) {
+            msgBox.innerText = "사용 가능한 아이디입니다.";
+            msgBox.style.color = "green";
+            setTimeout(() => showStep(2), 500);
+          } else {
+            msgBox.innerText = "이미 사용 중인 아이디입니다.";
+            msgBox.style.color = "red";
+          }
+        });
+      }
+
+      // === [STEP 2] 비밀번호 확인 ===
+      function checkPwAndNext() {
+        const pw = document.getElementById("su_password").value;
+        const pwConfirm = document.getElementById("su_password_confirm").value;
+        const msgBox = document.getElementById("pw-msg");
+
+        if (!pw) {
+          alert("비밀번호를 입력해주세요.");
+          return;
+        }
+        if (pw !== pwConfirm) {
+          msgBox.innerText = "비밀번호가 일치하지 않습니다.";
+          return;
+        }
+        msgBox.innerText = "";
+        showStep(3);
+      }
+
+      // === [STEP 3] 생년월일 (단순 값 체크) ===
+      function simpleNext(current, next) {
+        const val = document.querySelector(`#step-${current} input`).value;
+        if (!val) {
+          alert("값을 입력해주세요.");
+          return;
+        }
+        showStep(next);
+      }
+
+      // === [STEP 4] 성별 선택 로직 ===
+      function selectGender(val, btn) {
+        document.getElementById("su_gender").value = val;
+        // 스타일 처리
+        document
+          .querySelectorAll(".gender-btn")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+      }
+
+      function checkGenderAndNext() {
+        const gender = document.getElementById("su_gender").value;
+        if (!gender) {
+          alert("성별을 선택해주세요.");
+          return;
+        }
+        showStep(5);
+      }
+
+      // === [STEP 5] 전화번호 자동 하이픈 & 검증 ===
+      function autoHyphen(target) {
+        target.value = target.value
+          .replace(/[^0-9]/g, "")
+          .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+          .replace(/(\-{1,2})$/g, "");
+      }
+
+      function checkPhoneAndNext() {
+        const phone = document.getElementById("su_phone").value;
+        // 간단한 길이 체크 (010-xxxx-xxxx = 13자리)
+        if (phone.length < 12) {
+          alert("전화번호를 올바르게 입력해주세요.\n예: 010-1234-5678");
+          return;
+        }
+        showStep(6);
+      }
+
+      // === [STEP 6] 최종 가입 요청 ===
+      function submitSignupFinal() {
+        const email = document.getElementById("su_email").value;
+        if (!email) {
+          alert("이메일을 입력해주세요.");
+          return;
+        }
+
         const data = {
-          username: formData.get("username"),
-          email: formData.get("email"),
-          password: formData.get("password"),
+          username: document.getElementById("su_username").value,
+          password: document.getElementById("su_password").value,
+          birthdate: document.getElementById("su_birthdate").value,
+          gender: document.getElementById("su_gender").value,
+          phone_number: document.getElementById("su_phone").value,
+          email: email,
         };
+
         fetch("/auth/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -205,100 +524,37 @@
           )
           .then((result) => {
             if (result.status === 200) {
-              alert("회원가입 성공! 이제 로그인해주세요.");
-              toggleForms(); // 회원가입 성공하면 바로 로그인 화면으로 전환
+              alert("회원가입 성공! 로그인해주세요.");
+              toggleForms();
             } else {
-              throw new Error(result.body.detail || "회원가입을 실패했습니다.");
+              alert(result.body.detail || "가입 실패");
             }
           })
-          .catch((error) => {
-            console.error("Error:", error);
-            alert(error.message);
+          .catch((err) => console.error(err));
+      }
+
+      // === 로그인 로직 ===
+      function submitLoginForm(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch("/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        })
+          .then((res) =>
+            res.json().then((body) => ({ status: res.status, body: body }))
+          )
+          .then((result) => {
+            if (result.status === 200) {
+              window.location.href = "/";
+            } else {
+              alert(result.body.detail || "로그인 실패");
+            }
           });
       }
     </script>
-  </head>
-  <body>
-    <div class="container">
-      <div id="login-box" class="fade-in">
-        <h1><i class="fas fa-paw"></i> 경수오빠못해조</h1>
-        <p class="subtitle">반려동물을 위한 모든 것이 여기에!</p>
-
-        <form id="loginForm" onsubmit="submitLoginForm(event)">
-          <div class="form-group">
-            <label for="username">아이디 (Username)</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              placeholder="아이디를 입력하세요"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="password">비밀번호 (Password)</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="비밀번호를 입력하세요"
-              required
-            />
-          </div>
-          <button type="submit" class="btn-submit">로그인</button>
-        </form>
-
-        <div class="toggle-text">
-          아직 계정이 없으신가요?
-          <span class="toggle-link" onclick="toggleForms()">회원가입 하기</span>
-        </div>
-      </div>
-
-      <div id="signup-box" class="hidden">
-        <h1>회원가입</h1>
-        <p class="subtitle">경수오빠못해조의 가족이 되어주세요!</p>
-
-        <form id="signupForm" onsubmit="submitSignupForm(event)">
-          <div class="form-group">
-            <label for="signup_username">아이디</label>
-            <input
-              type="text"
-              id="signup_username"
-              name="username"
-              placeholder="사용할 아이디"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="signup_email">이메일</label>
-            <input
-              type="email"
-              id="signup_email"
-              name="email"
-              placeholder="example@email.com"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="signup_password">비밀번호</label>
-            <input
-              type="password"
-              id="signup_password"
-              name="password"
-              placeholder="비밀번호 설정"
-              required
-            />
-          </div>
-          <button type="submit" class="btn-submit">가입하기</button>
-        </form>
-
-        <div class="toggle-text">
-          이미 계정이 있으신가요?
-          <span class="toggle-link" onclick="toggleForms()"
-            >로그인 하러가기</span
-          >
-        </div>
-      </div>
-    </div>
   </body>
 </html>

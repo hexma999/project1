@@ -1,0 +1,239 @@
+  <style>
+    :root {
+      --brand: #4f46e5; /* Indigo */
+      --bg: #ffffff;
+      --text: #111827;
+      --shadow: 0 10px 30px rgba(0,0,0,0.15);
+      --radius: 14px;
+    }
+
+    /* 전체 레이아웃 샘플 */
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #f7f7fb;
+      min-height: 100vh;
+    }
+
+    /* 우측 하단 플로팅 버튼 */
+    .chatbot-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .chatbot-fab:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,0.2); }
+    .chatbot-fab:active { transform: translateY(0); }
+    .chatbot-fab svg { width: 28px; height: 28px; }
+
+    /* 팝업 컨테이너 */
+    .chatbot-popup {
+      position: fixed;
+      right: 24px;
+      bottom: 92px; /* 버튼 위로 띄우기 */
+      width: 360px;
+      max-width: calc(100vw - 48px);
+      height: 520px;
+      max-height: calc(100vh - 140px);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: none; /* 기본은 숨김 */
+      overflow: hidden;
+      z-index: 9999; /* 👈 최상위로 올리기 */
+    }
+    .chatbot-popup.open { display: flex; flex-direction: column; }
+
+    /* 헤더 */
+    .chatbot-header {
+      padding: 12px 16px;
+      background: #eef2ff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chatbot-title { font-weight: 600; }
+    .chatbot-close {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+    }
+    .chatbot-close:hover { background: #e0e7ff; }
+
+    /* 메시지 영역 */
+    .chatbot-body {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+    }
+    .msg {
+      display: block;              /* inline-block 대신 block으로 */
+      white-space: pre-wrap;       /* 줄바꿈과 공백 유지 */
+      word-wrap: break-word;       /* 긴 단어도 줄바꿈 */
+      max-width: 80%;
+      margin: 6px 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      line-height: 1.4;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .msg.bot { background: #f3f4f6; }
+    .msg.user { background: #dcfce7; align-self: flex-end; }
+
+    /* 입력 영역 */
+    .chatbot-input {
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid #e5e7eb;
+      padding: 10px;
+      background: #fafafa;
+    }
+    .chatbot-input input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+    .chatbot-input button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      background: var(--brand);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 480px) {
+      .chatbot-popup {
+        right: 12px;
+        bottom: 84px;
+        width: calc(100vw - 24px);
+        height: 65vh;
+      }
+      .chatbot-fab { right: 12px; bottom: 12px; }
+    }
+  </style>
+  
+  <!-- 챗봇 플로팅 버튼 -->
+  <button class="chatbot-fab" id="chatbotFab" aria-label="챗봇 열기">
+    <!-- 간단한 채팅 아이콘 (SVG) -->
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"/>
+    </svg>
+  </button>
+
+  <!-- 챗봇 팝업 -->
+  <section class="chatbot-popup" id="chatbotPopup" aria-hidden="true" role="dialog" aria-labelledby="chatbotTitle">
+    <header class="chatbot-header">
+      <div class="chatbot-title" id="chatbotTitle">도움이 필요하신가요?</div>
+      <button class="chatbot-close" id="chatbotClose" aria-label="닫기">
+        ✕
+      </button>
+    </header>
+   <div class="chatbot-body" id="chatbotBody">
+      <div class="msg bot">안녕하세요! 무엇을 도와드릴까요?</div>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="chatInput" placeholder="메시지를 입력하세요…" />
+      <button id="chatSend">전송</button>
+    </div>
+  </section>
+
+  <script>
+    const fab = document.getElementById('chatbotFab');
+    const popup = document.getElementById('chatbotPopup');
+    const closeBtn = document.getElementById('chatbotClose');
+    const input = document.getElementById('chatInput');
+    const send = document.getElementById('chatSend');
+    const body = document.getElementById('chatbotBody');
+
+    function togglePopup(forceOpen) {
+      const open = forceOpen ?? !popup.classList.contains('open');
+      popup.classList.toggle('open', open);
+      popup.setAttribute('aria-hidden', String(!open));
+      if (open) input.focus();
+    }
+
+    fab.addEventListener('click', () => togglePopup());
+    closeBtn.addEventListener('click', () => togglePopup(false));
+
+    // ESC로 닫기
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && popup.classList.contains('open')) togglePopup(false);
+    });
+
+    // 바깥 클릭으로 닫기 (팝업 영역 외)
+    document.addEventListener('click', (e) => {
+      if (!popup.classList.contains('open')) return;
+      const clickInsidePopup = popup.contains(e.target) || fab.contains(e.target);
+      if (!clickInsidePopup) togglePopup(false);
+    });
+
+    // 간단한 메시지 전송 동작 (데모)
+    send.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    async function sendMessage() {
+        const msg = input.value.trim();
+        if (!msg) return;
+        const userMsg = document.createElement('div');
+        userMsg.className = 'msg user';
+        userMsg.textContent = msg;
+        body.appendChild(userMsg);
+        input.value = '';
+        body.scrollTop = body.scrollHeight;
+
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg }),
+        });
+        const data = await res.json();
+        
+        const botMsg = document.createElement('div');
+        botMsg.className = 'msg bot';
+        botMsg.textContent =  data.reply;
+        body.appendChild(botMsg);
+        body.scrollTop = body.scrollHeight;
+    }
+
+    //테스트
+    function sendMessage2() {
+      const msg = input.value.trim();
+      if (!msg) return;
+      const userMsg = document.createElement('div');
+      userMsg.className = 'msg user';
+      userMsg.textContent = msg;
+      body.appendChild(userMsg);
+      input.value = '';
+      body.scrollTop = body.scrollHeight;
+
+      // 봇 응답 데모
+      setTimeout(() => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'msg bot';
+        botMsg.textContent = msg;
+        body.appendChild(botMsg);
+        body.scrollTop = body.scrollHeight;
+      }, 600);
+    }
+  </script>

@@ -11,85 +11,175 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
       rel="stylesheet"
     />
+    <link href="/static/css/common.css" rel="stylesheet" />
+
     <style>
-      body {
-        font-family: "Noto Sans KR", sans-serif;
-        background-color: #f8f9fa;
-      }
+      /* --- [제품 상세 페이지 전용 스타일] --- */
 
-      /* 상단 헤더 스타일 (products.html과 통일) */
-      .header-bar {
-        background-color: #e74c3c;
-        color: white;
-        padding: 15px 0;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: white;
-        text-decoration: none;
-      }
-      .logo:hover {
-        color: #ffecec;
-        text-decoration: none;
-      }
-
-      /* 헤더 아이콘 메뉴 스타일 */
-      .header-icons {
-        display: flex;
-        align-items: center;
-      }
-      .header-icons .btn {
-        color: white;
-        margin-left: 10px;
-        transition: color 0.2s;
-      }
-      .header-icons .btn:hover {
-        color: #ffecec;
-      }
-      .header-icons span {
-        font-weight: 500;
-      }
-
-      /* 상품 컨테이너 */
-      .product-container {
+      .product-detail-card {
         background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 40px;
+        margin-top: 30px;
+      }
+
+      /* 이미지 영역 */
+      .detail-img-wrapper {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eee;
       }
       .product-img {
         width: 100%;
-        height: 400px;
+        height: auto;
         object-fit: cover;
-        border-radius: 10px;
-        background-color: #eee;
-        border: 1px solid #eee;
+        display: block;
+      }
+
+      /* 정보 영역 */
+      .badge-category {
+        background-color: #fff0f0;
+        color: #e74c3c;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        display: inline-block;
+        border: 1px solid #ffecec;
       }
       .product-title {
-        font-weight: bold;
-        font-size: 1.8rem;
-        margin-bottom: 10px;
-        word-break: keep-all; /* 단어 단위 줄바꿈 */
+        font-weight: 800;
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+        color: #333;
+        line-height: 1.3;
+        word-break: keep-all;
+      }
+      .product-description {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 25px;
       }
       .product-price {
         color: #e74c3c;
-        font-weight: bold;
-        font-size: 1.8rem;
-        margin-bottom: 20px;
-      }
-      .badge-category {
-        background-color: #333;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        display: inline-block;
+        font-weight: 800;
+        font-size: 2rem;
+        margin-bottom: 30px;
       }
 
-      /* ★ 플로팅 버튼 스타일 (우측 하단 고정) ★ */
+      /* 수량 조절기 */
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 10px 20px;
+        width: fit-content;
+      }
+      .qty-btn {
+        border: none;
+        background: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        color: #333;
+        font-weight: bold;
+        transition: all 0.2s;
+      }
+      .qty-btn:hover {
+        background: #e74c3c;
+        color: white;
+      }
+      .qty-input {
+        border: none;
+        background: transparent;
+        text-align: center;
+        width: 50px;
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      /* 구매 버튼 그룹 */
+      .action-buttons .btn {
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s;
+      }
+      .btn-cart {
+        background: white;
+        border: 2px solid #e74c3c;
+        color: #e74c3c;
+      }
+      .btn-cart:hover {
+        background: #fff5f5;
+      }
+      .btn-buy {
+        background: #e74c3c;
+        border: 2px solid #e74c3c;
+        color: white;
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+      }
+      .btn-buy:hover {
+        background: #c0392b;
+        border-color: #c0392b;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+      }
+
+      /* 상세 설명 박스 */
+      .detail-content-box {
+        background: #fdfdfd;
+        border: 1px solid #eee;
+        border-radius: 15px;
+        padding: 40px;
+        line-height: 1.8;
+        min-height: 200px;
+        color: #444;
+      }
+
+      /* 리뷰 리스트 */
+      .review-card {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: transform 0.2s;
+      }
+      .review-card:hover {
+        transform: translateX(5px);
+        border-color: #ffdce0;
+      }
+      .review-user {
+        font-weight: 700;
+        color: #333;
+        display: flex;
+        align-items: center;
+      }
+      .review-user i {
+        color: #ccc;
+        margin-right: 8px;
+        font-size: 1.2rem;
+      }
+      .review-date {
+        font-size: 0.85rem;
+        color: #999;
+        margin-left: auto;
+      }
+      .review-text {
+        margin-top: 10px;
+        color: #555;
+        line-height: 1.5;
+      }
+
+      /* 플로팅 버튼 */
       .floating-buttons {
         position: fixed;
         bottom: 30px;
@@ -99,241 +189,316 @@
         flex-direction: column;
         gap: 10px;
       }
-
       .float-btn {
-        width: 50px;
-        height: 50px;
+        width: 55px;
+        height: 55px;
         border-radius: 50%;
         border: none;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         color: white;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         cursor: pointer;
         transition: transform 0.2s;
         display: flex;
         align-items: center;
         justify-content: center;
       }
-
       .float-btn:hover {
-        transform: scale(1.1);
+        transform: scale(1.1) rotate(10deg);
       }
       .btn-review {
-        background-color: #ffc107;
-        color: #333;
-      } /* 노란색 (의견) */
+        background: linear-gradient(135deg, #f1c40f, #f39c12);
+      }
       .btn-top {
-        background-color: #333;
-      } /* 검은색 (위로) */
+        background: linear-gradient(135deg, #34495e, #2c3e50);
+      }
 
-      /* ★ 모달 스타일 (의견 작성창) ★ */
+      /* 모달 스타일 */
       .modal-overlay {
-        display: none; /* 평소에는 숨김 */
+        display: none;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.6);
         z-index: 2000;
+        backdrop-filter: blur(5px); /* 배경 흐림 효과 */
         justify-content: center;
         align-items: center;
       }
       .review-modal {
         background: white;
-        padding: 20px;
-        border-radius: 10px;
+        padding: 30px;
+        border-radius: 15px;
         width: 90%;
         max-width: 500px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        animation: popUp 0.3s ease-out;
+      }
+      @keyframes popUp {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
       }
     </style>
   </head>
   <body>
-    <!-- 상단 헤더 -->
     <div class="header-bar">
-      <div class="container d-flex justify-content-between align-items-center">
+      <div class="container">
         <a href="/" class="logo"><i class="fas fa-paw"></i> 경수오빠못해조</a>
 
-        <!-- ★ 로그인 여부에 따른 버튼 표시 영역 (수정됨) ★ -->
-        <div class="header-icons">
+        <div class="search-container d-none d-md-block">
+          <form action="/products" method="get">
+            <div class="search-input-group">
+              <input
+                type="text"
+                name="keyword"
+                class="search-input"
+                placeholder="찾으시는 상품이 있나요?"
+                value="{{ keyword if keyword else '' }}"
+              />
+              <button class="search-btn" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="header-nav">
           {% if username %}
-          <span class="mr-3"
-            ><i class="fas fa-user-circle"></i> {{ username }}님</span
-          >
-          <a href="/" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-home"></i> 메인
-          </a>
-          <a href="/memos" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-clipboard-list"></i> 게시판
-          </a>
-          <button
-            onclick="logout()"
-            class="btn btn-sm btn-light text-danger font-weight-bold"
-          >
-            <i class="fas fa-sign-out-alt"></i> 로그아웃
-          </button>
+          <span class="user-greeting d-none d-lg-block">
+            <i class="fas fa-user-circle"></i> {{ username }}님
+          </span>
+          <div class="dropdown">
+            <a href="#" class="menu-btn dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-bars"></i> 메뉴
+            </a>
+            <div class="dropdown-menu custom-dropdown">
+              <a href="/" class="dropdown-item"
+                ><i class="fas fa-home"></i> 메인</a
+              >
+              <a href="/mypage" class="dropdown-item"
+                ><i class="fas fa-user-cog"></i> 마이페이지</a
+              >
+              <a href="/memos" class="dropdown-item"
+                ><i class="fas fa-clipboard-list"></i> 게시판</a
+              >
+              <div class="dropdown-divider"></div>
+              <a href="#" onclick="logout()" class="dropdown-item text-danger"
+                ><i class="fas fa-sign-out-alt"></i> 로그아웃</a
+              >
+            </div>
+          </div>
           {% else %}
-          <a href="/" class="btn btn-outline-light btn-sm mr-2">
-            <i class="fas fa-home"></i> 메인
-          </a>
-          <a
-            href="/login"
-            class="btn btn-sm btn-light text-danger font-weight-bold"
-          >
-            <i class="fas fa-sign-in-alt"></i> 로그인
-          </a>
+          <div class="dropdown">
+            <a href="#" class="menu-btn dropdown-toggle" data-toggle="dropdown">
+              <i class="fas fa-user"></i> 시작하기
+            </a>
+            <div class="dropdown-menu custom-dropdown">
+              <a href="/login" class="dropdown-item"
+                ><i class="fas fa-sign-in-alt"></i> 로그인</a
+              >
+              <a href="/" class="dropdown-item"
+                ><i class="fas fa-home"></i> 메인 둘러보기</a
+              >
+            </div>
+          </div>
           {% endif %}
         </div>
       </div>
     </div>
 
-    <!-- 기존 뒤로가기 버튼 영역 제거 (상단 헤더에 통합됨) -->
+    {% include "navbar.html" %}
 
     <div class="container mb-5">
-      <div class="product-container">
+      <div class="product-detail-card">
         <div class="row">
           <div class="col-md-6 mb-4">
-            <img
-              src="{{ product.image_url if product.image_url else 'https://via.placeholder.com/400' }}"
-              alt="{{ product.name }}"
-              class="product-img"
-            />
+            <div class="detail-img-wrapper">
+              <img
+                src="{{ product.image_url if product.image_url else 'https://via.placeholder.com/400' }}"
+                alt="{{ product.name }}"
+                class="product-img"
+              />
+            </div>
           </div>
+
           <div class="col-md-6">
             <span class="badge-category">{{ product.category | upper }}</span>
             <h1 class="product-title">{{ product.name }}</h1>
-            <p class="text-muted">{{ product.description }}</p>
-            <hr />
+            <p class="product-description">{{ product.description }}</p>
+            <hr style="border-top: 1px dashed #ddd; margin: 25px 0" />
+
             <p class="product-price">{{ product.price }}원</p>
 
-            <!-- 수량 조절 -->
-            <div class="d-flex align-items-center mb-4">
-              <span class="mr-3 font-weight-bold">수량</span>
-              <div class="input-group" style="width: 140px">
-                <div class="input-group-prepend">
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    id="btnMinus"
-                  >
-                    -
-                  </button>
-                </div>
-                <input
-                  type="text"
-                  class="form-control text-center"
-                  value="1"
-                  id="quantityInput"
-                  readonly
-                />
-                <div class="input-group-append">
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    id="btnPlus"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
+            <div class="quantity-control">
+              <span class="mr-3 text-muted font-weight-bold">수량</span>
+              <button class="qty-btn" type="button" id="btnMinus">
+                <i class="fas fa-minus"></i>
+              </button>
+              <input
+                type="text"
+                class="qty-input"
+                value="1"
+                id="quantityInput"
+                readonly
+              />
+              <button class="qty-btn" type="button" id="btnPlus">
+                <i class="fas fa-plus"></i>
+              </button>
             </div>
 
-            <button class="btn btn-lg btn-outline-danger btn-block mb-2">
-              <i class="fas fa-shopping-cart"></i> 장바구니 담기
-            </button>
-            <button class="btn btn-lg btn-danger btn-block">구매하기</button>
+            <div class="action-buttons row px-3">
+              <button class="btn btn-cart col-5 mr-2">
+                <i class="fas fa-shopping-cart"></i> 장바구니
+              </button>
+              <button
+                class="btn btn-buy col"
+                onclick="buyItem({{ product.id }})"
+              >
+                구매하기
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="mt-5">
-          <h4>상품 상세 정보</h4>
-          <div class="mt-4 mb-5">
-            <div
-              class="product-detail-box bg-light p-4 rounded"
-              style="min-height: 200px; line-height: 1.6"
-            >
-              {% if product.detail %} {{ product.detail | safe }} {% else %}
-              <p class="text-muted text-center py-5">
-                <i class="fas fa-info-circle fa-2x mb-3"></i><br />
-                상세 설명이 준비 중입니다.
-              </p>
-              {% endif %}
-            </div>
-          </div>
-
-          <h4>
-            <i class="fas fa-comments text-warning"></i> 구매 후기
-            <span class="badge badge-warning">{{ reviews|length }}</span>
-          </h4>
-          <hr />
-
-          <div class="review-list">
-            {% for review in reviews %}
-            <div class="card mb-3">
-              <div class="card-body">
-                <div
-                  class="d-flex justify-content-between align-items-center mb-2"
+        <div class="mt-5 pt-4">
+          <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active font-weight-bold text-dark"
+                id="detail-tab"
+                data-toggle="tab"
+                href="#detail"
+                role="tab"
+                >상세 정보</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link font-weight-bold text-dark"
+                id="review-tab"
+                data-toggle="tab"
+                href="#review"
+                role="tab"
+              >
+                구매 후기
+                <span class="badge badge-warning ml-1"
+                  >{{ reviews|length }}</span
                 >
-                  <h6 class="card-subtitle text-dark font-weight-bold">
-                    <i class="fas fa-user-circle text-secondary"></i> {{
-                    review.username }}
-                  </h6>
-                  <small class="text-secondary"
-                    >{{ review.created_at.strftime('%Y-%m-%d %H:%M') }}</small
-                  >
+              </a>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="detail" role="tabpanel">
+              <div class="detail-content-box">
+                {% if product.detail %} {{ product.detail | safe }} {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i
+                    class="fas fa-clipboard-list fa-3x mb-3"
+                    style="opacity: 0.3"
+                  ></i
+                  ><br />
+                  상세 설명이 준비 중입니다.
                 </div>
-                <p class="card-text text-secondary">{{ review.content }}</p>
+                {% endif %}
               </div>
             </div>
-            {% else %}
-            <div class="text-center py-5 bg-light rounded">
-              <i class="far fa-comment-dots fa-3x text-muted mb-3"></i>
-              <p class="text-muted">
-                아직 작성된 후기가 없습니다.<br />첫 번째 후기의 주인공이
-                되어보세요!
-              </p>
+
+            <div class="tab-pane fade" id="review" role="tabpanel">
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+                <h5 class="font-weight-bold m-0">리뷰 리스트</h5>
+                <button
+                  class="btn btn-sm btn-warning font-weight-bold"
+                  onclick="openReviewModal()"
+                >
+                  <i class="fas fa-pen"></i> 리뷰 쓰기
+                </button>
+              </div>
+
+              <div class="review-list">
+                {% for review in reviews %}
+                <div class="review-card">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <div class="review-user">
+                      <i class="fas fa-user-circle"></i> {{ review.username }}
+                    </div>
+                    <span class="review-date"
+                      >{{ review.created_at.strftime('%Y-%m-%d') }}</span
+                    >
+                  </div>
+                  <p class="review-text">{{ review.content }}</p>
+                </div>
+                {% else %}
+                <div class="text-center py-5 bg-light rounded border">
+                  <i
+                    class="far fa-comment-dots fa-3x text-muted mb-3"
+                    style="opacity: 0.5"
+                  ></i>
+                  <p class="text-muted font-weight-bold">
+                    아직 작성된 후기가 없습니다.<br />첫 번째 후기의 주인공이
+                    되어보세요!
+                  </p>
+                </div>
+                {% endfor %}
+              </div>
             </div>
-            {% endfor %}
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 플로팅 버튼 -->
     <div class="floating-buttons">
       <button
         class="float-btn btn-review"
         onclick="openReviewModal()"
-        title="의견 남기기"
+        title="리뷰 쓰기"
       >
-        <i class="fas fa-comment-dots"></i>
+        <i class="fas fa-pen"></i>
       </button>
       <button class="float-btn btn-top" onclick="scrollToTop()" title="맨 위로">
         <i class="fas fa-arrow-up"></i>
       </button>
     </div>
 
-    <!-- 리뷰 모달 -->
     <div id="reviewModal" class="modal-overlay">
       <div class="review-modal">
-        <h4><i class="fas fa-pen"></i> 이 상품 어때요?</h4>
-        <hr />
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="font-weight-bold m-0">
+            <i class="fas fa-comment-dots text-warning"></i> 리뷰 작성
+          </h4>
+          <button class="close" onclick="closeReviewModal()">&times;</button>
+        </div>
+        <p class="text-muted small">이 상품에 대한 솔직한 의견을 남겨주세요.</p>
         <div class="form-group">
-          <label>상품에 대한 솔직한 의견을 남겨주세요!</label>
           <textarea
             id="reviewContent"
-            class="form-control"
-            rows="4"
-            placeholder="예: 우리 강아지가 너무 잘 먹어요!"
+            class="form-control bg-light border-0"
+            rows="5"
+            placeholder="예: 배송도 빠르고 강아지가 너무 좋아해요!"
+            style="resize: none"
           ></textarea>
         </div>
-        <div class="text-right">
-          <button class="btn btn-secondary" onclick="closeReviewModal()">
+        <div class="text-right mt-4">
+          <button
+            class="btn btn-light mr-2 font-weight-bold"
+            onclick="closeReviewModal()"
+          >
             취소
           </button>
           <button
-            class="btn btn-primary"
+            class="btn btn-warning font-weight-bold px-4"
             onclick="submitReview({{ product.id }})"
           >
             등록하기
@@ -342,8 +507,12 @@
       </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
     <script>
-      // 1. 맨 위로 가기 기능
+      // 1. 맨 위로 가기
       function scrollToTop() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -356,7 +525,7 @@
         document.getElementById("reviewModal").style.display = "none";
       }
 
-      // 3. 로그아웃 기능 (추가됨)
+      // 3. 로그아웃
       function logout() {
         fetch("/auth/logout", {
           method: "POST",
@@ -364,7 +533,7 @@
         })
           .then((response) => response.json())
           .then((data) => {
-            window.location.reload(); // 새로고침
+            window.location.reload();
           })
           .catch((error) => console.error("Error:", error));
       }
@@ -384,17 +553,12 @@
         })
           .then((res) => res.json())
           .then((data) => {
-            if (data.message) {
-              alert(data.message);
-              location.reload();
-            } else {
-              alert("리뷰가 등록되었습니다!");
-              location.reload();
-            }
+            alert(data.message || "리뷰가 등록되었습니다!");
+            location.reload();
           });
       }
 
-      // 5. 수량 변경 기능 (+, - 버튼)
+      // 5. 수량 변경 로직
       document.addEventListener("DOMContentLoaded", function () {
         const minusBtn = document.getElementById("btnMinus");
         const plusBtn = document.getElementById("btnPlus");
@@ -414,6 +578,34 @@
           });
         }
       });
+
+      // 6. 구매하기 로직
+      function buyItem(productId) {
+        const quantity = document.getElementById("quantityInput").value;
+        if (!confirm(quantity + "개를 구매하시겠습니까?")) return;
+
+        fetch("/orders/buy/" + productId, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quantity: parseInt(quantity) }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.result === "success") {
+              alert(data.message);
+              window.location.href = "/mypage"; // 구매 후 마이페이지로 이동
+            } else {
+              alert(data.message);
+              if (data.message.includes("로그인")) {
+                location.href = "/login";
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("구매 중 오류가 발생했습니다.");
+          });
+      }
     </script>
   </body>
 </html>

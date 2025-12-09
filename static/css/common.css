@@ -1,0 +1,405 @@
+/* =========================================
+   common.css - 경수오빠못해조 통합 테마
+   (Glassmorphism & Interactive Design)
+   ========================================= */
+
+/* --- [0] 기본 설정 --- */
+body {
+  font-family: "Noto Sans KR", sans-serif;
+  background-color: #f8f9fa; /* 밝은 회색 배경 */
+  margin: 0;
+  padding-top: 80px; /* 헤더가 고정(fixed)이므로 콘텐츠가 가리지 않게 여백 추가 */
+  color: #333;
+}
+
+/* --- [1] 상단 헤더 (Glassmorphism Sticky) --- */
+.header-bar {
+  background: rgba(231, 76, 60, 0.95); /* 투명도가 있는 붉은색 */
+  backdrop-filter: blur(10px); /* 블러 효과 (유리 느낌) */
+  box-shadow: 0 4px 20px rgba(231, 76, 60, 0.25);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+.header-bar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+/* 로고 */
+.logo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.logo:hover {
+  transform: scale(1.05) rotate(-3deg);
+  color: white;
+  text-decoration: none;
+}
+.logo i {
+  margin-right: 8px;
+  font-size: 1.4rem;
+}
+
+/* 검색바 */
+.search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 30px;
+}
+.search-input-group {
+  background: white;
+  border-radius: 50px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+.search-input-group:focus-within {
+  transform: scale(1.02);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+.search-input {
+  border: none;
+  background: transparent;
+  flex-grow: 1;
+  padding: 8px 15px;
+  font-size: 0.95rem;
+  outline: none;
+}
+.search-btn {
+  background: #e74c3c;
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-btn:hover {
+  background: #c0392b;
+  transform: rotate(90deg);
+}
+
+/* 헤더 우측 메뉴 */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-greeting {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 10px;
+  color: white;
+}
+
+.menu-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.menu-btn:hover {
+  background: white;
+  color: #e74c3c;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+}
+
+/* --- [2] 네비게이션 바 (Sticky & Hover Effect) --- */
+.nav-bar-wrapper {
+  position: sticky;
+  top: 70px;
+  z-index: 900;
+  margin-top: 0;
+}
+.nav-bar {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+  border-radius: 0 0 20px 20px; /* 아래쪽 둥글게 */
+  padding: 0 10px;
+}
+.navbar-nav {
+  flex-direction: row !important;
+  justify-content: center;
+  width: 100%;
+}
+.navbar-nav .nav-link {
+  color: #444;
+  font-weight: 700;
+  padding: 15px 20px !important;
+  position: relative;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+}
+.navbar-nav .nav-link i {
+  margin-right: 8px;
+  transition: transform 0.3s;
+}
+
+/* Hover 효과 */
+.navbar-nav .nav-link:hover {
+  color: #e74c3c;
+}
+.navbar-nav .nav-link:hover i {
+  transform: translateY(-3px) scale(1.2);
+}
+.navbar-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: #e74c3c;
+  transition: all 0.3s ease-out;
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+.navbar-nav .nav-link:hover::after {
+  width: 80%;
+}
+
+/* --- [3] 드롭다운 메뉴 (Animation) --- */
+.dropdown-menu {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  margin-top: 10px;
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(20px) translateX(-50%);
+  left: 50%;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  pointer-events: none;
+  position: absolute;
+  min-width: 180px;
+}
+.dropdown.show .dropdown-menu {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0) translateX(-50%);
+  pointer-events: auto;
+}
+.dropdown-item {
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.dropdown-item:hover {
+  background-color: #fff5f5;
+  color: #e74c3c;
+  padding-left: 20px;
+}
+
+/* --- [4] 메인 배너 (Hero Section) --- */
+.main-banner {
+  background: linear-gradient(120deg, #fff0f0 0%, #ffecec 100%);
+  padding: 80px 0;
+  margin-bottom: 60px;
+  text-align: center;
+  border-radius: 20px; /* 전체 둥글게 */
+  margin-top: 20px; /* 네비게이션과 간격 */
+  box-shadow: inset 0 0 30px rgba(231, 76, 60, 0.05); /* 안쪽 그림자 */
+  position: relative;
+  overflow: hidden;
+}
+/* 배너 배경 장식 (원) */
+.main-banner::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  left: -50px;
+  width: 200px;
+  height: 200px;
+  background: rgba(231, 76, 60, 0.05);
+  border-radius: 50%;
+  z-index: 0;
+}
+.main-banner::after {
+  content: "";
+  position: absolute;
+  bottom: -50px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  background: rgba(231, 76, 60, 0.05);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 1;
+} /* 텍스트가 장식 위에 오도록 */
+
+.banner-title {
+  color: #c0392b;
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 0px rgba(255, 255, 255, 1);
+  letter-spacing: -1px;
+}
+.banner-text {
+  color: #555;
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+
+/* 쇼핑하러 가기 버튼 */
+.btn-shopping {
+  background: #e74c3c;
+  color: white;
+  padding: 15px 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 50px;
+  border: none;
+  box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+  transition: all 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
+}
+.btn-shopping:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(231, 76, 60, 0.4);
+  background: #c0392b;
+  color: white;
+  text-decoration: none;
+}
+
+/* --- [5] 섹션 타이틀 (MD 추천 상품) --- */
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+  position: relative;
+}
+.section-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #333;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 15px;
+}
+/* 타이틀 밑줄 효과 */
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 50px;
+  height: 4px;
+  background: #e74c3c;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: width 0.3s;
+}
+.section-header:hover .section-title::after {
+  width: 100px;
+} /* 호버시 밑줄 길어짐 */
+
+/* --- [6] 상품 카드 (Product Card) 리뉴얼 --- */
+.product-card {
+  background: white;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+.product-card:hover {
+  transform: translateY(-12px); /* 위로 붕 뜸 */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.card-img-wrapper {
+  overflow: hidden;
+  height: 250px;
+  position: relative;
+  background-color: #f8f9fa;
+}
+.card-img-top {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.product-card:hover .card-img-top {
+  transform: scale(1.1);
+} /* 이미지 확대 */
+
+/* 이미지 위 찜 아이콘 (장식용) */
+.card-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  z-index: 2;
+}
+.product-card:hover .card-badge {
+  color: #e74c3c;
+  transform: scale(1.1);
+}
+
+.card-body {
+  padding: 25px 20px;
+  text-align: center;
+}
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.product-price {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #e74c3c;
+}

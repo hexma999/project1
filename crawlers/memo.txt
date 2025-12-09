@@ -1,0 +1,6 @@
+python -m pip install --upgrade pip
+python -m pip install selenium webdriver-manager
+
+python -c "import selenium; print(selenium.__version__)"
+
+python -m pip install playwright

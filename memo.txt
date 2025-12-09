@@ -9,6 +9,51 @@ pip install itsdangerous
 pip install "passlib[bcrypt]"
 pip install bcrypt==3.2.0
 pip install python-dotenv //251204 1614 업데이트
+pip install openai //251208 Install the OpenAI SDK(챗봇기능)
 
 // 서버 시작
 uvicorn main:app --reload
+
+//지라 git 연동
+1.지라에서 + Create 클릭하여 할일 등록
+   그러면 KAN-16 와 같은 이슈키가 생성됨
+2.클릭하여 상세 팝업창 띄운 후 Create branch 클릭
+  github 브렌치 생성 창이 뜨면
+  Repository 는 hexma999/project1
+  Branch from : main
+  Branch name 은 디폴트값으로 두면 됨
+  이렇게 셋팅하고 아래의 Create branch 버튼 클릭
+
+3. 방금 생성한 브렌치는 로컬 vs code 에서 git branch -a 명령으로 보이지 않는다
+   보이게 하려면 페치해야 한다.
+   페치 방법은 소스제어 창에서 ... 클릭하면 보이는 풀, 푸시,클론, 페치 항목에서 페치 클릭하면 됨 
+   ( 또는 다음과 같이 명령어 입력한다.
+     git fetch origin
+     git branch -r
+   )
+
+4. 페치 후 git branch -a 하면 방금 생성한 원격브렌치 (ex remotes/origin/KAN-16-지라테스트1) 가 보인다.
+5. 원격 브랜치를 로컬로 가져오기 (체크아웃)
+   main 브런치에서 
+   git checkout -b KAN-16-지라테스트1 origin/KAN-16-지라테스트1
+
+6. git branch 로 현재 KAN-16-지라테스트1 인지 확인 후 소스 작업한다.
+
+--------------------[ 소스 작업 후 지라 연동]-----------------
+//스테이징 올리기
+git add memo.txt
+
+//로컬 푸시
+git commit -m "KAN-16 설명"
+
+//리모트에 PUSH
+git push origin KAN-16-지라테스트1
+
+//메인 브런치로 병합
+git checkout main
+git pull origin main
+git merge KAN-16-지라테스트1
+git push origin main
+
+
+   
