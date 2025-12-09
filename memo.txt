@@ -1,5 +1,5 @@
 // memo.txt
-// 사전 설치 항목
+// 사전 설치 항목 ( 한번에 하려면 pip install -r requirements.txt)
 pip install fastapi==0.104.1
 pip install uvicorn==0.27.0.post1
 pip install sqlalchemy==1.4.39
