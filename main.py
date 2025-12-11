@@ -15,10 +15,12 @@ from dependencies import get_db
 
 # 라우터 및 데이터 모듈
 from routers import auth, memos, orders, chatbot
-from data import cart, products as product_data
+from routers import cart as cart_router
+from data import products as product_data
 from data import auth as auth_data
 from data import orders as order_data
-from data import reviews as review_data  # [추가] 리뷰 데이터 모듈
+from data import reviews as review_data
+from data import cart as cart_data  # [추가] 리뷰 데이터 모듈
 
 load_dotenv()
 
@@ -40,7 +42,7 @@ app.include_router(auth.router)
 app.include_router(memos.router)
 app.include_router(orders.router)
 app.include_router(chatbot.router)
-app.include_router(cart.router)
+app.include_router(cart_router.router)
 
 class ReviewRequest(BaseModel):
     content: str
