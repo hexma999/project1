@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>전자 영수증 - 경수오빠못해조</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="/static/css/common.css" rel="stylesheet" />
+
+    <style>
+      /* 영수증 전용 스타일 */
+      body {
+        background-color: #f8f9fa; /* 메인과 동일한 배경색 */
+      }
+      .receipt-wrapper {
+        padding: 50px 0;
+      }
+      .receipt-card {
+        max-width: 500px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 40px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        position: relative;
+        /* 영수증 상단 톱니 효과 */
+        background-image: linear-gradient(135deg, #fff 5px, transparent 0),
+          linear-gradient(-135deg, #fff 5px, transparent 0);
+        background-size: 20px 20px;
+        background-repeat: repeat-x;
+        background-position: top;
+        border-top: 10px solid transparent;
+        border-radius: 0 0 5px 5px; /* 아래쪽만 살짝 둥글게 */
+      }
+
+      .receipt-header {
+        text-align: center;
+        border-bottom: 2px dashed #ddd;
+        padding-bottom: 25px;
+        margin-bottom: 25px;
+      }
+      .shop-name {
+        font-size: 1.6rem;
+        font-weight: 900;
+        color: #333;
+        margin-bottom: 8px;
+      }
+      .receipt-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #999;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.95rem;
+        color: #555;
+        margin-bottom: 8px;
+      }
+      .info-label {
+        color: #888;
+      }
+      .info-value {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .item-table {
+        width: 100%;
+        margin: 25px 0;
+        border-collapse: collapse;
+      }
+      .item-table th {
+        text-align: left;
+        font-size: 0.85rem;
+        color: #aaa;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        font-weight: 600;
+      }
+      .item-table td {
+        padding: 12px 0;
+        border-bottom: 1px solid #f9f9f9;
+        font-size: 0.95rem;
+        vertical-align: top;
+        color: #444;
+      }
+      .item-name {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .item-meta {
+        font-size: 0.75rem;
+        color: #999;
+      }
+
+      .total-section {
+        border-top: 2px dashed #ddd;
+        padding-top: 25px;
+        margin-top: 10px;
+      }
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .total-label {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #333;
+      }
+      .total-amount {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #e74c3c;
+      }
+
+      .receipt-footer {
+        margin-top: 40px;
+        text-align: center;
+      }
+      .btn-list {
+        display: inline-block;
+        background: #333;
+        color: white;
+        padding: 12px 40px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+      .btn-list:hover {
+        background: #555;
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    {% include "header.html" %} {% include "navbar.html" %}
+
+    <div class="container receipt-wrapper">
+      <div class="receipt-card">
+        <div class="receipt-header">
+          <div class="shop-name"><i class="fas fa-receipt"></i> RECEIPT</div>
+          <div class="receipt-title">경수오빠못해조</div>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">주문번호</span>
+          <span class="info-value">No. {{ order.id }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">거래일시</span>
+          <span class="info-value"
+            >{{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span
+          >
+        </div>
+        <div class="info-row">
+          <span class="info-label">구매자명</span>
+          <span class="info-value">{{ username }}</span>
+        </div>
+
+        <table class="item-table">
+          <thead>
+            <tr>
+              <th width="55%">상품명</th>
+              <th width="15%" class="text-center">수량</th>
+              <th width="30%" class="text-right">금액</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.order_items %}
+            <tr>
+              <td>
+                <span class="item-name">{{ item.product_name_snap }}</span>
+                <span class="item-meta"
+                  >{{ item.category_snap }} &gt; {{ item.sub_category_snap
+                  }}</span
+                >
+              </td>
+              <td class="text-center">{{ item.quantity }}</td>
+              <td class="text-right">
+                {{ "{:,}".format(item.price_snap * item.quantity) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="total-section">
+          <div class="total-row">
+            <span class="total-label">결제 총액</span>
+            <span class="total-amount"
+              >{{ "{:,}".format(order.total_price) }}원</span
+            >
+          </div>
+        </div>
+
+        <div class="receipt-footer">
+          <p class="text-muted small mb-4">
+            이용해 주셔서 감사합니다.<br />
+            문의사항은 고객센터(1234-5678)로 연락 바랍니다.
+          </p>
+          <a href="/mypage" class="btn-list">
+            <i class="fas fa-list-ul"></i> 주문 목록으로 돌아가기
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+      function logout() {
+        fetch("/auth/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            window.location.href = "/";
+          });
+      }
+    </script>
+  </body>
+</html>

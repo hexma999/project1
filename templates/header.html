@@ -1,0 +1,66 @@
+<div class="header-bar">
+  <div class="container">
+    <a href="/" class="logo"><i class="fas fa-paw"></i> 경수오빠못해조</a>
+
+    <div class="search-container d-none d-md-block">
+      <form action="/products" method="get">
+        <div class="search-input-group">
+          <input
+            type="text"
+            name="keyword"
+            class="search-input"
+            placeholder="찾으시는 상품이 있나요?"
+            value="{{ keyword if keyword else '' }}"
+          />
+          <button class="search-btn" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="header-nav">
+      {% if username %}
+      <span class="user-greeting d-none d-lg-block">
+        <i class="fas fa-user-circle"></i> {{ username }}님
+      </span>
+      <div class="dropdown">
+        <a href="#" class="menu-btn dropdown-toggle" data-toggle="dropdown">
+          <i class="fas fa-bars"></i> 메뉴
+        </a>
+        <div class="dropdown-menu custom-dropdown">
+          <a href="/mypage" class="dropdown-item"
+            ><i class="fas fa-user-cog"></i> 마이페이지</a
+          >
+          <a href="/memos" class="dropdown-item"
+            ><i class="fas fa-clipboard-list"></i> 게시판</a
+          >
+          <div class="dropdown-divider"></div>
+          <a href="#" onclick="logout()" class="dropdown-item text-danger"
+            ><i class="fas fa-sign-out-alt"></i> 로그아웃</a
+          >
+        </div>
+      </div>
+      {% else %}
+      <a href="/login" class="menu-btn">
+        <i class="fas fa-sign-in-alt"></i> 로그인
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% include "cart_floating.html" %}
+<script>
+  // 로그아웃 공통 함수 (헤더에 포함)
+  function logout() {
+    fetch("/auth/logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        window.location.href = "/";
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+</script>

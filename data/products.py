@@ -1,69 +1,106 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from datetime import datetime
 
-# 1. 카테고리별 상품 목록 조회 (products.html 용)
+# [헬퍼] 카테고리 ID 조회
+def get_category_id(db: Session, main_type: str, sub_name: str):
+    sql = """
+        SELECT id FROM categories 
+        WHERE main_type = :main AND sub_name = :sub
+    """
+    params = {"main": main_type, "sub": sub_name}
+    cursor = db.execute(text(sql), params)
+    result = cursor.fetchone()
+    return result.id if result else None
+
+# 1. 상품 등록
+def create_product(db: Session, name: str, price: int, description: str, 
+                   detail: str, detail_img_url: str, image_url: str, 
+                   main_cat: str, sub_cat: str, initial_stock: int):
+    
+    cat_id = get_category_id(db, main_cat, sub_cat)
+    if not cat_id:
+        raise ValueError(f"존재하지 않는 카테고리: {main_cat} > {sub_cat}")
+
+    sql = """
+        INSERT INTO products 
+        (category_id, name, price, description, detail, detail_img_url, image_url, initial_stock, stock, sales_count)
+        VALUES 
+        (:cat_id, :name, :price, :desc, :detail, :d_img, :img, :init_stock, :init_stock, 0)
+    """
+    params = {
+        "cat_id": cat_id, "name": name, "price": price, 
+        "desc": description, "detail": detail, "d_img": detail_img_url, 
+        "img": image_url, "init_stock": initial_stock
+    }
+    db.execute(text(sql), params)
+    db.commit()
+
+# 2. 카테고리별 상품 목록 조회 (JOIN 및 Alias 사용)
 def get_products_by_category(db: Session, category: str, sub_category: str):
-    # 'etc' 카테고리는 sub_category(동물 이름)만 맞으면 모든 품목을 가져옴
+    # category='etc'인 경우 처리 로직 유지
     if category == 'etc':
-        sql = "SELECT * FROM pet_item WHERE category = :category AND sub_category = :sub_category"
+        sql = """
+            SELECT p.*, c.main_type AS category, c.sub_name AS sub_category 
+            FROM products p
+            JOIN categories c ON p.category_id = c.id
+            WHERE c.main_type = :main
+        """
+        params = {"main": category}
     else:
-        # 강아지/고양이는 category와 sub_category(품목) 둘 다 일치해야 함
-        sql = "SELECT * FROM pet_item WHERE category = :category AND sub_category = :sub_category"
-    
-    return db.execute(text(sql), {"category": category, "sub_category": sub_category}).fetchall()
+        sql = """
+            SELECT p.*, c.main_type AS category, c.sub_name AS sub_category 
+            FROM products p
+            JOIN categories c ON p.category_id = c.id
+            WHERE c.main_type = :main AND c.sub_name = :sub
+        """
+        params = {"main": category, "sub": sub_category}
 
-# 2. 상품 상세 정보 조회 (product_detail.html 용)
+    cursor = db.execute(text(sql), params)
+    return cursor.fetchall()
+
+# 3. 상품 상세 조회
 def get_product_by_id(db: Session, product_id: int):
-    sql = "SELECT * FROM pet_item WHERE id = :product_id"
-    result = db.execute(text(sql), {"product_id": product_id}).fetchone()
-    return result
-
-# 3. 상품별 리뷰 목록 조회 (작성자 이름 포함)
-def get_reviews_by_product_id(db: Session, product_id: int):
-    # created_at에 9시간을 더해서(INTERVAL 9 HOUR) 가져오도록 수정
     sql = """
-        SELECT r.id, r.user_id, r.content, r.product_id, 
-               DATE_ADD(r.created_at, INTERVAL 9 HOUR) as created_at, 
-               u.username 
-        FROM reviews r 
-        JOIN users u ON r.user_id = u.id 
-        WHERE r.product_id = :product_id 
-        ORDER BY r.created_at DESC
+        SELECT p.*, c.main_type AS category, c.sub_name AS sub_category
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        WHERE p.id = :pid
     """
-    return db.execute(text(sql), {"product_id": product_id}).fetchall()
+    params = {"pid": product_id}
+    cursor = db.execute(text(sql), params)
+    return cursor.fetchone()
 
-# 4. 리뷰 등록 (이 함수가 없어서 문제였습니다!)
-def create_review(db: Session, product_id: int, user_id: int, content: str):
-    db.execute(
-        text("INSERT INTO reviews (product_id, user_id, content) VALUES (:product_id, :user_id, :content)"),
-        {
-            "product_id": product_id,
-            "user_id": user_id,
-            "content": content
-        }
-    )
-    db.commit()
-    
-# 5. MD 추천 상품 (랜덤 4개 조회)
+# 4. MD 추천 상품 (랜덤)
 def get_featured_products(db: Session, limit: int = 4):
-    # RAND()를 사용해 매번 새로고침 할 때마다 다른 상품이 나오게 합니다.
-    sql = "SELECT * FROM pet_item ORDER BY RAND() LIMIT :limit"
-    return db.execute(text(sql), {"limit": limit}).fetchall()
+    sql = """
+        SELECT p.*, c.main_type AS category, c.sub_name AS sub_category
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        ORDER BY RAND() LIMIT :limit
+    """
+    cursor = db.execute(text(sql), {"limit": limit})
+    return cursor.fetchall()
 
-# 6. 구매 발생 시 재고 감소 및 판매량 증가
+# 5. 재고 감소 (products 테이블 사용)
 def update_stock_and_sales(db: Session, product_id: int, quantity: int):
-    # 재고는 줄이고(stock - quantity), 판매량은 늘림(sales_count + quantity)
-    db.execute(
-        text("UPDATE pet_item SET stock = stock - :quantity, sales_count = sales_count + :quantity WHERE id = :product_id"),
-        {"quantity": quantity, "product_id": product_id}
-    )
+    sql = """
+        UPDATE products 
+        SET stock = stock - :qty, sales_count = sales_count + :qty 
+        WHERE id = :pid
+    """
+    db.execute(text(sql), {"qty": quantity, "pid": product_id})
     db.commit()
 
-# 상품 검색 기능
+# 6. 상품 검색
 def search_products(db: Session, keyword: str):
-    # 상품명 또는 설명에 키워드가 포함된 경우 조회
     sql = """
-        SELECT * FROM pet_item 
-        WHERE name LIKE :keyword OR description LIKE :keyword
+        SELECT p.*, c.main_type AS category, c.sub_name AS sub_category
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        WHERE p.name LIKE :kw 
+           OR p.description LIKE :kw 
+           OR c.sub_name LIKE :kw
     """
-    return db.execute(text(sql), {"keyword": f"%{keyword}%"}).fetchall()
+    cursor = db.execute(text(sql), {"kw": f"%{keyword}%"})
+    return cursor.fetchall()
