@@ -31,6 +31,7 @@ uvicorn main:app --reload
      git fetch origin
      git branch -r
    )
+   
 
 4. 페치 후 git branch -a 하면 방금 생성한 원격브렌치 (ex remotes/origin/KAN-16-지라테스트1) 가 보인다.
 5. 원격 브랜치를 로컬로 가져오기 (체크아웃)
