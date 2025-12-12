@@ -2,4 +2,4 @@
 .gitignore
 __pycache__/
 *.pyc
-data/__pycache__/
+data/__pycache__/"__pycache__/" 
