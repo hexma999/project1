@@ -21,7 +21,7 @@ load_dotenv()
 
 class ReviewRequest(BaseModel):
     content: str
-app = FastAPI()
+ 
 
 # 환경 변수에서 SECRET_KEY 가져오기
 SECRET_KEY = os.getenv("SECRET_KEY")

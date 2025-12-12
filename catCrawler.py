@@ -42,7 +42,7 @@ def create_products(db: Session, category_id: str, name: str, price: str, brand:
 
 # 크롬으로 창 열기
 driver = webdriver.Chrome()
-driver.get('https://www.catpang.com/shop/goods/goods_list.php?category=001002')
+driver.get('https://www.catpang.com/shop/goods/goods_list.php?category=001010')
 wait = WebDriverWait(driver, 10)
 
 time.sleep(1)   
@@ -101,6 +101,7 @@ for j in range(count):
             box = driver.find_elements(By.CLASS_NAME, 'flex-root')[i]
             element = wait.until(EC.element_to_be_clickable(box))
             element.click()
+            
 
             # 1.이름
             name = driver.find_elements(By.ID, 'viewName')[0].text
@@ -115,7 +116,7 @@ for j in range(count):
             image_element = driver.find_element(By.ID, 'photo_detail')
             image_url = image_element.get_attribute('src')
 
-            # 4.상세정보 가져오기
+            # 4.상세정보 가져오기 #content_view_desc > dl:nth-child(1) > dd > font
             detail_elements = driver.find_elements(By.CSS_SELECTOR, 'dl.add-info dt' + ' + dd')
             detail_texts = []
             for element in detail_elements:
@@ -146,7 +147,8 @@ for j in range(count):
                 By.XPATH,
                 "/html/body/div[4]/div/div[2]/div/div[1]/div[2]/div[1]/a"
             ).text
-             
+
+            # 카테고리 ID 매핑
             category_id=''
             if category == "사료":
                 category_id = "201"

@@ -43,7 +43,7 @@ def create_products(db: Session, category_id: str, name: str, price: str, brand:
 
 # 크롬으로 창 열기
 driver = webdriver.Chrome()
-driver.get('https://www.dogpang.com/shop/goods/goods_list.php?category=002008')
+driver.get('https://www.dogpang.com/shop/goods/goods_list.php?category=002003')
 wait = WebDriverWait(driver, 10)
 
 time.sleep(1)   
@@ -61,20 +61,20 @@ def get_page_count(driver):
 
 # 사용 예시
 count = get_page_count(driver)  # 🔥 결과: 8
+if True:
+# for j in range(count):
+#     print(f"페이지 {j+1} 페이지 작업중...")
 
-for j in range(count):
-    print(f"페이지 {j+1} 페이지 작업중...")
+#     # 페이지네이션 div 찾기
+#     pager = driver.find_element(By.CLASS_NAME, "pager")
 
-    # 페이지네이션 div 찾기
-    pager = driver.find_element(By.CLASS_NAME, "pager")
+#     # div 안의 모든 a 태그 가져오기 (★★ 페이지마다 다시 읽어야 한다)
+#     pages = pager.find_elements(By.TAG_NAME, "a")
 
-    # div 안의 모든 a 태그 가져오기 (★★ 페이지마다 다시 읽어야 한다)
-    pages = pager.find_elements(By.TAG_NAME, "a")
-
-    # pages 길이 체크 (index error 방지)
-    if j >= len(pages):
-        print("페이지 인덱스가 페이지 수보다 큼 — 건너뜀")
-        continue
+#     # pages 길이 체크 (index error 방지)
+#     if j >= len(pages):
+#         print("페이지 인덱스가 페이지 수보다 큼 — 건너뜀")
+#         continue
 
     # 클릭 가능 상태까지 기다리기 (★★ 여기 추가!)
     try:
@@ -89,13 +89,14 @@ for j in range(count):
 
     except Exception as e:
         print("페이지 클릭 오류:", e)
-        continue
+        # continue
 
     ############################페이지 안 작업##########################
 
     for i, box in enumerate(boxes):
 
-        if j == 0 and i < 20:
+        if i < 20:
+        # if j == 0 and i < 20:
             continue
 
         try:
@@ -147,7 +148,7 @@ for j in range(count):
                 By.XPATH,
                 "/html/body/div[5]/div/div[2]/div/div[1]/div[2]/div[1]/a"
             ).text
-             
+            
             category_id=''
             if category == "사료":
                 category_id = "101"
