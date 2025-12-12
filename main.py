@@ -16,7 +16,7 @@ from dependencies import get_db
 
 # [설명] 기능별 라우터(컨트롤러) 모듈 임포트
 # [이동] project1/routers/ 폴더 내 각 파일들
-from routers import auth, memos, orders, chatbot
+from routers import auth, memos, orders, chatbot, products
 from routers import cart as cart_router
 
 # [설명] 데이터베이스 처리(쿼리) 모듈 임포트
@@ -57,10 +57,7 @@ app.include_router(memos.router)        # 게시판
 app.include_router(orders.router)       # 주문
 app.include_router(chatbot.router)      # 챗봇
 app.include_router(cart_router.router)  # 장바구니
-
-# [설명] 리뷰 작성 시 받을 데이터 검증 모델
-class ReviewRequest(BaseModel):
-    content: str
+app.include_router(products.router)
 
 # --- 메인 페이지 ---
 @app.get("/") 
@@ -85,47 +82,6 @@ async def main_page(request: Request, db: Session = Depends(get_db)):
 async def login_page(request: Request):
     # [이동] project1/templates/home.html (로그인/가입 폼)
     return templates.TemplateResponse("home.html", {"request": request})
-
-# --- 상품 상세 페이지 ---
-@app.get("/products/{product_id}")
-async def product_detail(request: Request, product_id: int, db: Session = Depends(get_db)):
-    username = request.session.get("username")
-
-    # [설명] 상품 ID로 상세 정보 조회
-    # [이동] project1/data/products.py -> get_product_by_id()
-    product = product_data.get_product_by_id(db, product_id)
-    if not product:
-        raise HTTPException(status_code=404, detail="상품을 찾을 수 없습니다.")
-
-    # [설명] 해당 상품의 리뷰 목록 조회만
-    # [이동] project1/data/reviews.py -> get_reviews_by_product_id()
-    reviews = review_data.get_reviews_by_product_id(db, product_id)
-
-    # [설명] HTML 렌더링 (product_detail.html에 데이터(username, 제품정보, 리뷰정보)를 보냄)
-    # [파일] project1/templates/product_detail.html
-    return templates.TemplateResponse("product_detail.html", {
-        "request": request,
-        "username": username,
-        "product": product,
-        "reviews": reviews
-    })
-
-# --- 리뷰 작성 ---
-@app.post("/products/{product_id}/review")
-async def create_review(request: Request, product_id: int, review: ReviewRequest, db: Session = Depends(get_db)):
-    username = request.session.get("username")
-    if not username:
-        return {"message": "로그인이 필요한 서비스입니다."}
-
-    user = auth_data.get_user_by_username(db, username)
-    if not user:
-        return {"message": "사용자 정보를 찾을 수 없습니다."}
-
-    # [설명] 해당 상품의 리뷰 작성
-    # [이동] project1/data/reviews.py -> create_review()
-    review_data.create_review(db, product_id, user.id, review.content)
-    
-    return {"message": "소중한 후기가 등록되었습니다!"}
 
 # --- 마이페이지 ---
 @app.get("/mypage")
@@ -154,48 +110,4 @@ async def mypage(request: Request, db: Session = Depends(get_db)):
         "username": username,
         "user": user,
         "orders": my_orders
-    })
-
-# --- 상품 목록 (검색/카테고리) ---
-@app.get("/products")
-async def product_list(
-    request: Request, 
-    category: Optional[str] = None, 
-    sub: Optional[str] = None, 
-    keyword: Optional[str] = None, 
-    db: Session = Depends(get_db)
-):
-    username = request.session.get("username")
-
-    # [설명] 화면 표시용 소분류 한글 매핑
-    sub_names = {
-        "clothes": "옷", "food": "사료", "snack": "간식", "toy": "장난감",
-        "house": "집", "bird_clothes": "윙슈트", "bird_house": "집 (새장)"
-    }
-    
-    # [설명] 검색어가 있으면 검색, 없으면 카테고리 조회
-    if keyword:
-        products = product_data.search_products(db, keyword)
-        sub_name = f"'{keyword}' 검색 결과"
-    
-    # [설명] 주-카테고리가 있으면 검색
-    elif category and sub:
-        # [수정] JOIN된 카테고리 정보로 조회
-        products = product_data.get_products_by_category(db, category, sub)
-        sub_name = sub_names.get(sub, sub)
-    else:
-        products = []
-        sub_name = "상품"
-
-
-    # [설명] HTML 렌더링 (products.html에 데이터(username, 주-카테고리, 서브-카테고리,영수증)를 보냄)
-    # [파일] project1/templates/product_detail.html
-    return templates.TemplateResponse("products.html", {
-        "request": request,
-        "username": username,
-        "category": category,
-        "sub": sub,
-        "sub_name": sub_name,
-        "products": products,
-        "keyword": keyword
     })
