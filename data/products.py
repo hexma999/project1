@@ -14,7 +14,7 @@ def get_category_id(db: Session, main_type: str, sub_name: str):
     return result.id if result else None
 
 # 1. 상품 등록
-def create_product(db: Session, name: str, price: int, description: str, 
+def create_product(db: Session, name: str, price: int, brand: str, 
                    detail: str, detail_img_url: str, image_url: str, 
                    main_cat: str, sub_cat: str, initial_stock: int):
     
@@ -24,13 +24,13 @@ def create_product(db: Session, name: str, price: int, description: str,
 
     sql = """
         INSERT INTO products 
-        (category_id, name, price, description, detail, detail_img_url, image_url, initial_stock, stock, sales_count)
+        (category_id, name, price, brand, detail, detail_img_url, image_url, initial_stock, stock, sales_count)
         VALUES 
-        (:cat_id, :name, :price, :desc, :detail, :d_img, :img, :init_stock, :init_stock, 0)
+        (:cat_id, :name, :price, :brand, :detail, :d_img, :img, :init_stock, :init_stock, 0)
     """
     params = {
         "cat_id": cat_id, "name": name, "price": price, 
-        "desc": description, "detail": detail, "d_img": detail_img_url, 
+        "brand": brand, "detail": detail, "d_img": detail_img_url, 
         "img": image_url, "init_stock": initial_stock
     }
     db.execute(text(sql), params)
@@ -99,7 +99,7 @@ def search_products(db: Session, keyword: str):
         FROM products p
         JOIN categories c ON p.category_id = c.id
         WHERE p.name LIKE :kw 
-           OR p.description LIKE :kw 
+           OR p.brand LIKE :kw 
            OR c.sub_name LIKE :kw
     """
     cursor = db.execute(text(sql), {"kw": f"%{keyword}%"})

@@ -46,7 +46,7 @@ def create_order(db: Session, user_id: int, items: List[Dict]):
         db.rollback()
         raise e
 
-# 2. 내 주문 내역 조회 (수정됨)
+# 2. 내 주문 내역 조회 (수정됨: 삭제된 상품 예외 처리 추가)
 def get_my_orders(db: Session, user_id: int):
     # A. 주문서 목록 조회
     sql_orders = """
@@ -76,16 +76,25 @@ def get_my_orders(db: Session, user_id: int):
         
         items_cursor = db.execute(text(sql_items), {"oid": order.id})
         items_rows = items_cursor.fetchall()
-        items = [dict(row._mapping) for row in items_rows]
         
-        # 템플릿 호환성을 위한 가공
+        # Row -> Dict 변환 및 안전한 데이터 처리
+        items = []
+        for row in items_rows:
+            item_dict = dict(row._mapping)
+            # 상품명이 없으면(삭제됨) '삭제된 상품'으로 대체
+            if not item_dict.get('product_name_snap'):
+                item_dict['product_name_snap'] = "삭제된 상품"
+            items.append(item_dict)
+        
+        # 템플릿 호환성을 위한 가공 (마이페이지 목록용 요약)
         if items:
-            order_dict['product_name_snap'] = items[0]['product_name_snap']
+            first_name = items[0]['product_name_snap']
             if len(items) > 1:
-                order_dict['product_name_snap'] += f" 외 {len(items)-1}건"
+                first_name += f" 외 {len(items)-1}건"
+            
+            order_dict['product_name_snap'] = first_name
             order_dict['quantity'] = sum(i['quantity'] for i in items)
         
-        # ★ 핵심 수정: 키 이름을 'items' -> 'order_items'로 변경 ★
         order_dict["order_items"] = items
         result.append(order_dict)
         
@@ -120,8 +129,15 @@ def get_order_detail(db: Session, order_id: int):
         {"oid": order_id}
     ).fetchall()
     
-    # 3. 딕셔너리로 변환 및 합치기
+    # 3. 딕셔너리로 변환 및 합치기 (삭제된 상품 처리 추가)
     order_dict = dict(order._mapping)
-    order_dict["order_items"] = [dict(item._mapping) for item in items]
+    safe_items = []
+    for item in items:
+        i_dict = dict(item._mapping)
+        if not i_dict.get('product_name_snap'):
+            i_dict['product_name_snap'] = "삭제된 상품"
+        safe_items.append(i_dict)
+
+    order_dict["order_items"] = safe_items
     
     return order_dict

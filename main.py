@@ -132,9 +132,8 @@ async def product_list(
 
     # 소분류 한국어 매핑 (표시용)
     sub_names = {
-        "clothes": "옷", "food": "사료", "snack": "간식", "leash": "끈 (리드줄)",
-        "cushion": "방석", "house": "집 (하우스)", "harness": "하네스",
-        "bird_clothes": "윙슈트", "bird_house": "집 (새장)"
+        "clothes": "옷", "food": "사료", "snack": "간식", "toy": "장난감",
+        "house": "집", "bird_clothes": "윙슈트", "bird_house": "집 (새장)"
     }
     
     if keyword:
@@ -146,7 +145,7 @@ async def product_list(
         sub_name = sub_names.get(sub, sub)
     else:
         products = []
-        sub_name = "전체 상품"
+        sub_name = "상품"
 
     return templates.TemplateResponse("products.html", {
         "request": request,
