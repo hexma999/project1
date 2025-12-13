@@ -28,7 +28,8 @@ async def product_list(
     # [설명] 화면 표시용 소분류 한글 매핑
     sub_names = {
         "clothes": "옷", "food": "사료", "snack": "간식", "toy": "장난감",
-        "house": "집", "bird_clothes": "윙슈트", "bird_house": "집 (새장)"
+        "house": "집", "bird_food": "새 먹이", "bird_house": "새장", "bird_item" : "용품", "bird_alpha" : "영양/치료제",
+        "etc": "기타"
     }
     
     # [설명] 검색어가 있으면 검색, 없으면 카테고리 조회
