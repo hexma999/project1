@@ -1,0 +1,12 @@
+gunicorn
+requests
+fastapi==0.104.1
+uvicorn==0.27.0.post1
+sqlalchemy==1.4.39
+pymysql==1.1.0
+jinja2==3.1.2
+itsdangerous
+passlib[bcrypt]
+bcrypt==3.2.0
+python-dotenv
+openai

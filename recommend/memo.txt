@@ -1,0 +1,4 @@
+py -3.12 -m pip install scikit-learn
+py -3.12 -m pip install schedule
+python -m pip install pymysql
+pip install numpy pandas

@@ -1,178 +1,52 @@
-📘 프로젝트 문서: 경수오빠못해조 (Pet Shop & Community)
-1. 프로젝트 개요
-프로젝트명: 경수오빠못해조
+1. 👋 프로젝트 소개 (Overview)
+**'경수오빠못해조'**는 반려동물(강아지, 고양이, 새, 햄스터 등)을 위한 용품을 판매하고, 반려인들이 소통할 수 있는 공간을 제공합니다.
+🛒 쇼핑몰: 카테고리별 상품 조회, 장바구니, 재고 관리 및 결제 시스템
+📝 커뮤니티: 사용자 간 자유로운 소통을 위한 게시판 (CRUD)
+🤖 AI 챗봇: OpenAI GPT-4.1-mini 기반 CS 자동 응답 챗봇
+🔮 상품 추천: 사용자 정보(성별/연령) 기반 머신러닝(Random Forest) 맞춤 상품 추천
+🎨 반응형 UI: Glassmorphism 디자인이 적용된 깔끔한 프론트엔드2.
 
-설명: 반려동물(강아지, 고양이, 조류, 기타 동물) 용품을 판매하는 이커머스 기능과 사용자 간 소통을 위한 자유 게시판(메모) 기능을 결합한 웹 애플리케이션입니다.
+구분,기술 (Technology),설명
+Backend,고성능 비동기 웹 프레임워크
+Database,관계형 데이터베이스 및 클라우드 스토리지
+ORM,Python 객체와 DB 매핑
+AI / ML,CS 챗봇 및 상품 추천 알고리즘
+Frontend,반응형 디자인 및 템플릿 엔진
 
-주요 기능: 회원가입/로그인, 카테고리별 상품 조회, 상품 상세 및 리뷰 작성, 자유 게시판(CRUD)
-
-2. 활용 기술 (Tech Stack)
-Backend
-Language: Python 3.12+
-
-Framework: FastAPI (REST API 구축 및 웹 서버 기능)
-
-ORM: SQLAlchemy (데이터베이스 상호작용 추상화)
-
-Security: passlib[bcrypt], python-jose (비밀번호 해싱 및 인증 처리)
-
-Database
-RDBMS: MySQL (실제 데이터 저장소)
-
-Hosting: Amazon RDS (AWS 클라우드 데이터베이스 서비스)
-
-Driver: pymysql (Python-MySQL 커넥터)
-
-Frontend
-Language: HTML5, CSS3, JavaScript
-
-Templating Engine: Jinja2 (서버 사이드 렌더링)
-
-Framework: Bootstrap 4.3.1 (반응형 디자인 및 UI 컴포넌트)
-
-Library: jQuery, FontAwesome (아이콘)
-
-Infrastructure & Tools
-Environment: .env (환경 변수 관리 - python-dotenv)
-
-Server: Uvicorn (ASGI 서버)
-
-3. 파일 구조 (File Structure)
-프로젝트는 MVC(Model-View-Controller) 패턴과 유사하게 데이터(Data), 라우터(Router), 템플릿(Templates)으로 구조화되어 있습니다.
-
-Plaintext
-
-project1/
-├── main.py                  # [진입점] 앱 초기화, 미들웨어 설정, 메인/상품 라우팅
-├── database.py              # DB 연결 설정 (Engine, SessionLocal 생성)
-├── dependencies.py          # 의존성 주입 (DB 세션 생성, 비밀번호 해시/검증)
-├── schemas.py               # Pydantic 모델 (요청/응답 데이터 검증)
-├── .env                     # 환경 변수 (DB URL, Secret Key)
+📂 디렉토리 구조 (Directory Structure)MVC(Model-View-Controller) 패턴을 기반으로 기능별로 깔끔하게 구조화되어 있습니다.Bashproject1/
+├── main.py                  # [Entry] 앱 실행 및 설정 진입점
+├── database.py              # DB 연결 엔진 설정
+├── dependencies.py          # DB 세션 관리 및 인증 의존성
+├── schemas.py               # Pydantic 데이터 검증 모델
 │
-├── routers/                 # [Controller] URL 라우팅 및 비즈니스 로직 처리
-│   ├── auth.py              # 인증 관련 라우터 (회원가입, 로그인, 로그아웃)
-│   └── memos.py             # 게시판 관련 라우터 (CRUD)
+├── routers/                 # [Controller] URL 라우팅 및 비즈니스 로직
+│   ├── auth.py              # 회원가입, 로그인, 정보수정
+│   ├── cart.py              # 장바구니 로직
+│   ├── orders.py            # 주문 및 결제 처리
+│   ├── memos.py             # 게시판 CRUD
+│   └── chatbot.py           # AI 챗봇 연결
 │
-├── data/                    # [Model/DAO] 데이터베이스 쿼리 함수 집합
-│   ├── auth.py              # 사용자(User) 테이블 쿼리
-│   ├── memos.py             # 메모(Memo) 테이블 쿼리
-│   └── products.py          # 상품(PetItem), 리뷰(Reviews) 테이블 쿼리
+├── data/                    # [Model/DAO] DB 쿼리 집합
+│   ├── products.py          # 상품/재고 관리 쿼리
+│   ├── orders.py            # 주문 트랜잭션 쿼리
+│   └── ...                  # (auth, cart, memos 등)
 │
 └── templates/               # [View] 사용자 인터페이스 (HTML)
-    ├── home.html            # 로그인/회원가입 페이지
-    ├── main.html            # 메인 페이지 (상품 추천, 네비게이션)
-    ├── products.html        # 카테고리별 상품 목록 페이지
-    ├── product_detail.html  # 상품 상세 및 리뷰 페이지
-    └── memos.html           # 자유 게시판 페이지
-4. 데이터베이스 설계 (ERD)
-Amazon RDS(MySQL)에 구축된 테이블 구조입니다.
-
-1) Users (사용자)
-회원 정보를 저장합니다.
-
-Columns: id (PK), username (Unique), email, hashed_password
-
-2) Pet_Item (상품)
-판매 물품 정보를 저장합니다.
-
-Columns: id (PK), category (대분류: dog, cat...), sub_category (소분류), name, price, description, detail (HTML), image_url
-
-3) Memo (게시판)
-사용자가 작성한 게시글입니다. User와 1:N 관계입니다.
-
-Columns: id (PK), user_id (FK -> Users.id), title, content
-
-4) Reviews (리뷰)
-상품에 대한 후기입니다. Product, User와 각각 N:1 관계입니다.
-
-Columns: id (PK), product_id (FK -> Pet_Item.id), user_id (FK -> Users.id), content, created_at
-
-5. 시스템 아키텍처 및 코드 흐름도 (Code Flow)
-사용자의 요청이 들어왔을 때 서버 내부에서 처리되는 흐름입니다. **계층형 아키텍처(Layered Architecture)**를 따르고 있습니다.
-
-흐름도 (Flowchart)
-코드 스니펫
-
-graph TD
-    User((사용자))
-    
-    subgraph Frontend [Templates (View)]
-        HTML[HTML 페이지/JS]
-    end
-
-    subgraph Backend [FastAPI Server]
-        Main[main.py (App Entry)]
-        
-        subgraph Routers [API Routes]
-            AuthRouter[routers/auth.py]
-            MemoRouter[routers/memos.py]
-            ProductRoutes[main.py 내 정의]
-        end
-        
-        subgraph DataLayer [Data Access Object]
-            DataAuth[data/auth.py]
-            DataMemo[data/memos.py]
-            DataProd[data/products.py]
-        end
-        
-        Schemas[schemas.py (Validation)]
-        DB_Conn[database.py / dependencies.py]
-    end
-
-    subgraph Database [Amazon RDS]
-        MySQL[(MySQL DB)]
-    end
-
-    User -->|HTTP Request| Main
-    Main -->|Mount| AuthRouter
-    Main -->|Mount| MemoRouter
-    
-    %% 회원가입/로그인 흐름
-    AuthRouter -->|Validate| Schemas
-    AuthRouter -->|Call| DataAuth
-    DataAuth -->|Query| DB_Conn
-    DB_Conn -->|SQL| MySQL
-    
-    %% 게시판 흐름
-    MemoRouter -->|Call| DataMemo
-    DataMemo -->|Query| DB_Conn
-    
-    %% 상품 흐름
-    ProductRoutes -->|Call| DataProd
-    DataProd -->|Query| DB_Conn
-
-    %% 응답
-    MySQL -->|Result| DB_Conn
-    DB_Conn -->|Data| Backend
-    Backend -->|Render| HTML
-    HTML -->|Display| User
-주요 로직 상세
-초기화 (main.py):
-
-.env 로드 및 DB 엔진/세션 설정.
-
-auth, memos 라우터 등록 (include_router).
-
-정적 템플릿(Jinja2Templates) 설정.
-
-상품 조회 흐름:
-
-요청: GET /products?category=dog&sub=food
-
-처리: main.py의 product_list 함수 실행 -> data/products.py의 get_products_by_category 호출 -> SQL 실행.
-
-응답: 조회된 데이터를 products.html 템플릿에 담아 렌더링.
-
-게시글 작성 흐름:
-
-요청: POST /memos/ (JSON body: title, content)
-
-처리: routers/memos.py -> 세션에서 username 확인 (로그인 체크) -> data/memos.py의 create_memo 호출 -> DB Insert.
-
-응답: 성공 메시지 JSON 반환 (프론트엔드에서 JS로 새로고침 처리).
-
-데이터베이스 연결:
-
-database.py에서 create_engine으로 RDS에 연결.
-
-dependencies.py의 get_db 함수가 요청(Request)마다 DB 세션을 생성하고, 처리가 끝나면 자동으로 닫음(yield 패턴).
+    ├── main.html            # 메인 페이지
+    ├── product_detail.html  # 상품 상세 및 리뷰
+    ├── mypage.html          # 마이페이지
+    └── ...
+4. 🚀 핵심 기능 및 로직 (Key Features)
+🛒 1. 쇼핑 및 주문 (Shopping & Order)재고 관리: 주문 시 product_data를 통해 실시간 재고를 확인합니다.트랜잭션(Transaction): create_order 함수 내에서 결제 금액 계산, 주문서 생성, 상세 품목 기록, 재고 차감이 하나의 트랜잭션으로 안전하게 처리됩니다.장바구니: 세션 기반이 아닌 DB(carts 테이블)를 사용하여 로그아웃 후에도 장바구니가 유지됩니다.
+📝 2. 커뮤니티 게시판 (Community Board)접근 제어: 글 작성/수정/삭제 시 세션 검증을 통해 로그인한 사용자만 접근 가능합니다.CRUD 구현: 본인이 작성한 글인지(user_id 대조) 확인 후 수정/삭제 권한을 부여합니다.편의 기능: '내 글만 보기' 필터 및 제목/내용/작성자 검색 기능을 제공합니다.
+🤖 3. AI 챗봇 (AI Chatbot)Role-Playing: 챗봇에게 "쇼핑몰 고객센터 직원"이라는 페르소나를 부여합니다.Context Injection: faq.json에 정의된 배송, 환불 규정 데이터를 프롬프트에 주입하여 쇼핑몰 정책에 맞는 정확한 답변을 제공합니다. (Powered by gpt-4.1-mini)
+🔮 4. 상품 추천 시스템 (Recommendation)Machine Learning: Scikit-learn의 RandomForestClassifier를 사용합니다.알고리즘: 사용자의 '성별'과 '연령대' 데이터를 학습하여 가장 선호할 확률이 높은 상품 10개를 예측하여 추천합니다.자동화: schedule 라이브러리를 통해 추천 로직(batch.py)이 주기적으로 실행됩니다. 
+💾 5. 데이터베이스 설계 (ERD Summary)
+테이블명,역할,주요 관계
+Users,회원 정보 저장,-
+Products,상품 정보 및 재고,Categories와 N:1
+Orders,주문 내역 (영수증),Users와 N:1
+Order_Items,주문 상세 품목,"Orders, Products와 연결"
+Carts,사용자 장바구니,Users와 1:1
+Memo,게시판 게시글,Users와 N:1
+Reviews,상품 리뷰,"Products, Users와 N:1"

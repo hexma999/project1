@@ -43,10 +43,10 @@ uvicorn main:app --reload
 //스테이징 올리기
 git add memo.txt
 
-//로컬 푸시
+//로컬 커밋
 git commit -m "KAN-16 설명"
 
-//리모트에 PUSH
+//리모트(원격저장소)에 PUSH
 git push origin KAN-16-지라테스트1
 
 //메인 브런치로 병합
@@ -54,6 +54,9 @@ git checkout main
 git pull origin main
 git merge KAN-16-지라테스트1
 git push origin main
+
+//배포 주소 ( 랜더사용 : https://render.com/ )
+https://project1-c2xk.onrender.com/
 
 
    

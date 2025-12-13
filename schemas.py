@@ -28,3 +28,7 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None      # 비밀번호 변경 
     email: Optional[str] = None         # 이메일 변경
     phone_number: Optional[str] = None  # 전화번호 변경 
+
+# 리뷰 작성 요청 데이터
+class ReviewRequest(BaseModel):
+    content: str

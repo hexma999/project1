@@ -2,3 +2,6 @@
 .gitignore
 __pycache__/
 *.pyc
+data/__pycache__/"__pycache__/" 
+web.py
+crawlers/dogCrawler.py

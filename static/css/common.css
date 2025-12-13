@@ -15,7 +15,7 @@ body {
 /* --- [1] 상단 헤더 (Glassmorphism Sticky) --- */
 .header-bar {
   background: rgba(231, 76, 60, 0.95); /* 투명도가 있는 붉은색 */
-  backdrop-filter: blur(10px); /* 블러 효과 (유리 느낌) */
+  backdrop-filter: blur(10px); /* 블러 효과 */
   box-shadow: 0 4px 20px rgba(231, 76, 60, 0.25);
   position: fixed;
   top: 0;
@@ -141,7 +141,7 @@ body {
   backdrop-filter: blur(5px);
   border-bottom: 1px solid #eee;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-  border-radius: 0 0 20px 20px; /* 아래쪽 둥글게 */
+  border-radius: 0 0 20px 20px;
   padding: 0 10px;
 }
 .navbar-nav {
@@ -162,8 +162,6 @@ body {
   margin-right: 8px;
   transition: transform 0.3s;
 }
-
-/* Hover 효과 */
 .navbar-nav .nav-link:hover {
   color: #e74c3c;
 }
@@ -221,116 +219,7 @@ body {
   padding-left: 20px;
 }
 
-/* --- [4] 메인 배너 (Hero Section) --- */
-.main-banner {
-  background: linear-gradient(120deg, #fff0f0 0%, #ffecec 100%);
-  padding: 80px 0;
-  margin-bottom: 60px;
-  text-align: center;
-  border-radius: 20px; /* 전체 둥글게 */
-  margin-top: 20px; /* 네비게이션과 간격 */
-  box-shadow: inset 0 0 30px rgba(231, 76, 60, 0.05); /* 안쪽 그림자 */
-  position: relative;
-  overflow: hidden;
-}
-/* 배너 배경 장식 (원) */
-.main-banner::before {
-  content: "";
-  position: absolute;
-  top: -50px;
-  left: -50px;
-  width: 200px;
-  height: 200px;
-  background: rgba(231, 76, 60, 0.05);
-  border-radius: 50%;
-  z-index: 0;
-}
-.main-banner::after {
-  content: "";
-  position: absolute;
-  bottom: -50px;
-  right: -50px;
-  width: 300px;
-  height: 300px;
-  background: rgba(231, 76, 60, 0.05);
-  border-radius: 50%;
-  z-index: 0;
-}
-
-.banner-content {
-  position: relative;
-  z-index: 1;
-} /* 텍스트가 장식 위에 오도록 */
-
-.banner-title {
-  color: #c0392b;
-  font-size: 2.8rem;
-  font-weight: 800;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 0px rgba(255, 255, 255, 1);
-  letter-spacing: -1px;
-}
-.banner-text {
-  color: #555;
-  font-size: 1.2rem;
-  margin-bottom: 40px;
-  font-weight: 500;
-}
-
-/* 쇼핑하러 가기 버튼 */
-.btn-shopping {
-  background: #e74c3c;
-  color: white;
-  padding: 15px 50px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border-radius: 50px;
-  border: none;
-  box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
-  transition: all 0.3s ease;
-  display: inline-block;
-  cursor: pointer;
-}
-.btn-shopping:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 15px 30px rgba(231, 76, 60, 0.4);
-  background: #c0392b;
-  color: white;
-  text-decoration: none;
-}
-
-/* --- [5] 섹션 타이틀 (MD 추천 상품) --- */
-.section-header {
-  text-align: center;
-  margin-bottom: 50px;
-  position: relative;
-}
-.section-title {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #333;
-  display: inline-block;
-  position: relative;
-  padding-bottom: 15px;
-}
-/* 타이틀 밑줄 효과 */
-.section-title::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 50px;
-  height: 4px;
-  background: #e74c3c;
-  border-radius: 2px;
-  transform: translateX(-50%);
-  transition: width 0.3s;
-}
-.section-header:hover .section-title::after {
-  width: 100px;
-} /* 호버시 밑줄 길어짐 */
-
-/* --- [6] 상품 카드 (Product Card) 리뉴얼 --- */
+/* --- [4] 상품 카드 (Product Card) - 공통 사용 --- */
 .product-card {
   background: white;
   border-radius: 20px;
@@ -343,7 +232,7 @@ body {
   height: 100%;
 }
 .product-card:hover {
-  transform: translateY(-12px); /* 위로 붕 뜸 */
+  transform: translateY(-12px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
@@ -361,9 +250,8 @@ body {
 }
 .product-card:hover .card-img-top {
   transform: scale(1.1);
-} /* 이미지 확대 */
+}
 
-/* 이미지 위 찜 아이콘 (장식용) */
 .card-badge {
   position: absolute;
   top: 15px;
