@@ -36,6 +36,12 @@ def create_products(db: Session, category_id: str, name: str, price: str, brand:
         }
     )
     db.commit()
+
+def get_page_count(driver):
+    pager = driver.find_element(By.CLASS_NAME, "pager")
+    links = pager.find_elements(By.TAG_NAME, "a")
+    return len(links)
+
 # 크롬으로 창 열기
 driver = webdriver.Chrome()
 driver.get('https://www.catpang.com/shop/goods/goods_list.php?category=001010')
@@ -44,10 +50,7 @@ time.sleep(1)
 boxes = driver.find_elements(By.CLASS_NAME, 'flex-root')
 # 수집한 데이터를 저장할 리스트
 data = []
-def get_page_count(driver):
-    pager = driver.find_element(By.CLASS_NAME, "pager")
-    links = pager.find_elements(By.TAG_NAME, "a")
-    return len(links)
+
 # 사용 예시
 count = get_page_count(driver)  # :불: 결과: 8
 for j in range(count):
