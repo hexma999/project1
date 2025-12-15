@@ -73,16 +73,25 @@ def get_product_by_id(db: Session, product_id: int):
 
 # 4. MD 추천 상품 (랜덤)
 def get_featured_products(db: Session, limit: int = 12):
+    # 로그인 하지 않은 경우
     sql = """
-       SELECT p.*, c.main_type AS category, c.sub_name, a.gender, a.age_group AS sub_category
-        FROM recommendation_products a
-		 JOIN products p
-          ON a.product_id = p.id   
-         JOIN categories c ON p.category_id = c.id
-         WHERE a.gender = 'F'
-         AND a.age_group = '30'
+        SELECT p.*, c.main_type AS category, c.sub_name AS sub_category
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
         ORDER BY RAND() LIMIT :limit
     """
+
+    # 로그인 한 경우    
+    # sql = """
+    #    SELECT p.*, c.main_type AS category, c.sub_name, a.gender, a.age_group AS sub_category
+    #     FROM recommendation_products a
+	# 	 JOIN products p
+    #       ON a.product_id = p.id   
+    #      JOIN categories c ON p.category_id = c.id
+    #      WHERE a.gender = 'F' -- 로그인 사용자 성별
+    #      AND a.age_group = '30' -- 로그인 사용자 나이대 ( (TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) DIV 10) * 10 AS age_group)
+    #     ORDER BY RAND() LIMIT :limit
+    # """
     cursor = db.execute(text(sql), {"limit": limit})
     return cursor.fetchall()
 
