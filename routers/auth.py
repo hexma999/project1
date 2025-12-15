@@ -48,6 +48,8 @@ async def login(request: Request, signin_data: UserLogin, db: Session = Depends(
 
     if user and verify_password(signin_data.password, user.hashed_password):
         request.session["username"] = user.username
+        request.session["gender"] = user.gender
+        request.session["age_group"] = user.age_group
         return {"message": "로그인 성공"}
     
     raise HTTPException(status_code=401, detail="로그인 실패")

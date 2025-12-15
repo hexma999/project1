@@ -72,27 +72,40 @@ def get_product_by_id(db: Session, product_id: int):
     return cursor.fetchone()
 
 # 4. MD 추천 상품 (랜덤)
-def get_featured_products(db: Session, limit: int = 12):
-    # 로그인 하지 않은 경우
-    sql = """
-        SELECT p.*, c.main_type AS category, c.sub_name AS sub_category
-        FROM products p
-        JOIN categories c ON p.category_id = c.id
-        ORDER BY RAND() LIMIT :limit
-    """
+def get_featured_products(db: Session, request, limit: int = 12):
 
-    # 로그인 한 경우    
-    # sql = """
-    #    SELECT p.*, c.main_type AS category, c.sub_name, a.gender, a.age_group AS sub_category
-    #     FROM recommendation_products a
-	# 	 JOIN products p
-    #       ON a.product_id = p.id   
-    #      JOIN categories c ON p.category_id = c.id
-    #      WHERE a.gender = 'F' -- 로그인 사용자 성별
-    #      AND a.age_group = '30' -- 로그인 사용자 나이대 ( (TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) DIV 10) * 10 AS age_group)
-    #     ORDER BY RAND() LIMIT :limit
-    # """
-    cursor = db.execute(text(sql), {"limit": limit})
+    username = request.session.get("username", "")
+    
+    params = {}
+    if username == "":
+        # 로그인 하지 않은 경우
+        sql = """
+            SELECT p.*, c.main_type AS category, c.sub_name AS sub_category
+            FROM products p
+            JOIN categories c ON p.category_id = c.id
+            ORDER BY RAND() LIMIT :limit
+        """
+        params = {"limit": limit}
+
+    else:
+        # 로그인 한 경우 
+        gender = request.session["gender"]
+        age_group = request.session["age_group"]
+
+        sql = """
+        SELECT p.*, c.main_type AS category, c.sub_name, a.gender, a.age_group AS sub_category
+            FROM recommendation_products a
+            JOIN products p
+            ON a.product_id = p.id   
+            JOIN categories c ON p.category_id = c.id
+            WHERE a.gender = :gender
+            AND a.age_group = :age_group
+            ORDER BY RAND() LIMIT :limit
+        """
+        params = {"gender": gender, "age_group": age_group, "limit": limit}
+
+    print(params)
+    cursor = db.execute(text(sql), params)
     return cursor.fetchall()
 
 # 5. 재고 감소 (products 테이블 사용)

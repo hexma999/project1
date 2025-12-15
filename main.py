@@ -67,7 +67,7 @@ async def main_page(request: Request, db: Session = Depends(get_db)):
 
     # [설명] 추천 상품(또는 랜덤 상품) 목록 조회
     # [이동] project1/data/products.py -> get_featured_products() 호출
-    featured_products = product_data.get_featured_products(db)
+    featured_products = product_data.get_featured_products(db,request)
     
     # [설명] HTML 렌더링 (main.html에 데이터(username, 제품특징)를 보냄)
     # [파일] project1/templates/main.html

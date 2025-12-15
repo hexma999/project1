@@ -4,7 +4,7 @@ from sqlalchemy import text
 # 사용자 조회 (로그인, 중복 확인용)
 def get_user_by_username(db: Session, username: str):
     return db.execute(
-        text("SELECT * FROM users WHERE username = :username"),
+        text("SELECT A.* , (TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) DIV 10) * 10 AS age_group FROM users A WHERE username = :username"),
         {"username": username}
     ).fetchone()
 
