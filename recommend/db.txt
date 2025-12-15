@@ -1,14 +1,9 @@
-CREATE TABLE purchaseTest (
-    id INT AUTO_INCREMENT PRIMARY KEY,   -- 고유 식별자
-    gender VARCHAR(10) NOT NULL,         -- 성별 (예: '남성', '여성')
-    age_group VARCHAR(10) NOT NULL,      -- 연령대 (예: '10대', '20대' ...)
-    product VARCHAR(100) NOT NULL,       -- 구매 상품명
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 구매 시각
-);
-
-CREATE TABLE recommendation_results (
-    id INT AUTO_INCREMENT PRIMARY KEY,   -- 고유 식별자
-    product VARCHAR(100) NOT NULL,       -- 추천 상품명
-    probability FLOAT NOT NULL,          -- 추천 확률
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 저장 시각
-);
+CREATE TABLE `recommendation_products` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `probability` float NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `gender` varchar(45) DEFAULT NULL,
+  `age_group` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=751 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
