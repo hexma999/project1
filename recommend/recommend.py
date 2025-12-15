@@ -54,7 +54,7 @@ model.fit(X_train, y_train)
 cursor = conn.cursor()
 
 # 1. 기존 데이터 모두 삭제
-cursor.execute("DELETE FROM recommendation_results")
+cursor.execute("DELETE FROM recommendation_products")
 
 genders = [0, 1]
 age_groups = [10, 20, 30, 40, 50, 60, 70, 80]
