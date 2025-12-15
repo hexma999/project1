@@ -74,7 +74,7 @@ def get_product_by_id(db: Session, product_id: int):
 # 4. MD 추천 상품 (랜덤)
 def get_featured_products(db: Session, request, limit: int = 12):
 
-    username = request.session.get("username", "")
+    username = "" #request.session.get("username", "")
     
     params = {}
     if username == "":
