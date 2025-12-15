@@ -64,14 +64,14 @@ for gender in genders:
         new_user = pd.DataFrame({"gender":[gender], "age_group":[age_group]})
         print("new_user:",new_user)
 
-        # 확률 기반 Top-10 추천
+        # 확률 기반 Top-20 추천
         proba = model.predict_proba(new_user)[0]
         product_labels = model.classes_
 
-        top_indices = proba.argsort()[::-1][:10]
+        top_indices = proba.argsort()[::-1][:20]
         top_products = [(product_labels[i], float(proba[i])) for i in top_indices]
 
-        print("추천 상품 Top-10:")
+        print("추천 상품 Top-20:")
         for rank, (prod, prob) in enumerate(top_products, start=1):
             print(f"{rank}. {prod} (확률: {prob:.2f})")
 
