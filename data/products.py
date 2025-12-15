@@ -89,8 +89,8 @@ def get_featured_products(db: Session, request, limit: int = 12):
 
     else:
         # 로그인 한 경우 
-        gender = request.session["gender"]
-        age_group = request.session["age_group"]
+        gender = request.session.get("gender", "")
+        age_group = request.session.get("age_group", "")
 
         sql = """
         SELECT p.*, c.main_type AS category, c.sub_name, a.gender, a.age_group AS sub_category
