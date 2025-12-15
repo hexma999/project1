@@ -70,7 +70,9 @@ async def product_detail(request: Request, product_id: int, db: Session = Depend
     product = product_data.get_product_by_id(db, product_id)
     if not product:
         raise HTTPException(status_code=404, detail="상품을 찾을 수 없습니다.")
-
+    
+    # text = product['detail'].join()
+    # print(text)
     # [설명] 해당 상품의 리뷰 목록 조회만
     # [이동] project1/data/reviews.py -> get_reviews_by_product_id()
     reviews = review_data.get_reviews_by_product_id(db, product_id)

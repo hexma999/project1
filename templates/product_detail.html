@@ -335,7 +335,19 @@
           <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="detail" role="tabpanel">
               <div class="detail-content-box">
-                {% if product.detail %} {{ product.detail | safe }} {% else %}
+                {% if product.detail %}
+                <ul class="detail-list">
+                  {% for info in product.detail.split(' | ') %} {% set
+                  clean_info = info.strip() %} {% if clean_info != '' and not
+                  clean_info.startswith("도그팡") and not
+                  clean_info.startswith("캣팡")%}
+                  <li>
+                    <i class="fas fa-check-circle text-danger mr-2"></i>{{
+                    clean_info }}
+                  </li>
+                  {% endif %} {% endfor %}
+                </ul>
+                {% else %}
                 <div class="text-center py-5 text-muted">
                   <i
                     class="fas fa-clipboard-list fa-3x mb-3"
@@ -345,12 +357,14 @@
                   상세 설명이 준비 중입니다.
                 </div>
                 {% endif %}
+
                 <hr style="border-top: 2px dashed #eee; margin: 30px 0" />
+
                 {% if product.detail_img_url %}
                 <div class="detail-image-wrapper text-center mb-4">
                   <img
                     src="{{ product.detail_img_url }}"
-                    alt="{{ product.detail_img_url }}"
+                    alt="상세 정보 이미지"
                     class="img-fluid rounded"
                     style="max-width: 100%; height: auto"
                   />
