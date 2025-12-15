@@ -78,7 +78,7 @@ for gender in genders:
         # 2. 새 추천 결과 삽입
         for prod, prob in top_products:
             cursor.execute(
-                "INSERT INTO recommendation_results (gender, age_group, product_id, probability) VALUES (CASE WHEN %s = '0' THEN 'M' WHEN %s = '1' THEN 'F' END, %s,%s,%s)",
+                "INSERT INTO recommendation_products (gender, age_group, product_id, probability) VALUES (CASE WHEN %s = '0' THEN 'M' WHEN %s = '1' THEN 'F' END, %s,%s,%s)",
                 (gender, gender, age_group, prod, prob)
             )
 

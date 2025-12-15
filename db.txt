@@ -28,3 +28,13 @@ CREATE TABLE `memo` (
   KEY `ix_memo_id` (`id`),
   CONSTRAINT `memo_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `recommendation_products` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` varchar(100) NOT NULL,
+  `probability` float NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `gender` varchar(45) DEFAULT NULL,
+  `age_group` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=591 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
