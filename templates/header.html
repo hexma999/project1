@@ -1,8 +1,11 @@
 <div class="header-bar">
   <div class="container">
-    <a href="/" class="logo"><i class="fas fa-paw"></i> 경수오빠못해조</a>
+    <a href="/" class="logo">
+      <i class="fas fa-paw"></i>
+      <span class="logo-text">경수오빠못해조</span>
+    </a>
 
-    <div class="search-container d-none d-md-block">
+    <div class="search-container">
       <form action="/products" method="get">
         <div class="search-input-group">
           <input
@@ -49,7 +52,7 @@
     </div>
   </div>
 </div>
-{% include "cart_floating.html" %} {% include "chatbot.html" %}
+{% include "chatbot.html" %}
 <script>
   // 로그아웃 공통 함수 (헤더에 포함)
   function logout() {

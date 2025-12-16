@@ -69,12 +69,20 @@ async def main_page(request: Request, db: Session = Depends(get_db)):
     # [이동] project1/data/products.py -> get_featured_products() 호출
     featured_products = product_data.get_featured_products(db,request)
     
+    # [설명] 로그인한 사용자의 유통기한 알림 데이터 조회
+    expiry_alerts = {}
+    if username:
+        user = auth_data.get_user_by_username(db, username)
+        if user:
+            expiry_alerts = order_data.get_expiry_alerts(db, user.id)
+    
     # [설명] HTML 렌더링 (main.html에 데이터(username, 제품특징)를 보냄)
     # [파일] project1/templates/main.html
     return templates.TemplateResponse("main.html", {
         "request": request, 
         "username": username,
-        "featured_products": featured_products
+        "featured_products": featured_products,
+        "expiry_alerts": expiry_alerts
     })
 
 # --- [라우트] 로그인 페이지 (화면만) ---

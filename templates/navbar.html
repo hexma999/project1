@@ -1,8 +1,19 @@
-<div class="container nav-bar-wrapper">
+<!--
+  navbar.html
+  - 강아지/고양이/새 카테고리 버튼(상단 버튼창)
+  - 각 버튼은 Bootstrap dropdown으로 하위 메뉴(사료/간식/장난감...)를 보여줌
+  - id="navDog/navCat/navBird" 는 "유통기한 말풍선"의 anchor(붙는 기준점)로도 사용됨
+    (main.html JS에서 data-anchor="navDog" 같은 방식으로 참조)
+-->
+
+<div class="container-fluid nav-bar-wrapper">
   <div class="nav-bar">
-    <nav
-      class="navbar navbar-expand-lg navbar-light p-0 justify-content-center"
-    >
+    <nav class="navbar navbar-expand navbar-light p-0 justify-content-center">
+      <!--
+        (참고) navbar-toggler / collapse는 원래 "모바일에서 접기"용
+        현재 main.html CSS에서 collapse를 강제로 display:block 처리하는 방식이라
+        실제로는 항상 펼쳐진 상태가 되기 쉬움
+      -->
       <button
         class="navbar-toggler mb-2"
         type="button"
@@ -15,12 +26,17 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div
-        class="collapse navbar-collapse justify-content-center"
-        id="navbarNav"
-      >
-        <ul class="navbar-nav">
+      <!-- 카테고리 버튼(강/고/새) 레일 -->
+      <div class="navbar-collapse justify-content-center" id="navbarNav">
+        <ul class="navbar-nav category-rail">
+
+          <!-- ================== 1) 강아지 ================== -->
           <li class="nav-item dropdown">
+            <!--
+              id="navDog"
+              - (중요) 말풍선 anchor로도 쓰이는 id
+              - data-toggle="dropdown" : Bootstrap dropdown 트리거
+            -->
             <a
               class="nav-link dropdown-toggle"
               href="#"
@@ -32,28 +48,22 @@
             >
               <i class="fas fa-dog text-danger"></i> 강아지
             </a>
+
+            <!--
+              aria-labelledby="navDog"
+              - 이 드롭다운이 어떤 버튼(id)을 기준으로 열리는지 명시
+            -->
             <div class="dropdown-menu" aria-labelledby="navDog">
-              <a class="dropdown-item" href="/products?category=dog&sub=food"
-                >🍚 사료</a
-              >
-              <a class="dropdown-item" href="/products?category=dog&sub=snack"
-                >🍪 간식</a
-              >
-              <a class="dropdown-item" href="/products?category=dog&sub=toy"
-                >🎉 장난감</a
-              >
-              <a class="dropdown-item" href="/products?category=dog&sub=house"
-                >🏛 집</a
-              >
-              <a class="dropdown-item" href="/products?category=dog&sub=clothes"
-                >👚 옷</a
-              >
-              <a class="dropdown-item" href="/products?category=dog&sub=etc"
-                >🧼 기타</a
-              >
+              <a class="dropdown-item" href="/products?category=dog&sub=food">🍚 사료</a>
+              <a class="dropdown-item" href="/products?category=dog&sub=snack">🍪 간식</a>
+              <a class="dropdown-item" href="/products?category=dog&sub=toy">🎉 장난감</a>
+              <a class="dropdown-item" href="/products?category=dog&sub=house">🏛 집</a>
+              <a class="dropdown-item" href="/products?category=dog&sub=clothes">👚 옷</a>
+              <a class="dropdown-item" href="/products?category=dog&sub=etc">🧼 기타</a>
             </div>
           </li>
 
+          <!-- ================== 2) 고양이 ================== -->
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -66,32 +76,24 @@
             >
               <i class="fas fa-cat text-warning"></i> 고양이
             </a>
+
+            <!-- ✅ 여기 오타 있음: aria-labelledby="navBird" → "navCat" 권장 -->
             <div class="dropdown-menu" aria-labelledby="navCat">
-              <a class="dropdown-item" href="/products?category=cat&sub=food"
-                >🍚 사료</a
-              >
-              <a class="dropdown-item" href="/products?category=cat&sub=snack"
-                >🍪 간식</a
-              >
-              <a class="dropdown-item" href="/products?category=cat&sub=toy"
-                >📿 장난감</a
-              >
-              <a class="dropdown-item" href="/products?category=cat&sub=house"
-                >🏛 하우스</a
-              >
-              <a class="dropdown-item" href="/products?category=cat&sub=clothes"
-                >👚 옷</a
-              >
-              <a class="dropdown-item" href="/products?category=cat&sub=etc"
-                >🧼 기타</a
-              >
+              <a class="dropdown-item" href="/products?category=cat&sub=food">🍚 사료</a>
+              <a class="dropdown-item" href="/products?category=cat&sub=snack">🍪 간식</a>
+              <a class="dropdown-item" href="/products?category=cat&sub=toy">📿 장난감</a>
+              <a class="dropdown-item" href="/products?category=cat&sub=house">🏛 하우스</a>
+              <a class="dropdown-item" href="/products?category=cat&sub=clothes">👚 옷</a>
+              <a class="dropdown-item" href="/products?category=cat&sub=etc">🧼 기타</a>
             </div>
           </li>
+
+          <!-- ================== 3) 새 ================== -->
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
               href="#"
-              id="navCat"
+              id="navBird"
               role="button"
               data-toggle="dropdown"
               aria-haspopup="true"
@@ -99,35 +101,18 @@
             >
               <i class="fas fa-crow text-success"></i> 새
             </a>
-            <div class="dropdown-menu" aria-labelledby="navCat">
-              <a
-                class="dropdown-item"
-                href="/products?category=bird&sub=bird_food"
-                >🍚 먹이</a
-              >
-              <a class="dropdown-item" href="/products?category=bird&sub=snack"
-                >🍪 간식</a
-              >
-              <a
-                class="dropdown-item"
-                href="/products?category=bird&sub=bird_house"
-                >🏛 새장</a
-              >
-              <a
-                class="dropdown-item"
-                href="/products?category=bird&sub=bird_item"
-                >📿 용품</a
-              >
-              <a
-                class="dropdown-item"
-                href="/products?category=bird&sub=bird_alpha"
-                >👚 영양/치료제</a
-              >
-              <a class="dropdown-item" href="/products?category=bird&sub=etc"
-                >🧼 기타</a
-              >
+
+            <!-- ✅ 여기 오타 있음: aria-labelledby="navCat" → "navBird" 권장 -->
+            <div class="dropdown-menu" aria-labelledby="navBird">
+              <a class="dropdown-item" href="/products?category=bird&sub=bird_food">🍚 먹이</a>
+              <a class="dropdown-item" href="/products?category=bird&sub=snack">🍪 간식</a>
+              <a class="dropdown-item" href="/products?category=bird&sub=bird_house">🏛 새장</a>
+              <a class="dropdown-item" href="/products?category=bird&sub=bird_item">📿 용품</a>
+              <a class="dropdown-item" href="/products?category=bird&sub=bird_alpha">👚 영양/치료제</a>
+              <a class="dropdown-item" href="/products?category=bird&sub=etc">🧼 기타</a>
             </div>
           </li>
+
         </ul>
       </div>
     </nav>

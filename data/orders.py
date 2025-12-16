@@ -141,3 +141,62 @@ def get_order_detail(db: Session, order_id: int):
     order_dict["order_items"] = safe_items
     
     return order_dict
+
+# 4. 유통기한 알림 데이터 조회
+def get_expiry_alerts(db: Session, user_id: int):
+    """
+    사용자가 구매한 상품 중 유통기한이 임박하거나 지난 상품을 카테고리별로 반환
+    """
+    from datetime import datetime, timedelta
+    
+    # 주문 아이템에서 상품 정보와 함께 조회 (최근 구매 기준)
+    sql = """
+        SELECT 
+            oi.product_id,
+            p.name AS product_name,
+            p.expiration_days,
+            c.main_type AS category,
+            MAX(o.created_at) AS last_purchased_at
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id
+        JOIN products p ON oi.product_id = p.id
+        JOIN categories c ON p.category_id = c.id
+        WHERE o.user_id = :uid 
+          AND p.expiration_days IS NOT NULL
+          AND p.expiration_days > 0
+        GROUP BY oi.product_id, p.name, p.expiration_days, c.main_type
+        ORDER BY last_purchased_at DESC
+    """
+    
+    rows = db.execute(text(sql), {"uid": user_id}).fetchall()
+    
+    # 카테고리별로 분류
+    alerts = {"dog": [], "cat": [], "bird": []}
+    now = datetime.now()
+    
+    for row in rows:
+        category = row.category.lower() if row.category else "dog"
+        if category not in alerts:
+            continue
+            
+        # 유통기한 계산
+        purchased_at = row.last_purchased_at
+        expiry_date = purchased_at + timedelta(days=row.expiration_days)
+        days_diff = (expiry_date - now).days
+        
+        # 15일 이내 또는 이미 지난 경우만 알림
+        if days_diff <= 15:
+            alerts[category].append({
+                "product_id": row.product_id,
+                "product_name": row.product_name,
+                "expiration_days": row.expiration_days,
+                "purchased_at": purchased_at,
+                "display_days": abs(days_diff),
+                "status": "over" if days_diff < 0 else "remaining"
+            })
+    
+    # 각 카테고리별로 최대 5개까지만, 급한 순서대로 정렬
+    for cat in alerts:
+        alerts[cat] = sorted(alerts[cat], key=lambda x: (x["status"] == "remaining", x["display_days"]))[:5]
+    
+    return alerts

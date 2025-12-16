@@ -14,101 +14,595 @@
     <link href="/static/css/common.css" rel="stylesheet" />
 
     <style>
-      /* --- [메인 페이지 전용 스타일] --- */
+    /* =============================================================
+       0) Global reset + CSS variables
+    ============================================================= */
+    :root{
+      --stickyTopH: 0px;
+      --bubbleGap: 12px;
+    }
 
-      /* 1. 캐러셀 배너 */
-      .carousel-container {
-        margin-top: 30px;
-        margin-bottom: 50px;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-      }
-      .carousel-item {
-        height: 350px;
-        background-color: #000;
-      }
-      .carousel-item img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        opacity: 0.7;
-      }
-      .carousel-caption {
-        bottom: 50%;
-        transform: translateY(50%);
-        text-align: center;
-        /* text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7); */
-      }
-      /* 2. 제목 그림자 강화 */
-      .banner-title {
-        font-size: 3rem;
-        font-weight: 800;
-        margin-bottom: 15px;
-        color: #fff;
-        /* ▼ 진하고 선명한 그림자 추가 ▼ */
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.7);
-      }
+    html, body{ margin:0; padding:0; }
+    body{ padding-top: var(--stickyTopH); } 
 
-      /* 3. 본문 그림자 강화 */
-      .banner-text {
-        font-size: 1.3rem;
-        margin-bottom: 30px;
-        color: #fff; /* 흰색 글씨로 고정 */
-        font-weight: 600; /* 글자 두께를 좀 더 두껍게 */
-        /* ▼ 진하고 선명한 그림자 추가 ▼ */
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
-      }
-      .btn-banner {
-        background: #e74c3c;
-        color: white;
-        padding: 12px 35px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        border-radius: 50px;
-        border: none;
-        transition: 0.3s;
-      }
-      .btn-banner:hover {
-        background: #c0392b;
-        transform: scale(1.05);
-        color: white;
-        text-decoration: none;
-      }
+    /* =============================================================
+       [추가 수정 1] 장바구니 버튼 위치 강제 조정 (수정됨)
+       - bottom: auto를 추가하여 하단 고정 속성을 무력화시킵니다.
+       - ID나 클래스를 확실하게 잡기 위해 선택자를 여러 개 나열했습니다.
+    ============================================================= */
+    .cart-floating, 
+    .cart-btn-wrapper, 
+    #cart-floating,
+    div[class*="cart-floating"] { /* 'cart-floating'이 포함된 모든 클래스 선택 */
+      
+      position: fixed !important;
+      
+      /* ✅ 위치 조정은 이 숫자를 바꾸세요 (PC 기준) */
+      top: 230px !important; 
+      
+      /* 중요: 기존의 하단 고정 속성을 풀어줘야 top이 먹힙니다 */
+      bottom: auto !important; 
+      
+      z-index: 60000 !important; 
+    }
 
-      /* 2. 섹션 헤더 (MD 추천 상품 등) - common.css에서 이동됨 */
-      /* .section-header {
-        text-align: center;
-        margin-bottom: 50px;
-        position: relative;
+    /* =============================================================
+       1) Sticky header container (#stickyTop)
+    ============================================================= */
+    #stickyTop{
+      position: fixed;
+      top: 15px; 
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1140px; 
+      z-index: 50000;
+      background: transparent !important; 
+      overflow: visible !important;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #stickyTop > *{ margin: 0 !important; }
+
+    #stickyTop .nav-bar-wrapper,
+    #stickyTop .nav-bar,
+    #stickyTop nav,
+    #stickyTop nav.navbar{
+      margin: 0 !important;
+      padding: 0 !important;
+      position: static !important;
+      top: auto !important;
+      transform: none !important;
+    }
+
+    /* 헤더 바: 위쪽 둥글게 */
+    #stickyTop .header-bar{
+      position: relative !important;
+      z-index: 2 !important;
+      overflow: visible !important;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+      width: 100% !important;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
+    /* 메뉴 바: 아래쪽 둥글게 */
+    #stickyTop .nav-bar-wrapper{
+      position: relative !important;
+      z-index: 1 !important;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 0 0 20px 20px;
+      border-top: none !important;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    
+    #stickyTop .nav-bar {
+      border-radius: 0 0 20px 20px; 
+      background: transparent !important;
+      box-shadow: none !important;
+      border-bottom: none !important;
+    }
+
+    #stickyTop .header-bar .dropdown-menu{
+      z-index: 9999 !important;
+    }
+
+    /* 반응형 너비 조절 */
+    @media (max-width: 1199px) { #stickyTop { max-width: 960px; } }
+    @media (max-width: 991px)  { #stickyTop { max-width: 720px; } }
+    @media (max-width: 767px)  { 
+      #stickyTop { 
+        max-width: 100%; 
+        top: 0; 
+        border-radius: 0; 
       }
-      .section-title {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #333;
-        display: inline-block;
-        position: relative;
-        padding-bottom: 15px;
+      #stickyTop .header-bar { border-radius: 0; }
+      #stickyTop .nav-bar-wrapper { border-radius: 0 0 15px 15px; }
+      
+      /* ✅ 모바일에서의 장바구니 버튼 위치 (숫자 조정) */
+      .cart-floating, 
+      .cart-btn-wrapper, 
+      #cart-floating,
+      div[class*="cart-floating"] {
+        top: 100px !important;     /* 모바일에서 원하는 높이 */
+        bottom: auto !important;   /* 중요 */
       }
-      .section-title::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 50px;
-        height: 4px;
-        background: #e74c3c;
-        border-radius: 2px;
-        transform: translateX(-50%);
-        transition: width 0.3s;
+    }
+
+
+    /* =============================================================
+       2) Header row (logo / search / menu)
+    ============================================================= */
+    #stickyTop .header-bar .logo{
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    #stickyTop .header-bar .logo .logo-text{
+      font-size: 22px; 
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    #stickyTop .header-bar form,
+    #stickyTop .header-bar .search-form,
+    #stickyTop .header-bar .search-box,
+    #stickyTop .header-bar .search-container{
+      flex: 1 1 auto !important;
+      min-width: 220px !important;
+      max-width: 560px !important;
+    }
+
+    #stickyTop .header-bar .dropdown,
+    #stickyTop .header-bar .menu-wrapper,
+    #stickyTop .header-bar .header-nav{
+      flex: 0 0 auto !important;
+    }
+
+    @media (max-width: 700px){
+      #stickyTop .header-bar .logo .logo-text{ display: none !important; }
+    }
+
+    @media (max-width: 900px){
+      #stickyTop .header-bar .container,
+      #stickyTop .header-bar .container-fluid{
+        width: 100% !important;
+        margin: 0 auto !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 12px !important;
       }
-      .section-header:hover .section-title::after {
-        width: 100px;
-      } */
+    }
+
+
+    /* =============================================================
+       3) Navbar (강아지/고양이/새)
+    ============================================================= */
+    .nav-bar{ display:block !important; }
+
+    .nav-bar-wrapper .navbar-collapse,
+    .nav-bar-wrapper .navbar-collapse.collapse{
+      display: block !important;
+      height: auto !important;
+      visibility: visible !important;
+      overflow: visible !important;
+    }
+
+    .nav-bar-wrapper .navbar-nav{
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      justify-content: center !important;
+      white-space: nowrap;
+      gap: 10px;
+      padding: 4px 10px !important;
+      margin: 0;
+      overflow: visible !important;
+    }
+
+    .nav-bar-wrapper .navbar-nav .nav-item{ flex: 0 0 auto; }
+
+    .nav-bar-wrapper .nav-link{
+      padding: 6px 14px !important;
+      font-size: 14px !important;
+      line-height: 1.1 !important;
+      padding-bottom: 12px !important;
+      position: relative;
+      white-space: nowrap;
+    }
+    .nav-bar-wrapper .nav-link i{ margin-right: 4px; }
+
+    .nav-bar-wrapper .nav-link::after{
+      content: "" !important;
+      position: absolute !important;
+      left: 10px !important;
+      right: 10px !important;
+      bottom: 4px !important;
+      height: 2px !important;
+      transform: none !important;
+    }
+
+    .nav-bar-wrapper .dropdown-menu{ z-index: 9999 !important; }
+
+    @media (max-width: 680px){
+      .nav-bar-wrapper{ padding: 6px 0 !important; }
+      .nav-bar-wrapper .navbar-nav{
+        gap: 10px !important;
+        padding: 4px 10px !important;
+        justify-content: center !important;
+      }
+      .nav-bar-wrapper .nav-link{
+        padding: 6px 14px !important;
+        font-size: 14px !important;
+        padding-bottom: 12px !important;
+      }
+    }
+
+
+    /* =============================================================
+       4) Expiry bubbles (말풍선)
+    ============================================================= */
+    .expiry-bubble{
+      position: fixed;
+      width: 210px;
+      max-width: 88vw;
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      padding: 10px 10px 8px;
+      z-index: 2000;
+      display: none;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .expiry-bubble .bubble-title{ font-weight:800; margin-bottom:8px; }
+    .expiry-remaining{ color:#6f42c1; font-weight:800; }
+    .expiry-over{ color:#dc3545; font-weight:800; }
+
+    .bubble-pointer{
+      position:absolute;
+      width:0; height:0;
+      border-left:10px solid transparent;
+      border-right:10px solid transparent;
+      border-bottom:10px solid #fff3cd;
+      top:-10px; left:18px;
+    }
+
+    .expiry-bubble .bubble-actions{
+      display:flex;
+      gap:8px;
+      margin-top:10px;
+      align-items:stretch;
+      flex-wrap: nowrap;
+    }
+
+    .expiry-bubble .bubble-actions > a,
+    .expiry-bubble .bubble-actions > button{
+      min-height: 9px;
+      padding: 1px 3px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+      overflow-wrap: normal !important;
+      font-size: 11px;
+      line-height: 1;
+      border-radius: 8px;
+    }
+
+    .bubble-btn-buy-top{ flex:5; }
+    .bubble-btn-toggle{  flex:4; }
+
+    .bubble-close-square{
+      flex:1;
+      aspect-ratio: 1 / 1;
+      min-width: 22px;
+      min-height: 22px;
+      padding: 0;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.25);
+      background:#fff;
+      cursor:pointer;
+      font-size: 16px;
+    }
+
+    .bubble-btn-buy-top,
+    .bubble-btn-buy{
+      background:#ff8a00 !important;
+      border:1px solid #ff8a00 !important;
+      color:#fff !important;
+    }
+    .bubble-btn-buy-top:hover,
+    .bubble-btn-buy:hover{
+      background:#111 !important;
+      border-color:#111 !important;
+    }
+
+    .bubble-btn-toggle{
+      background: transparent !important;
+      border: 1px solid #ff8a00 !important;
+      color: #ff8a00 !important;
+      font-weight:700;
+    }
+    .bubble-btn-toggle:hover{ background: rgba(255,138,0,0.08) !important; }
+
+    .bubble-list{
+      display:none;
+      margin-top:8px;
+      padding-top:8px;
+      border-top:1px dashed rgba(0,0,0,0.2);
+      max-height:250px;
+      overflow:auto;
+    }
+
+    .bubble-list > div > div:first-child{
+      margin-bottom: 6px; 
+    }
+
+    .bubble-list .bubble-btn-buy{
+      padding: 1px 6px !important;
+      font-size: 11px !important;
+      line-height: 1.2 !important;
+      border-radius: 7px !important;
+    }
+
+    .expiry-bubble.in-rail{
+      position: static !important;
+      display:block !important;
+      flex: 0 0 auto;
+      align-self:flex-start;
+    }
+    .expiry-bubble.in-rail .bubble-pointer{ display:none; }
+    .expiry-bubble.is-closed,
+    .expiry-bubble.in-rail.is-closed{ display:none !important; }
+
+
+    /* =============================================================
+       [추가 수정 2] Expiry bubble rail (모바일/좁은 폭 레일)
+       - justify-content를 center에서 flex-start로 변경하여
+         스크롤 시 왼쪽이 잘리지 않도록 함
+    ============================================================= */
+    .expiry-bubble-rail{
+      display:none;
+      position: fixed;
+      left:0; right:0;
+      top: calc(var(--stickyTopH) + var(--bubbleGap));
+      z-index: 2500; 
+      
+      /* 좌우 여백을 충분히 주어 스크롤 시작점 확보 */
+      padding: 0 20px; 
+      gap: 12px;
+      
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+      
+      /* 중요: 스크롤 시 왼쪽 잘림 방지를 위해 flex-start 사용 */
+      justify-content: flex-start; 
+      align-items: flex-start;
+    }
+
+
+    /* =============================================================
+       6) Main carousel / banner styles
+    ============================================================= */
+    .carousel-container{
+      margin-top: 30px;
+      margin-bottom: 50px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    .carousel-item{
+      height: 350px;
+      background-color: #000;
+    }
+    .carousel-item img{
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      opacity: 0.7;
+    }
+    .carousel-caption{
+      bottom: 50%;
+      transform: translateY(50%);
+      text-align: center;
+    }
+    .banner-title{
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.7);
+    }
+    .banner-text{
+      font-size: 1.3rem;
+      margin-bottom: 30px;
+      color: #fff;
+      font-weight: 600;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+    }
+    .btn-banner{
+      background: #e74c3c;
+      color: white;
+      padding: 12px 35px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 50px;
+      border: none;
+      transition: 0.3s;
+    }
+    .btn-banner:hover{
+      background: #c0392b;
+      transform: scale(1.05);
+      color: white;
+      text-decoration: none;
+    }
     </style>
+
+
   </head>
   <body>
-    {% include "header.html" %} {% include "navbar.html" %}
+    <div id="stickyTop">
+      {% include "header.html" %}
+      {% include "navbar.html" %}
+    </div>
+
+    <!-- 모바일에서만 보이는 말풍선 좌우 스크롤 레일 -->
+    <div id="expiryBubbleRail" class="expiry-bubble-rail" aria-label="유통기한 알림 레일"></div>
+
+    <!-- PC에서 말풍선을 다시 붙여둘 “거치대”(숨기지 마세요) -->
+    <div id="expiryBubbleMount" class="expiry-bubble-mount" aria-hidden="true"></div>
+
+    <!-- [NEW] 유통기한 말풍선 알림 -->
+    {% if username %}
+    {% set dog_items = expiry_alerts.get('dog', []) %}
+    {% set cat_items = expiry_alerts.get('cat', []) %}
+    {% set bird_items = expiry_alerts.get('bird', []) %}
+
+    {% if dog_items|length > 0 %}
+    <div id="expiryBubbleDog" class="expiry-bubble" data-anchor="navDog" data-category="dog">
+      <div class="bubble-pointer"></div>
+      <div class="bubble-title">🐶 {{ dog_items[0].product_name }}</div>
+      <div>
+        {% if dog_items[0].status == 'over' %}
+          약 {{ dog_items[0].display_days }}일 <span class="expiry-over">초과</span>
+        {% else %}
+          약 {{ dog_items[0].display_days }}일 <span class="expiry-remaining">잔여</span>
+        {% endif %}
+      </div>
+
+      <div class="bubble-actions">
+        <a class="btn btn-sm bubble-btn-buy bubble-btn-buy-top"
+          href="/products/{{ dog_items[0].product_id }}">재구매</a>
+
+        <button class="btn btn-sm bubble-btn-toggle"
+                onclick="toggleBubbleList('dog', this)">모두보기</button>
+
+        <button class="bubble-close-square"
+                onclick="closeBubble('dog')" aria-label="close">✕</button>
+      </div>
+
+
+      <div id="bubbleList-dog" class="bubble-list">
+        {% for it in dog_items %}
+          <div style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.08);">
+            <div style="font-weight:700;">{{ it.product_name }}</div>
+            <div>
+              {% if it.status == 'over' %}
+                약 {{ it.display_days }}일 <span class="expiry-over">초과</span>
+              {% else %}
+                약 {{ it.display_days }}일 <span class="expiry-remaining">잔여</span>
+              {% endif %}
+              <a class="btn btn-sm bubble-btn-buy" style="float:right; padding:2px 8px;"
+                 href="/products/{{ it.product_id }}">재구매</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+    {% endif %}
+
+      {% if cat_items|length > 0 %}
+      <div id="expiryBubbleCat" class="expiry-bubble" data-anchor="navCat" data-category="cat">
+        <div class="bubble-pointer"></div>
+        <div class="bubble-title">🐱 {{ cat_items[0].product_name }}</div>
+        <div>
+          {% if cat_items[0].status == 'over' %}
+            약 {{ cat_items[0].display_days }}일 <span class="expiry-over">초과</span>
+          {% else %}
+            약 {{ cat_items[0].display_days }}일 <span class="expiry-remaining">잔여</span>
+          {% endif %}
+        </div>
+
+        <div class="bubble-actions">
+          <a class="btn btn-sm bubble-btn-buy bubble-btn-buy-top"
+            href="/products/{{ cat_items[0].product_id }}">재구매</a>
+
+          <button class="btn btn-sm bubble-btn-toggle"
+                  onclick="toggleBubbleList('cat', this)">모두보기</button>
+
+          <button class="bubble-close-square"
+                  onclick="closeBubble('cat')" aria-label="close">✕</button>
+        </div>
+
+        <div id="bubbleList-cat" class="bubble-list">
+          {% for it in cat_items %}
+            <div style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.08);">
+              <div style="font-weight:700;">{{ it.product_name }}</div>
+              <div>
+                {% if it.status == 'over' %}
+                  약 {{ it.display_days }}일 <span class="expiry-over">초과</span>
+                {% else %}
+                  약 {{ it.display_days }}일 <span class="expiry-remaining">잔여</span>
+                {% endif %}
+                <a class="btn btn-sm bubble-btn-buy" style="float:right; padding:2px 8px;"
+                  href="/products/{{ it.product_id }}">재구매</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+      </div>
+      {% endif %}
+
+      {% if bird_items|length > 0 %}
+      <div id="expiryBubbleBird" class="expiry-bubble" data-anchor="navBird" data-category="bird">
+        <div class="bubble-pointer"></div>
+        <div class="bubble-title">🐦 {{ bird_items[0].product_name }}</div>
+        <div>
+          {% if bird_items[0].status == 'over' %}
+            약 {{ bird_items[0].display_days }}일 <span class="expiry-over">초과</span>
+          {% else %}
+            약 {{ bird_items[0].display_days }}일 <span class="expiry-remaining">잔여</span>
+          {% endif %}
+        </div>
+
+        <div class="bubble-actions">
+          <a class="btn btn-sm bubble-btn-buy bubble-btn-buy-top"
+            href="/products/{{ bird_items[0].product_id }}">재구매</a>
+
+          <button class="btn btn-sm bubble-btn-toggle"
+                  onclick="toggleBubbleList('bird', this)">모두보기</button>
+
+          <button class="bubble-close-square"
+                  onclick="closeBubble('bird')" aria-label="close">✕</button>
+        </div>
+
+        <div id="bubbleList-bird" class="bubble-list">
+          {% for it in bird_items %}
+            <div style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.08);">
+              <div style="font-weight:700;">{{ it.product_name }}</div>
+              <div>
+                {% if it.status == 'over' %}
+                  약 {{ it.display_days }}일 <span class="expiry-over">초과</span>
+                {% else %}
+                  약 {{ it.display_days }}일 <span class="expiry-remaining">잔여</span>
+                {% endif %}
+                <a class="btn btn-sm bubble-btn-buy" style="float:right; padding:2px 8px;"
+                  href="/products/{{ it.product_id }}">재구매</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+      </div>
+      {% endif %}
+    {% endif %}
+    <!-- #============================== -->
 
     <div class="container">
       <div class="carousel-container">
@@ -296,5 +790,254 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <div id="expiryBubbleMount" class="expiry-bubble-mount" aria-hidden="true"></div>
+
+    {% include "cart_floating.html" %}
+
+    <script>
+      // ===============================
+      // [NEW] PC: 앵커 기준 fixed 배치
+      //       Mobile: rail(좌우 스크롤)로 이동
+      // ===============================
+
+      function isMobile() {
+        return window.matchMedia("(max-width: 680px)").matches;
+      }
+
+      function toggleBubbleList(category, btn) {
+        const el = document.getElementById(`bubbleList-${category}`);
+        if (!el) return;
+
+        const opening = el.style.display !== "block";
+        el.style.display = opening ? "block" : "none";
+
+        // 버튼 텍스트도 같이 토글
+        if (btn) btn.textContent = opening ? "감추기" : "모두보기";
+
+        setupExpiryBubbles();
+      }
+
+      function closeBubble(category) {
+        const bubble = document.getElementById(
+          `expiryBubble${category[0].toUpperCase() + category.slice(1)}`
+        );
+        if (!bubble) return;
+
+        bubble.classList.add("is-closed");   // ✅ 핵심: 닫힘 상태 표시
+        bubble.style.display = "none";       // 즉시 숨김(체감용)
+        setupExpiryBubbles(); // ✅ 레일/PC 배치 즉시 갱신
+        
+      }
+
+      function positionBubble(bubbleId, anchorId) {
+        const bubble = document.getElementById(bubbleId);
+        const anchor = document.getElementById(anchorId);
+        if (!bubble || !anchor) return;
+
+        // ✅ 닫힌 말풍선이면 다시 열지 않음
+        if (bubble.classList.contains("is-closed")) return;
+
+        const rect = anchor.getBoundingClientRect();
+        if (!rect || rect.width === 0 || rect.height === 0) {
+          bubble.style.display = "none";
+          return;
+        }
+
+        bubble.style.display = "block";
+        bubble.style.position = "fixed";
+
+        const top = rect.bottom + 8;
+        let left = rect.left;
+
+        const w = bubble.offsetWidth || 280;
+        const maxLeft = window.innerWidth - w - 10;
+        if (left > maxLeft) left = maxLeft;
+        if (left < 10) left = 10;
+
+        bubble.style.top = `${top}px`;
+        bubble.style.left = `${left}px`;
+      }
+
+      function positionAllBubbles() {
+        const configs = [
+          { bubbleId: "expiryBubbleDog",  anchorId: "navDog"  },
+          { bubbleId: "expiryBubbleCat",  anchorId: "navCat"  },
+          { bubbleId: "expiryBubbleBird", anchorId: "navBird" },
+        ];
+
+        // 1) 표시 대상만 수집
+        const items = configs.map(c => {
+          const bubble = document.getElementById(c.bubbleId);
+          const anchor = document.getElementById(c.anchorId);
+          return { ...c, bubble, anchor };
+        }).filter(x => x.bubble && x.anchor && x.bubble.style.display !== "none");
+
+        if (items.length === 0) return;
+
+        // 2) top 기준: anchor들의 bottom 중 최대값 + 8px
+        const bottoms = items.map(x => x.anchor.getBoundingClientRect().bottom);
+        const top = Math.max(...bottoms) + 8;
+
+        // 3) 먼저 표시해서 width 측정 가능하게
+        items.forEach(x => {
+          x.bubble.style.display = "block";
+          x.bubble.style.position = "fixed";
+          x.bubble.style.top = `${top}px`;
+        });
+
+        const vw = window.innerWidth;
+        const margin = 10;
+
+        // 4) width + anchor center 계산 후 center 기준 정렬
+        const measured = items.map(x => {
+          const a = x.anchor.getBoundingClientRect();
+          const w = x.bubble.getBoundingClientRect().width || 280;
+          const center = a.left + a.width / 2;
+          return { ...x, w, center, left: 0 };
+        }).sort((a,b) => a.center - b.center);
+
+        // 말풍선 간격(폭의 5% 근사)
+        const avgW = measured.reduce((s,i)=>s+i.w,0) / measured.length;
+        const gap = Math.round(Math.max(10, Math.min(24, avgW * 0.05)));
+
+        // 5) center 기준으로 초기 left 설정
+        measured.forEach(it => {
+          it.left = Math.round(it.center - it.w/2);
+          it.left = Math.max(margin, Math.min(it.left, vw - margin - it.w));
+        });
+
+        // 6) 겹침 방지: 왼쪽→오른쪽으로 밀기
+        for (let i=1; i<measured.length; i++){
+          const prev = measured[i-1];
+          const cur  = measured[i];
+          const minLeft = prev.left + prev.w + gap;
+          if (cur.left < minLeft) cur.left = minLeft;
+        }
+
+        // 7) 오른쪽 넘치면 전체를 왼쪽으로 당김
+        const last = measured[measured.length-1];
+        const overflow = (last.left + last.w) - (vw - margin);
+        if (overflow > 0){
+          measured.forEach(it => it.left -= overflow);
+        }
+
+        // 8) 그룹을 화면 가운데로 정렬(가능한 범위 내)
+        const groupLeft  = measured[0].left;
+        const groupRight = measured[measured.length-1].left + measured[measured.length-1].w;
+        const groupW = groupRight - groupLeft;
+        const targetLeft = Math.round((vw - groupW) / 2);
+
+        let delta = targetLeft - groupLeft;
+        const minDelta = margin - groupLeft;
+        const maxDelta = (vw - margin) - groupRight;
+        delta = Math.max(minDelta, Math.min(maxDelta, delta));
+        measured.forEach(it => it.left += delta);
+
+        // 9) 적용
+        measured.forEach(it => {
+          it.bubble.style.left = `${it.left}px`;
+        });
+      }
+
+
+      document.addEventListener("DOMContentLoaded", () => {
+        updateStickyTopHeight();
+        // 폰트/이미지 로딩으로 높이가 늦게 변하는 경우 한 번 더
+        setTimeout(updateStickyTopHeight, 50);
+        setTimeout(() => { updateStickyTopHeight(); positionAllBubbles(); }, 200);
+      });
+
+      window.addEventListener("resize", () => {
+        updateStickyTopHeight();
+        positionAllBubbles();
+      });
+
+
+
+
+      // #======================================
+      function shouldUseRail(visibleCount) {
+        // 말풍선 폭(240) + gap(12) + 좌우 padding(24) 대략 계산
+        const total = visibleCount * 240 + Math.max(0, visibleCount - 1) * 12 + 24;
+        return isMobile() || total > window.innerWidth;
+      }
+
+      function updateStickyTopHeight(){
+        const sticky = document.getElementById("stickyTop");
+        if (!sticky) return;
+        const h = sticky.offsetHeight || 0;
+        document.documentElement.style.setProperty("--stickyTopH", `${h}px`);
+      }
+
+      function setupExpiryBubbles() {
+        updateStickyTopHeight();
+
+        const mount = document.getElementById("expiryBubbleMount");
+        const rail  = document.getElementById("expiryBubbleRail");
+
+        const bubbles = [
+          document.getElementById("expiryBubbleDog"),
+          document.getElementById("expiryBubbleCat"),
+          document.getElementById("expiryBubbleBird"),
+        ].filter(Boolean);
+
+        // ✅ “닫힌 말풍선” 제외하고만 레일/배치에 사용
+        const openBubbles = bubbles.filter(b => !b.classList.contains("is-closed"));
+
+        const useRail = shouldUseRail(openBubbles.length);
+
+        if (useRail) {
+          if (mount) mount.style.display = "none";
+          if (rail)  rail.style.display  = "flex";
+
+          openBubbles.forEach(b => {
+            rail.appendChild(b);
+
+            // ✅ 레일 모드 클래스 부여(중요)
+            b.classList.add("in-rail");
+
+            // 레일에서는 static
+            b.style.position = "static";
+            b.style.left = "";
+            b.style.top  = "";
+            b.style.display = "block";
+          });
+
+        } else {
+          if (mount) mount.style.display = "block";
+          if (rail)  rail.style.display  = "none";
+
+          // PC 배치 모드: 원래 mount에 붙이고 positionAllBubbles로 좌표 계산
+          bubbles.forEach(b => {
+            mount.appendChild(b);
+
+            b.classList.remove("in-rail");
+
+            if (b.classList.contains("is-closed")) {
+              b.style.display = "none";
+            } else {
+              b.style.display = "block";
+              b.style.position = "fixed";
+            }
+          });
+
+          positionAllBubbles();
+        }
+      }
+
+
+      window.addEventListener("load", () => {
+        updateStickyTopHeight();
+        setupExpiryBubbles();
+      });
+      window.addEventListener("resize", () => {
+        updateStickyTopHeight();
+        setupExpiryBubbles();
+      });
+
+    </script>
+
+
   </body>
 </html>

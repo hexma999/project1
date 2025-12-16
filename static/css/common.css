@@ -291,3 +291,19 @@ body {
   font-weight: 800;
   color: #e74c3c;
 }
+
+/* =========================
+   초소형 화면: 로고 텍스트 숨김 (stickyTop 유무 모두 대응)
+   ========================= */
+@media (max-width: 700px){
+  #stickyTop .header-bar .logo .logo-text,
+  .header-bar .logo .logo-text{
+    display: none !important; /* 🐾는 남고 텍스트만 숨김 */
+  }
+}
+
+/* (선택) 극소폭에서 로고 줄바꿈 방지(세로로 깨지는 현상 방지) */
+#stickyTop .header-bar .logo,
+.header-bar .logo{
+  white-space: nowrap;
+}
