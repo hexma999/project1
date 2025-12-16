@@ -58,7 +58,7 @@ def get_my_orders(db: Session, user_id: int):
     """
     cursor = db.execute(text(sql_orders), {"uid": user_id})
     orders = cursor.fetchall()
-    
+    print(f"get_my_orders user_id:{user_id}");
     result = []
     
     # B. 상세 물품 조회
@@ -69,6 +69,7 @@ def get_my_orders(db: Session, user_id: int):
         LEFT JOIN products p ON oi.product_id = p.id
         LEFT JOIN categories c ON p.category_id = c.id
         WHERE oi.order_id = :oid
+         AND p.name IS NOT NULL
     """
     
     for order in orders:
