@@ -38,11 +38,11 @@ def create_products(db: Session, category_id: str, name: str, price: str, brand:
     db.commit()
 
 
-for a in ['05']:
-# https://www.dogpang.com/shop/goods/goods_list.php?category=002001
+for a in ['01','02', '07', '10', '09', '06']:
+
 # 크롬으로 창 열기
     driver = webdriver.Chrome()
-    driver.get(f'https://www.dogpang.com/shop/goods/goods_list.php?category=0020{a}')
+    driver.get(f'https://www.catpang.com/shop/goods/goods_list.php?category=0010{a}')
     wait = WebDriverWait(driver, 10)
     time.sleep(1)
     boxes = driver.find_elements(By.CLASS_NAME, 'flex-root')
@@ -83,20 +83,16 @@ for a in ['05']:
             element.click()
             # 1.이름
             name = driver.find_elements(By.ID, 'viewName')[0].text
-            print(name)
-
+            
             # 2.가격
             price = driver.find_elements(By.ID, 'cart_total_price_pc')[0].text
             text_price = price.replace(',', '')
             if text_price == '0':
                 text_price = "19900"
-                print(text_price)
-
 
             # 3.이미지
             image_element = driver.find_element(By.ID, 'photo_detail')
             image_url = image_element.get_attribute('src')
-            print(image_url)
 
             # 4.상세정보 가져오기 #content_view_desc > dl:nth-child(1) > dd > font
             detail_elements = driver.find_elements(By.CSS_SELECTOR, 'dl.add-info dt' + ' + dd')
@@ -105,17 +101,15 @@ for a in ['05']:
                 txt = element.text
                 detail_texts.append(txt)
             detail_text = ' | '.join(detail_texts)
-            print(detail_text)
 
             # 5. 디테일 img
             img = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((
                     By.XPATH,
-                    "/html/body/div[5]/div/div[2]/div/div[5]/div/div[1]/img"
+                    "/html/body/div[4]/div/div[2]/div/div[5]/div/div[1]/img"
                 ))
             )
             detail_img_url = img.get_attribute("src")
-            print(detail_img_url)
 
             # 6. 카테고리
             try:
@@ -124,29 +118,26 @@ for a in ['05']:
                 category = a_elems[0].text if a_elems else ''
             except Exception:
                 category = ''
-            print(category)
 
             # 7. 브랜드 명
-            # /html/body/div[5]/div/div[2]/div/div[1]/div[2]/div[1]/a
             brand = driver.find_element(
                 By.XPATH,
-                "/html/body/div[5]/div/div[2]/div/div[1]/div[2]/div[1]/a"
+                "/html/body/div[4]/div/div[2]/div/div[1]/div[2]/div[1]/a"
             ).text
-            print(brand)
             # 카테고리 ID 매핑
             category_id=''
             if category == "사료":
-                category_id = "101"
-            elif category == "간식":
-                category_id = "102"
+                category_id = "201"
+            elif category == "캔/간식":
+                category_id = "202"
             elif category == "장난감":
-                category_id = "103"
-            elif category == "하우스/울타리":
-                category_id = "104"
-            elif category == "의류/악세서리":
-                category_id = "105"
+                category_id = "203"
+            elif category == "하우스/쿠션":
+                category_id = "204"
+            elif category == "스크래쳐/캣타워":
+                category_id = "205"
             else:
-                category_id = "106"
+                category_id = "206"
             initial_stock = "100"
             # 수집 리스트 추가
             data.append({
