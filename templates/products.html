@@ -1,140 +1,103 @@
-<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <title>{{ sub_name }} - 경수오빠못해조</title>
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link href="/static/css/common.css" rel="stylesheet" />
-    <style>
-      /* products.html 전용 추가 스타일 */
-      .category-header {
-        text-align: center;
-        margin: 40px 0 30px;
-        position: relative;
-      }
-      .breadcrumb-badge {
-        background-color: #fff;
-        border: 1px solid #e74c3c;
-        color: #e74c3c;
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 10px;
-        display: inline-block;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
-      }
-      .category-title-text {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #333;
-        margin-top: 5px;
-        text-shadow: 2px 2px 0px #fff;
-      }
-      .no-products-box {
-        background: white;
-        border-radius: 20px;
-        padding: 60px 20px;
-        text-align: center;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-      }
-    </style>
-  </head>
-  <body>
-    {% include "header.html" %} {% include "navbar.html" %}
+{% extends "base.html" %} {% block title %}{{ sub_name }} - 경수오빠못해조{%
+endblock %} {% block css %}
+<style>
+  /* products.html 전용 스타일 */
+  .category-header {
+    text-align: center;
+    margin: 40px 0 30px;
+    position: relative;
+  }
+  .breadcrumb-badge {
+    background-color: #fff;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: inline-block;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  }
+  .category-title-text {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #333;
+    margin-top: 5px;
+    text-shadow: 2px 2px 0px #fff;
+  }
+  .no-products-box {
+    background: white;
+    border-radius: 20px;
+    padding: 60px 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mb-5">
+  <div class="category-header">
+    {% if keyword %}
+    <span class="breadcrumb-badge"
+      ><i class="fas fa-search"></i> 검색 결과</span
+    >
+    <h2 class="category-title-text">"{{ keyword }}"</h2>
+    {% else %}
+    <span class="breadcrumb-badge">
+      {% if category == 'dog' %}🐶 강아지 {% elif category == 'cat' %}🐱 고양이
+      {% elif category == 'bird' %}🐦 새 {% elif category == 'etc' %}🦦 기타
+      동물 {% else %}🐾 전체{% endif %}
+    </span>
+    <h2 class="category-title-text">{{ sub_name }}</h2>
+    {% endif %}
+  </div>
 
-    <div class="container mb-5">
-      <div class="category-header">
-        {% if keyword %}
-        <span class="breadcrumb-badge"
-          ><i class="fas fa-search"></i> 검색 결과</span
-        >
-        <h2 class="category-title-text">"{{ keyword }}"</h2>
-        {% else %}
-        <span class="breadcrumb-badge">
-          {% if category == 'dog' %}🐶 강아지 {% elif category == 'cat' %}🐱
-          고양이 {% elif category == 'bird' %}🐦 새 {% elif category == 'etc'
-          %}🦦 기타 동물 {% else %}🐾 전체{% endif %}
-        </span>
-        <h2 class="category-title-text">{{ sub_name }}</h2>
-        {% endif %}
-      </div>
-
-      <div class="row">
-        {% for product in products %}
-        <div class="col-md-3 mb-4">
+  <div class="row">
+    {% for product in products %}
+    <div class="col-md-3 mb-4">
+      <div
+        class="card product-card"
+        onclick="location.href='/products/{{ product.id }}'"
+      >
+        <div class="card-img-wrapper">
+          <div class="card-badge"><i class="fas fa-heart"></i></div>
+          {% if product.image_url %}
+          <img
+            src="{{ product.image_url }}"
+            alt="{{ product.name }}"
+            class="card-img-top"
+          />
+          {% else %}
           <div
-            class="card product-card"
-            onclick="location.href='/products/{{ product.id }}'"
+            class="d-flex align-items-center justify-content-center h-100 bg-light text-secondary"
           >
-            <div class="card-img-wrapper">
-              <div class="card-badge"><i class="fas fa-heart"></i></div>
-
-              {% if product.image_url %}
-              <img
-                src="{{ product.image_url }}"
-                alt="{{ product.name }}"
-                class="card-img-top"
-              />
-              {% else %}
-              <div
-                class="d-flex align-items-center justify-content-center h-100 bg-light text-secondary"
-              >
-                <i class="fas fa-gift fa-3x"></i>
-              </div>
-              {% endif %}
-            </div>
-
-            <div class="card-body">
-              <h5 class="card-title">{{ product.name }}</h5>
-              <p class="product-price">{{ product.price }}원</p>
-            </div>
+            <i class="fas fa-gift fa-3x"></i>
           </div>
+          {% endif %}
         </div>
-        {% else %}
-        <div class="col-12">
-          <div class="no-products-box">
-            <i
-              class="fas fa-box-open fa-4x text-muted mb-3"
-              style="opacity: 0.5"
-            ></i>
-            <h4 class="font-weight-bold text-secondary">
-              아직 등록된 상품이 없습니다.
-            </h4>
-            <p class="text-muted">
-              더 좋은 상품을 준비 중이니 조금만 기다려주세요! 🚚
-            </p>
-            <a href="/" class="btn btn-outline-danger mt-3"
-              >메인으로 돌아가기</a
-            >
-          </div>
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="product-price">{{ product.price }}원</p>
         </div>
-        {% endfor %}
       </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script>
-      function logout() {
-        fetch("/auth/logout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            window.location.reload();
-          })
-          .catch((error) => console.error("Error:", error));
-      }
-    </script>
-  </body>
-</html>
+    {% else %}
+    <div class="col-12">
+      <div class="no-products-box">
+        <i
+          class="fas fa-box-open fa-4x text-muted mb-3"
+          style="opacity: 0.5"
+        ></i>
+        <h4 class="font-weight-bold text-secondary">
+          아직 등록된 상품이 없습니다.
+        </h4>
+        <p class="text-muted">
+          더 좋은 상품을 준비 중이니 조금만 기다려주세요! 🚚
+        </p>
+        <a href="/" class="btn btn-outline-danger mt-3">메인으로 돌아가기</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

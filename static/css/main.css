@@ -1,0 +1,441 @@
+/* main.css - 메인 페이지 전용 스타일 */
+
+/* 0) Global reset + CSS variables */
+:root {
+  --stickyTopH: 0px;
+  --bubbleGap: 12px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  padding-top: var(--stickyTopH);
+}
+
+/* 장바구니 버튼 위치 조정 (z-index 60000) */
+.cart-floating,
+.cart-btn-wrapper,
+#cart-floating,
+div[class*="cart-floating"] {
+  position: fixed !important;
+  top: 230px !important;
+  bottom: auto !important;
+  z-index: 60000 !important;
+}
+
+/* 1) Sticky header container (#stickyTop) */
+/* 헤더와 네비게이션을 감싸는 컨테이너 */
+#stickyTop {
+  position: fixed;
+  top: 0 !important;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1140px;
+  z-index: 50000;
+  background: transparent !important;
+  overflow: visible !important;
+  display: flex;
+  flex-direction: column;
+  /* 합쳐진 느낌을 주면서 자연스럽게 그림자 연결 */
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.05));
+}
+
+#stickyTop > * {
+  margin: 0 !important;
+}
+
+#stickyTop .nav-bar-wrapper,
+#stickyTop .nav-bar,
+#stickyTop nav,
+#stickyTop nav.navbar {
+  margin: 0 !important;
+  padding: 0 !important;
+  position: static !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+/* 헤더 바: 위쪽 둥글게 */
+#stickyTop .header-bar {
+  position: relative !important;
+  z-index: 2 !important;
+  overflow: visible !important;
+  border-radius: 20px 20px 0 0;
+  /* 개별 그림자 제거 (컨테이너 그림자 사용) */
+  box-shadow: none !important;
+  width: 100% !important;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* 메뉴 바: 아래쪽 둥글게 */
+#stickyTop .nav-bar-wrapper {
+  position: relative !important;
+  z-index: 1 !important;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 0 0 20px 20px;
+  border-top: none !important;
+  /* 개별 그림자 제거 */
+  box-shadow: none !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.05) !important; /* 헤더와 구분선 살짝 추가 */
+}
+
+#stickyTop .nav-bar {
+  border-radius: 0 0 20px 20px;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-bottom: none !important;
+}
+
+/* 드롭다운 메뉴가 잘리지 않게 설정 */
+#stickyTop .header-bar .dropdown-menu,
+#stickyTop .nav-bar-wrapper .dropdown-menu {
+  z-index: 9999 !important;
+}
+
+/* 반응형 너비 조절 */
+@media (max-width: 1199px) {
+  #stickyTop {
+    max-width: 960px;
+  }
+}
+@media (max-width: 991px) {
+  #stickyTop {
+    max-width: 720px;
+  }
+}
+@media (max-width: 767px) {
+  #stickyTop {
+    max-width: 100%;
+    top: 0;
+    border-radius: 0;
+    filter: none; /* 모바일은 전체 꽉 차게 */
+  }
+  #stickyTop .header-bar {
+    border-radius: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+  }
+  #stickyTop .nav-bar-wrapper {
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .cart-floating,
+  .cart-btn-wrapper,
+  #cart-floating,
+  div[class*="cart-floating"] {
+    top: 100px !important;
+    bottom: auto !important;
+  }
+}
+
+/* 2) Header row (logo / search / menu) */
+#stickyTop .header-bar .logo {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+#stickyTop .header-bar .logo .logo-text {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+}
+#stickyTop .header-bar form,
+#stickyTop .header-bar .search-container {
+  flex: 1 1 auto !important;
+  min-width: 220px !important;
+  max-width: 560px !important;
+}
+#stickyTop .header-bar .header-nav {
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 700px) {
+  #stickyTop .header-bar .logo .logo-text {
+    display: none !important;
+  }
+}
+@media (max-width: 900px) {
+  #stickyTop .header-bar .container {
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important; /* 줄바꿈 방지 */
+  }
+  /* 모바일에서 검색창 크기 유동적 조절 */
+  #stickyTop .header-bar .search-container {
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+  }
+}
+
+/* 3) Navbar */
+.nav-bar {
+  display: block !important;
+}
+.nav-bar-wrapper .navbar-collapse {
+  display: block !important;
+  height: auto !important;
+  visibility: visible !important;
+  overflow: visible !important;
+}
+.nav-bar-wrapper .navbar-nav {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap;
+  gap: 10px;
+  padding: 4px 10px !important;
+}
+.nav-bar-wrapper .nav-item {
+  flex: 0 0 auto;
+}
+.nav-bar-wrapper .nav-link {
+  padding: 6px 14px !important;
+  font-size: 14px !important;
+  line-height: 1.1 !important;
+  padding-bottom: 12px !important;
+  position: relative;
+  white-space: nowrap;
+}
+.nav-bar-wrapper .nav-link i {
+  margin-right: 4px;
+}
+.nav-bar-wrapper .nav-link::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 10px !important;
+  right: 10px !important;
+  bottom: 4px !important;
+  height: 2px !important;
+  transform: none !important;
+}
+.nav-bar-wrapper .dropdown-menu {
+  z-index: 9999 !important;
+}
+
+@media (max-width: 680px) {
+  .nav-bar-wrapper {
+    padding: 6px 0 !important;
+  }
+  .nav-bar-wrapper .navbar-nav {
+    gap: 10px !important;
+    padding: 4px 10px !important;
+    justify-content: center !important;
+  }
+  .nav-bar-wrapper .nav-link {
+    padding: 6px 14px !important;
+    font-size: 14px !important;
+    padding-bottom: 12px !important;
+  }
+}
+
+/* 4) Expiry bubbles (말풍선) */
+.expiry-bubble {
+  position: fixed;
+  width: 210px;
+  max-width: 88vw;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 10px 10px 8px;
+  z-index: 2000;
+  display: none;
+  font-size: 13px;
+  line-height: 1.25;
+}
+.expiry-bubble .bubble-title {
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.expiry-remaining {
+  color: #6f42c1;
+  font-weight: 800;
+}
+.expiry-over {
+  color: #dc3545;
+  font-weight: 800;
+}
+
+.bubble-pointer {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #fff3cd;
+  top: -10px;
+  left: 18px;
+}
+.expiry-bubble .bubble-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.expiry-bubble .bubble-actions > a,
+.expiry-bubble .bubble-actions > button {
+  min-height: 9px;
+  padding: 1px 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap !important;
+  font-size: 11px;
+  line-height: 1;
+  border-radius: 8px;
+}
+.bubble-btn-buy-top {
+  flex: 5;
+  background: #ff8a00 !important;
+  color: #fff !important;
+  border: 1px solid #ff8a00 !important;
+}
+.bubble-btn-toggle {
+  flex: 4;
+  background: transparent !important;
+  color: #ff8a00 !important;
+  border: 1px solid #ff8a00 !important;
+  font-weight: 700;
+}
+.bubble-close-square {
+  flex: 1;
+  aspect-ratio: 1/1;
+  min-width: 22px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  background: #fff;
+  cursor: pointer;
+  font-size: 16px;
+}
+.bubble-list {
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.2);
+  max-height: 250px;
+  overflow: auto;
+}
+.bubble-list .bubble-btn-buy {
+  background: #ff8a00 !important;
+  color: #fff !important;
+  border: 1px solid #ff8a00 !important;
+  padding: 1px 6px !important;
+  border-radius: 7px !important;
+  font-size: 11px !important;
+}
+
+.expiry-bubble.in-rail {
+  position: static !important;
+  display: block !important;
+  flex: 0 0 auto;
+  align-self: flex-start;
+}
+.expiry-bubble.in-rail .bubble-pointer {
+  display: none;
+}
+.expiry-bubble.is-closed,
+.expiry-bubble.in-rail.is-closed {
+  display: none !important;
+}
+
+/* Expiry bubble rail */
+.expiry-bubble-rail {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(var(--stickyTopH) + var(--bubbleGap));
+  z-index: 2500;
+  padding: 0 20px;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: visible;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* 5) Carousel */
+.carousel-container {
+  margin-top: 30px;
+  margin-bottom: 50px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+.carousel-item {
+  height: 350px;
+  background-color: #000;
+}
+.carousel-item img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+}
+.carousel-caption {
+  bottom: 50%;
+  transform: translateY(50%);
+  text-align: center;
+}
+.banner-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+}
+.banner-text {
+  font-size: 1.3rem;
+  margin-bottom: 30px;
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+}
+.btn-banner {
+  background: #e74c3c;
+  color: white;
+  padding: 12px 35px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 50px;
+  border: none;
+  transition: 0.3s;
+}
+.btn-banner:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+  color: white;
+  text-decoration: none;
+}
+
+/* =========================================================
+   [7] 네비게이션 호버 효과 (PC 전용: 992px 이상)
+   - 모바일에서는 터치해야 열리고, PC에서는 마우스만 올려도 열립니다.
+   ========================================================= */
+@media (min-width: 992px) {
+  /* 드롭다운 부모 요소에 마우스를 올리면(.dropdown:hover) */
+  /* 자식 요소인 메뉴(.dropdown-menu)를 보여줌 */
+  #stickyTop .navbar-nav .dropdown:hover .dropdown-menu {
+    display: block; /* 보이기 */
+    visibility: visible; /* common.css의 애니메이션 트리거 */
+    opacity: 1; /* 투명도 해제 */
+    transform: translateY(0) translateX(-50%); /* 위치 제자리로 */
+    pointer-events: auto; /* 클릭 가능하게 */
+    margin-top: 0; /* 자연스러운 위치 */
+  }
+}

@@ -1,357 +1,321 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>게시판 - 경수오빠못해조</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
-    <link href="/static/css/common.css" rel="stylesheet">
+{% extends "base.html" %}
 
-    <style>
-        /* --- 게시판 전용 스타일 --- */
-        
-        .board-title {
-            font-weight: 800;
-            color: #333;
-            margin-bottom: 30px;
-            position: relative;
-            display: inline-block;
-            font-size: 1.8rem;
-        }
-        .board-title::after {
-            content: '';
-            display: block;
-            width: 100%;
-            height: 4px;
-            background: #e74c3c;
-            border-radius: 2px;
-            margin-top: 5px;
-        }
+{% block title %}게시판 - 경수오빠못해조{% endblock %}
 
-        /* 검색 및 필터 박스 */
-        .filter-box {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+{% block css %}
+<style>
+    /* --- 게시판 전용 스타일 --- */
+    .board-title {
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 30px;
+        position: relative;
+        display: inline-block;
+        font-size: 1.8rem;
+    }
+    .board-title::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 4px;
+        background: #e74c3c;
+        border-radius: 2px;
+        margin-top: 5px;
+    }
+    .filter-box {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .write-box {
+        background: #fff5f5;
+        border: 2px dashed #ffdcdc;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 40px;
+        transition: all 0.3s;
+    }
+    .write-box:focus-within {
+        background: white;
+        border-color: #e74c3c;
+        box-shadow: 0 10px 30px rgba(231, 76, 60, 0.1);
+    }
+    .write-input {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 12px;
+        width: 100%;
+        margin-bottom: 10px;
+        transition: 0.3s;
+    }
+    .write-input:focus {
+        border-color: #e74c3c;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    }
+    .memo-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        padding: 0;
+        margin-bottom: 25px;
+        overflow: hidden;
+        border: none;
+        transition: transform 0.3s;
+    }
+    .memo-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .memo-header {
+        background: #fcfcfc;
+        padding: 15px 25px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .memo-author {
+        font-weight: 700;
+        color: #555;
+        display: flex; align-items: center;
+    }
+    .memo-author i { margin-right: 8px; color: #e74c3c; font-size: 1.2rem; }
+    .memo-id { font-size: 0.85rem; color: #aaa; }
+    .memo-body { padding: 25px; }
+    .memo-title-text {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 15px;
+        display: block;
+        width: 100%;
+        border: none;
+        background: transparent;
+    }
+    .memo-content-text {
+        line-height: 1.6;
+        color: #666;
+        width: 100%;
+        border: none;
+        background: transparent;
+        resize: none;
+        min-height: 80px;
+    }
+    .editing .memo-title-text, .editing .memo-content-text {
+        border: 1px solid #ddd;
+        background: #fff;
+        padding: 10px;
+        border-radius: 8px;
+    }
+    .editing .memo-title-text:focus, .editing .memo-content-text:focus {
+        border-color: #e74c3c; outline: none;
+    }
+    .btn-action-group button {
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 5px 15px;
+        margin-left: 5px;
+    }
+    .btn-edit-custom { background: #fff; border: 1px solid #ddd; color: #555; }
+    .btn-edit-custom:hover { background: #333; color: white; border-color: #333; }
+    .btn-delete-custom { background: #fff; border: 1px solid #ffcccc; color: #e74c3c; }
+    .btn-delete-custom:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
+    .btn-regist {
+        background: #e74c3c; color: white; border: none; padding: 12px;
+        border-radius: 12px; font-weight: bold; width: 100%; transition: 0.3s;
+    }
+    .btn-regist:hover { background: #c0392b; transform: translateY(-2px); }
+    .custom-control-input:checked ~ .custom-control-label::before {
+        border-color: #e74c3c;
+        background-color: #e74c3c;
+    }
+</style>
+{% endblock %}
 
-        /* 글쓰기 카드 */
-        .write-box {
-            background: #fff5f5;
-            border: 2px dashed #ffdcdc;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 40px;
-            transition: all 0.3s;
-        }
-        .write-box:focus-within {
-            background: white;
-            border-color: #e74c3c;
-            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.1);
-        }
-        .write-input {
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 12px;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: 0.3s;
-        }
-        .write-input:focus {
-            border-color: #e74c3c;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
-        }
+{% block content %}
+<div class="container my-5" style="max-width: 900px;">
+    <h2 class="board-title"><i class="fas fa-clipboard-list"></i> 자유 게시판</h2>
 
-        /* 메모 카드 리스트 */
-        .memo-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            padding: 0;
-            margin-bottom: 25px;
-            overflow: hidden;
-            border: none;
-            transition: transform 0.3s;
-        }
-        .memo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        
-        .memo-header {
-            background: #fcfcfc;
-            padding: 15px 25px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .memo-author {
-            font-weight: 700;
-            color: #555;
-            display: flex; align-items: center;
-        }
-        .memo-author i { margin-right: 8px; color: #e74c3c; font-size: 1.2rem; }
-        .memo-id { font-size: 0.85rem; color: #aaa; }
-
-        .memo-body { padding: 25px; }
-        .memo-title-text {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #333;
-            margin-bottom: 15px;
-            display: block;
-            width: 100%;
-            border: none;
-            background: transparent;
-        }
-        .memo-content-text {
-            line-height: 1.6;
-            color: #666;
-            width: 100%;
-            border: none;
-            background: transparent;
-            resize: none;
-            min-height: 80px;
-        }
-
-        /* 수정 모드 스타일 */
-        .editing .memo-title-text, .editing .memo-content-text {
-            border: 1px solid #ddd;
-            background: #fff;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .editing .memo-title-text:focus, .editing .memo-content-text:focus {
-            border-color: #e74c3c; outline: none;
-        }
-
-        /* 버튼 그룹 */
-        .btn-action-group button {
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 5px 15px;
-            margin-left: 5px;
-        }
-        .btn-edit-custom { background: #fff; border: 1px solid #ddd; color: #555; }
-        .btn-edit-custom:hover { background: #333; color: white; border-color: #333; }
-        
-        .btn-delete-custom { background: #fff; border: 1px solid #ffcccc; color: #e74c3c; }
-        .btn-delete-custom:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
-
-        /* 등록 버튼 */
-        .btn-regist {
-            background: #e74c3c; color: white; border: none; padding: 12px;
-            border-radius: 12px; font-weight: bold; width: 100%; transition: 0.3s;
-        }
-        .btn-regist:hover { background: #c0392b; transform: translateY(-2px); }
-
-        /* 토글 스위치 커스텀 */
-        .custom-control-input:checked ~ .custom-control-label::before {
-            border-color: #e74c3c;
-            background-color: #e74c3c;
-        }
-    </style>
-</head>
-
-<body>
-    {% include "header.html" %}
-
-    {% include "navbar.html" %}
-
-    <div class="container my-5" style="max-width: 900px;">
-        <h2 class="board-title"><i class="fas fa-clipboard-list"></i> 자유 게시판</h2>
-
-        <div class="filter-box">
-            <form id="searchForm" method="GET" action="/memos/" class="w-100 d-flex justify-content-between align-items-center flex-wrap">
-                <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" id="showMineCheck" onchange="toggleMyPosts()" 
-                           {% if show_mine %}checked{% endif %}>
-                    <label class="custom-control-label font-weight-bold text-secondary" for="showMineCheck">
-                        <i class="fas fa-user-check"></i> 내 글만 보기
-                    </label>
-                </div>
-
-                <div class="input-group" style="max-width: 400px;">
-                    <div class="input-group-prepend">
-                        <select name="search_type" class="custom-select border-0 bg-light" style="border-radius: 20px 0 0 20px;">
-                            <option value="title" {% if search_type == 'title' %}selected{% endif %}>제목</option>
-                            <option value="username" {% if search_type == 'username' %}selected{% endif %}>작성자</option>
-                            <option value="content" {% if search_type == 'content' %}selected{% endif %}>내용</option>
-                        </select>
-                    </div>
-                    <input type="text" name="keyword" class="form-control border-0 bg-light" placeholder="검색어를 입력하세요" value="{{ keyword }}">
-                    <div class="input-group-append">
-                        <button class="btn btn-dark" type="submit" style="border-radius: 0 20px 20px 0;">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div class="write-box">
-            <h5 class="font-weight-bold text-danger mb-3"><i class="fas fa-pen-fancy"></i> 새로운 이야기 쓰기</h5>
-            <input type="text" id="new-title" placeholder="제목을 입력해 주세요" class="write-input font-weight-bold">
-            <textarea id="new-content" placeholder="오늘 있었던 즐거운 일을 공유해보세요!" class="write-input" rows="3" style="resize: none;"></textarea>
-            <div class="text-right mt-2">
-                <button onclick="createMemo()" class="btn-regist">
-                    <i class="fas fa-paper-plane"></i> 등록하기
-                </button>
+    <div class="filter-box">
+        <form id="searchForm" method="GET" action="/memos/" class="w-100 d-flex justify-content-between align-items-center flex-wrap">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="showMineCheck" onchange="toggleMyPosts()" 
+                       {% if show_mine %}checked{% endif %}>
+                <label class="custom-control-label font-weight-bold text-secondary" for="showMineCheck">
+                    <i class="fas fa-user-check"></i> 내 글만 보기
+                </label>
             </div>
-        </div>
 
-        <hr class="mb-4">
-
-        {% if not memos %}
-            <div class="text-center py-5 text-muted">
-                <i class="far fa-folder-open fa-3x mb-3" style="opacity: 0.3;"></i>
-                <p>등록된 게시글이 없습니다.<br>첫 번째 글을 남겨보세요!</p>
-            </div>
-        {% endif %}
-
-        {% for memo in memos %}
-        <div class="card memo-card" id="card-{{ memo.id }}">
-            <div class="memo-header">
-                <div class="memo-author">
-                    <i class="fas fa-user-circle"></i> {{ memo.username }}
+            <div class="input-group" style="max-width: 400px;">
+                <div class="input-group-prepend">
+                    <select name="search_type" class="custom-select border-0 bg-light" style="border-radius: 20px 0 0 20px;">
+                        <option value="title" {% if search_type == 'title' %}selected{% endif %}>제목</option>
+                        <option value="username" {% if search_type == 'username' %}selected{% endif %}>작성자</option>
+                        <option value="content" {% if search_type == 'content' %}selected{% endif %}>내용</option>
+                    </select>
                 </div>
-                <div class="memo-id">No. {{ memo.id }}</div>
-            </div>
-            
-            <div class="memo-body">
-                <input type="text" id="title-{{ memo.id }}" value="{{ memo.title }}" class="memo-title-text" readonly>
-                <textarea id="content-{{ memo.id }}" class="memo-content-text" readonly>{{ memo.content }}</textarea>
-                
-                {% if memo.user_id == current_user_id %}
-                <div class="text-right mt-3 btn-action-group" id="btn-group-{{ memo.id }}">
-                    <button onclick="toggleEdit({{ memo.id }})" class="btn btn-edit-custom">
-                        <i class="fas fa-edit"></i> 수정
-                    </button>
-                    <button onclick="deleteMemo({{ memo.id }})" class="btn btn-delete-custom">
-                        <i class="fas fa-trash-alt"></i> 삭제
+                <input type="text" name="keyword" class="form-control border-0 bg-light" placeholder="검색어를 입력하세요" value="{{ keyword }}">
+                <div class="input-group-append">
+                    <button class="btn btn-dark" type="submit" style="border-radius: 0 20px 20px 0;">
+                        <i class="fas fa-search"></i>
                     </button>
                 </div>
-                {% endif %}
             </div>
-        </div>
-        {% endfor %}
+        </form>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <div class="write-box">
+        <h5 class="font-weight-bold text-danger mb-3"><i class="fas fa-pen-fancy"></i> 새로운 이야기 쓰기</h5>
+        <input type="text" id="new-title" placeholder="제목을 입력해 주세요" class="write-input font-weight-bold">
+        <textarea id="new-content" placeholder="오늘 있었던 즐거운 일을 공유해보세요!" class="write-input" rows="3" style="resize: none;"></textarea>
+        <div class="text-right mt-2">
+            <button onclick="createMemo()" class="btn-regist">
+                <i class="fas fa-paper-plane"></i> 등록하기
+            </button>
+        </div>
+    </div>
 
-    <script>
-        // 로그아웃
-        function logout() {
-            fetch('/auth/logout', { method: 'POST' })
-            .then(() => window.location.href = '/');
-        }
+    <hr class="mb-4">
 
-        // 메모 작성
-        function createMemo() {
-            var title = document.getElementById('new-title').value;
-            var content = document.getElementById('new-content').value;
+    {% if not memos %}
+        <div class="text-center py-5 text-muted">
+            <i class="far fa-folder-open fa-3x mb-3" style="opacity: 0.3;"></i>
+            <p>등록된 게시글이 없습니다.<br>첫 번째 글을 남겨보세요!</p>
+        </div>
+    {% endif %}
 
-            if(!title || !content) { alert('제목과 내용을 입력해주세요.'); return; }
-
-            fetch('/memos/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title, content: content })
-            })
-            .then(response => response.json())
-            .then(data => {
-                window.location.reload(); 
-            })
-            .catch((error) => console.error('Error:', error));
-        }
-
-        // 수정 모드 전환
-        function toggleEdit(id) {
-            var card = document.getElementById('card-' + id);
-            var titleEl = document.getElementById('title-' + id);
-            var contentEl = document.getElementById('content-' + id);
-            var btnGroup = document.getElementById('btn-group-' + id);
+    {% for memo in memos %}
+    <div class="card memo-card" id="card-{{ memo.id }}">
+        <div class="memo-header">
+            <div class="memo-author">
+                <i class="fas fa-user-circle"></i> {{ memo.username }}
+            </div>
+            <div class="memo-id">No. {{ memo.id }}</div>
+        </div>
+        
+        <div class="memo-body">
+            <input type="text" id="title-{{ memo.id }}" value="{{ memo.title }}" class="memo-title-text" readonly>
+            <textarea id="content-{{ memo.id }}" class="memo-content-text" readonly>{{ memo.content }}</textarea>
             
-            var isReadOnly = titleEl.readOnly;
-            
-            // 상태 토글
-            titleEl.readOnly = !isReadOnly;
-            contentEl.readOnly = !isReadOnly;
+            {% if memo.user_id == current_user_id %}
+            <div class="text-right mt-3 btn-action-group" id="btn-group-{{ memo.id }}">
+                <button onclick="toggleEdit({{ memo.id }})" class="btn btn-edit-custom">
+                    <i class="fas fa-edit"></i> 수정
+                </button>
+                <button onclick="deleteMemo({{ memo.id }})" class="btn btn-delete-custom">
+                    <i class="fas fa-trash-alt"></i> 삭제
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
 
-            if (!isReadOnly) {
-                updateMemo(id);
+{% block scripts %}
+<script>
+    // 메모 작성
+    function createMemo() {
+        var title = document.getElementById('new-title').value;
+        var content = document.getElementById('new-content').value;
+
+        if(!title || !content) { alert('제목과 내용을 입력해주세요.'); return; }
+
+        fetch('/memos/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: title, content: content })
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.reload(); 
+        })
+        .catch((error) => console.error('Error:', error));
+    }
+
+    // 수정 모드 전환
+    function toggleEdit(id) {
+        var card = document.getElementById('card-' + id);
+        var titleEl = document.getElementById('title-' + id);
+        var contentEl = document.getElementById('content-' + id);
+        var btnGroup = document.getElementById('btn-group-' + id);
+        
+        var isReadOnly = titleEl.readOnly;
+        
+        titleEl.readOnly = !isReadOnly;
+        contentEl.readOnly = !isReadOnly;
+
+        if (!isReadOnly) {
+            updateMemo(id);
+        } else {
+            card.classList.add('editing');
+            titleEl.focus();
+            
+            var editBtn = btnGroup.querySelector('.btn-edit-custom');
+            editBtn.innerHTML = '<i class="fas fa-save"></i> 저장';
+            editBtn.classList.remove('btn-edit-custom');
+            editBtn.classList.add('btn-dark'); 
+        }
+    }
+
+    // 메모 업데이트
+    function updateMemo(id) {
+        var title = document.getElementById('title-' + id).value;
+        var content = document.getElementById('content-' + id).value;
+
+        fetch('/memos/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: title, content: content })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('메모가 수정되었습니다.');
+                window.location.reload();
             } else {
-                card.classList.add('editing');
-                titleEl.focus();
-                
-                var editBtn = btnGroup.querySelector('.btn-edit-custom');
-                editBtn.innerHTML = '<i class="fas fa-save"></i> 저장';
-                editBtn.classList.remove('btn-edit-custom');
-                editBtn.classList.add('btn-dark'); 
+                alert('수정 권한이 없습니다.');
+                window.location.reload();
             }
-        }
+        });
+    }
 
-        // 메모 업데이트
-        function updateMemo(id) {
-            var title = document.getElementById('title-' + id).value;
-            var content = document.getElementById('content-' + id).value;
+    // 메모 삭제
+    function deleteMemo(id) {
+        if (!confirm('정말 삭제하시겠습니까?')) return;
 
-            fetch('/memos/' + id, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title, content: content })
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('메모가 수정되었습니다.');
-                    window.location.reload();
-                } else {
-                    alert('수정 권한이 없습니다.');
-                    window.location.reload();
-                }
-            });
-        }
-
-        // 메모 삭제
-        function deleteMemo(id) {
-            if (!confirm('정말 삭제하시겠습니까?')) return;
-
-            fetch('/memos/' + id, {
-                method: 'DELETE',
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    alert('삭제 권한이 없습니다.');
-                }
-            });
-        }
-
-        // 내 글만 보기 필터
-        function toggleMyPosts() {
-            const checkBox = document.getElementById('showMineCheck');
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            if (checkBox.checked) {
-                urlParams.set('show_mine', 'true');
+        fetch('/memos/' + id, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
             } else {
-                urlParams.delete('show_mine');
+                alert('삭제 권한이 없습니다.');
             }
-            window.location.search = urlParams.toString();
+        });
+    }
+
+    // 내 글만 보기 필터
+    function toggleMyPosts() {
+        const checkBox = document.getElementById('showMineCheck');
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (checkBox.checked) {
+            urlParams.set('show_mine', 'true');
+        } else {
+            urlParams.delete('show_mine');
         }
-    </script>
-</body>
-</html>
+        window.location.search = urlParams.toString();
+    }
+</script>
+{% endblock %}

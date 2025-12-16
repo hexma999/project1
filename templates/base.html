@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}경수오빠못해조{% endblock %}</title>
+
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="/static/css/common.css" rel="stylesheet" />
+    <link href="/static/css/main.css" rel="stylesheet" />
+    {% block css %}{% endblock %}
+  </head>
+  <body>
+    <div id="stickyTop">
+      {% include "header.html" %} {% include "navbar.html" %}
+    </div>
+
+    <div id="expiryBubbleRail" class="expiry-bubble-rail"></div>
+    <div
+      id="expiryBubbleMount"
+      class="expiry-bubble-mount"
+      aria-hidden="true"
+    ></div>
+
+    {% if expiry_alerts %} {% if username %} {% set dog_items =
+    expiry_alerts.get('dog', []) %} {% set cat_items = expiry_alerts.get('cat',
+    []) %} {% set bird_items = expiry_alerts.get('bird', []) %} {% if dog_items
+    %}
+    <div
+      id="expiryBubbleDog"
+      class="expiry-bubble"
+      data-anchor="navDog"
+      data-category="dog"
+    >
+      <div class="bubble-pointer"></div>
+      <div class="bubble-title">🐶 {{ dog_items[0].product_name }}</div>
+      <div>
+        {% if dog_items[0].status == 'over' %} 약 {{ dog_items[0].display_days
+        }}일 <span class="expiry-over">초과</span> {% else %} 약 {{
+        dog_items[0].display_days }}일
+        <span class="expiry-remaining">잔여</span> {% endif %}
+      </div>
+      <div class="bubble-actions">
+        <a
+          class="btn btn-sm bubble-btn-buy bubble-btn-buy-top"
+          href="/products/{{ dog_items[0].product_id }}"
+          >재구매</a
+        >
+        <button
+          class="btn btn-sm bubble-btn-toggle"
+          onclick="toggleBubbleList('dog', this)"
+        >
+          모두보기
+        </button>
+        <button class="bubble-close-square" onclick="closeBubble('dog')">
+          ✕
+        </button>
+      </div>
+      <div id="bubbleList-dog" class="bubble-list">
+        {% for it in dog_items %}
+        <div
+          style="padding: 6px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.08)"
+        >
+          <div style="font-weight: 700">{{ it.product_name }}</div>
+          <div>
+            {% if it.status == 'over' %} 약 {{ it.display_days }}일
+            <span class="expiry-over">초과</span> {% else %} 약 {{
+            it.display_days }}일 <span class="expiry-remaining">잔여</span> {%
+            endif %}
+            <a
+              class="btn btn-sm bubble-btn-buy"
+              style="float: right"
+              href="/products/{{ it.product_id }}"
+              >재구매</a
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %} {% if cat_items %}
+    <div
+      id="expiryBubbleCat"
+      class="expiry-bubble"
+      data-anchor="navCat"
+      data-category="cat"
+    >
+      <div class="bubble-pointer"></div>
+      <div class="bubble-title">🐱 {{ cat_items[0].product_name }}</div>
+      <div>
+        {% if cat_items[0].status == 'over' %} 약 {{ cat_items[0].display_days
+        }}일 <span class="expiry-over">초과</span> {% else %} 약 {{
+        cat_items[0].display_days }}일
+        <span class="expiry-remaining">잔여</span> {% endif %}
+      </div>
+      <div class="bubble-actions">
+        <a
+          class="btn btn-sm bubble-btn-buy bubble-btn-buy-top"
+          href="/products/{{ cat_items[0].product_id }}"
+          >재구매</a
+        >
+        <button
+          class="btn btn-sm bubble-btn-toggle"
+          onclick="toggleBubbleList('cat', this)"
+        >
+          모두보기
+        </button>
+        <button class="bubble-close-square" onclick="closeBubble('cat')">
+          ✕
+        </button>
+      </div>
+      <div id="bubbleList-cat" class="bubble-list">
+        {% for it in cat_items %}
+        <div
+          style="padding: 6px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.08)"
+        >
+          <div style="font-weight: 700">{{ it.product_name }}</div>
+          <div>
+            {% if it.status == 'over' %} 약 {{ it.display_days }}일
+            <span class="expiry-over">초과</span> {% else %} 약 {{
+            it.display_days }}일 <span class="expiry-remaining">잔여</span> {%
+            endif %}
+            <a
+              class="btn btn-sm bubble-btn-buy"
+              style="float: right"
+              href="/products/{{ it.product_id }}"
+              >재구매</a
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %} {% if bird_items %}
+    <div
+      id="expiryBubbleBird"
+      class="expiry-bubble"
+      data-anchor="navBird"
+      data-category="bird"
+    >
+      <div class="bubble-pointer"></div>
+      <div class="bubble-title">🐦 {{ bird_items[0].product_name }}</div>
+      <div>
+        {% if bird_items[0].status == 'over' %} 약 {{ bird_items[0].display_days
+        }}일 <span class="expiry-over">초과</span> {% else %} 약 {{
+        bird_items[0].display_days }}일
+        <span class="expiry-remaining">잔여</span> {% endif %}
+      </div>
+      <div class="bubble-actions">
+        <a
+          class="btn btn-sm bubble-btn-buy bubble-btn-buy-top"
+          href="/products/{{ bird_items[0].product_id }}"
+          >재구매</a
+        >
+        <button
+          class="btn btn-sm bubble-btn-toggle"
+          onclick="toggleBubbleList('bird', this)"
+        >
+          모두보기
+        </button>
+        <button class="bubble-close-square" onclick="closeBubble('bird')">
+          ✕
+        </button>
+      </div>
+      <div id="bubbleList-bird" class="bubble-list">
+        {% for it in bird_items %}
+        <div
+          style="padding: 6px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.08)"
+        >
+          <div style="font-weight: 700">{{ it.product_name }}</div>
+          <div>
+            {% if it.status == 'over' %} 약 {{ it.display_days }}일
+            <span class="expiry-over">초과</span> {% else %} 약 {{
+            it.display_days }}일 <span class="expiry-remaining">잔여</span> {%
+            endif %}
+            <a
+              class="btn btn-sm bubble-btn-buy"
+              style="float: right"
+              href="/products/{{ it.product_id }}"
+              >재구매</a
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %} {% endif %} {% endif %} {% block content %}{% endblock %} {%
+    include "chatbot.html" %} {% include "cart_floating.html" %}
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="/static/js/main.js"></script>
+
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
