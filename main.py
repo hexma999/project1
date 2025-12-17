@@ -16,7 +16,7 @@ from dependencies import get_db
 
 # [설명] 기능별 라우터(컨트롤러) 모듈 임포트
 # [이동] project1/routers/ 폴더 내 각 파일들
-from routers import auth, memos, orders, chatbot, products
+from routers import auth, memos, orders, chatbot, products, asdfsadf
 from routers import cart as cart_router
 
 # [설명] 데이터베이스 처리(쿼리) 모듈 임포트
