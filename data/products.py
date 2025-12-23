@@ -3,25 +3,10 @@ from sqlalchemy import text
 from datetime import datetime
 
 # [헬퍼] 카테고리 ID 조회
-def get_category_id(db: Session, main_type: str, sub_name: str):
-    sql = """
-        SELECT id FROM categories 
-        WHERE main_type = :main AND sub_name = :sub
-    """
-    params = {"main": main_type, "sub": sub_name}
-    cursor = db.execute(text(sql), params)
-    result = cursor.fetchone()
-    return result.id if result else None
-
-# 1. 상품 등록
 def create_product(db: Session, name: str, price: int, brand: str, 
                    detail: str, detail_img_url: str, image_url: str, 
-                   main_cat: str, sub_cat: str, initial_stock: int):
+                   category_id: int, initial_stock: int):
     
-    cat_id = get_category_id(db, main_cat, sub_cat)
-    if not cat_id:
-        raise ValueError(f"존재하지 않는 카테고리: {main_cat} > {sub_cat}")
-
     sql = """
         INSERT INTO products 
         (category_id, name, price, brand, detail, detail_img_url, image_url, initial_stock, stock, sales_count)
@@ -29,7 +14,7 @@ def create_product(db: Session, name: str, price: int, brand: str,
         (:cat_id, :name, :price, :brand, :detail, :d_img, :img, :init_stock, :init_stock, 0)
     """
     params = {
-        "cat_id": cat_id, "name": name, "price": price, 
+        "cat_id": category_id, "name": name, "price": price, 
         "brand": brand, "detail": detail, "d_img": detail_img_url, 
         "img": image_url, "init_stock": initial_stock
     }
@@ -92,17 +77,27 @@ def get_featured_products(db: Session, request, limit: int = 12):
         gender = request.session.get("gender", "")
         age_group = request.session.get("age_group", "")
 
-        sql = """
-        SELECT p.*, c.main_type AS category, c.sub_name, a.gender, a.age_group AS sub_category
-            FROM recommendation_products a
-            JOIN products p
-            ON a.product_id = p.id   
-            JOIN categories c ON p.category_id = c.id
-            WHERE a.gender = :gender
-            AND a.age_group = :age_group
-            ORDER BY RAND() LIMIT :limit
-        """
-        params = {"gender": gender, "age_group": age_group, "limit": limit}
+        # 성별 또는 연령대 정보가 세션에 없는 경우, 비로그인과 동일하게 처리
+        if not gender or not age_group:
+            sql = """
+                SELECT p.*, c.main_type AS category, c.sub_name AS sub_category
+                FROM products p
+                JOIN categories c ON p.category_id = c.id
+                ORDER BY RAND() LIMIT :limit
+            """
+            params = {"limit": limit}
+        else:
+            sql = """
+            SELECT p.*, c.main_type AS category, c.sub_name, a.gender, a.age_group AS sub_category
+                FROM recommendation_products a
+                JOIN products p
+                ON a.product_id = p.id   
+                JOIN categories c ON p.category_id = c.id
+                WHERE a.gender = :gender
+                AND a.age_group = :age_group
+                ORDER BY RAND() LIMIT :limit
+            """
+            params = {"gender": gender, "age_group": age_group, "limit": limit}
 
     print(params)
     cursor = db.execute(text(sql), params)

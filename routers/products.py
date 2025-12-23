@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, Request, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from typing import Optional
 from dependencies import get_db
 from schemas import ReviewRequest
+import shutil
+import uuid
+import os
 
 # 데이터 모듈 임포트
 from data import products as product_data
@@ -12,6 +15,75 @@ from data import reviews as review_data
 
 router = APIRouter(prefix="/products", tags=["products"])
 templates = Jinja2Templates(directory="templates")
+
+# --- 추가: 상품 등록 ---
+@router.post("/")
+async def create_product_with_image(
+    request: Request,
+    db: Session = Depends(get_db),
+    name: str = Form(...),
+    brand: str = Form(...),
+    detail: str = Form(...),
+    price: int = Form(...),
+    main_cat: str = Form(...),
+    sub_cat: str = Form(...),
+    initial_stock: int = Form(...),
+    image: UploadFile = File(...),
+    detail_image: UploadFile = File(...)
+):
+    # 1. 로그인 확인
+    username = request.session.get("username")
+    if not username:
+        raise HTTPException(status_code=401, detail="상품을 등록하려면 로그인이 필요합니다.")
+
+    # --- 이미지 파일 처리 함수 ---
+    def save_upload_file(upload_file: UploadFile) -> str:
+        # 허용할 이미지 확장자
+        allowed_extensions = {"png", "jpg", "jpeg"}
+        extension = upload_file.filename.split('.')[-1].lower()
+        if extension not in allowed_extensions:
+            raise HTTPException(status_code=400, detail=f"{upload_file.filename} 파일은 png, jpg, jpeg 형식만 가능합니다.")
+
+        # 고유한 파일명 생성
+        unique_filename = f"{uuid.uuid4()}.{extension}"
+        file_path = os.path.join("static", "img", unique_filename)
+        
+        # 파일 저장
+        try:
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(upload_file.file, buffer)
+        finally:
+            upload_file.file.close()
+        
+        return f"/static/img/{unique_filename}"
+
+    # 2. 대표 이미지 및 상세 이미지 저장
+    image_url = save_upload_file(image)
+    detail_img_url = save_upload_file(detail_image)
+    
+    # 3. 데이터베이스에 상품 정보 저장
+    try:
+        product_data.create_product(
+            db=db,
+            name=name,
+            price=price,
+            brand=brand,
+            detail=detail,
+            detail_img_url=detail_img_url,
+            image_url=image_url,
+            category_id=int(sub_cat),
+            initial_stock=initial_stock
+        )
+    except Exception as e:
+        # DB 저장 실패 시 업로드된 파일들 삭제
+        if os.path.exists(image_url.lstrip('/')):
+            os.remove(image_url.lstrip('/'))
+        if os.path.exists(detail_img_url.lstrip('/')):
+            os.remove(detail_img_url.lstrip('/'))
+        raise HTTPException(status_code=500, detail=f"상품 등록 중 오류 발생: {e}")
+
+    return {"message": "상품이 성공적으로 등록되었습니다.", "image_url": image_url, "detail_img_url": detail_img_url}
+
 
 # 1. 상품 목록 (검색/카테고리)
 # URL: /products

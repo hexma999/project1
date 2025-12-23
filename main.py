@@ -16,7 +16,7 @@ from dependencies import get_db
 
 # [설명] 기능별 라우터(컨트롤러) 모듈 임포트
 # [이동] project1/routers/ 폴더 내 각 파일들
-from routers import auth, memos, orders, chatbot, products
+from routers import auth, memos,inputProducts, orders, chatbot, products
 from routers import cart as cart_router
 
 # [설명] 데이터베이스 처리(쿼리) 모듈 임포트
@@ -55,6 +55,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)         # 인증 (로그인/가입)
 app.include_router(memos.router)        # 게시판
 app.include_router(orders.router)       # 주문
+app.include_router(inputProducts.router)# 상품등록
 app.include_router(chatbot.router)      # 챗봇
 app.include_router(cart_router.router)  # 장바구니
 app.include_router(products.router)
