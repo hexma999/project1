@@ -2,6 +2,9 @@ import time
 import argparse
 import logging
 import json
+import os
+import requests
+import uuid
 from bs4 import BeautifulSoup
 from typing import Optional
 from selenium import webdriver
@@ -83,7 +86,7 @@ for a in ['01','02', '07', '10', '09', '06']:
             element.click()
             # 1.이름
             name = driver.find_elements(By.ID, 'viewName')[0].text
-            
+        
             # 2.가격
             price = driver.find_elements(By.ID, 'cart_total_price_pc')[0].text
             text_price = price.replace(',', '')
@@ -110,6 +113,34 @@ for a in ['01','02', '07', '10', '09', '06']:
                 ))
             )
             detail_img_url = img.get_attribute("src")
+            print(detail_img_url)
+
+            detail_img_path = ""
+            try:
+                if detail_img_url and detail_img_url.startswith('http'):
+                    response = requests.get(detail_img_url, stream=True)
+                    response.raise_for_status()
+
+                    file_extension = os.path.splitext(detail_img_url.split("?")[0])[-1]
+                    if not file_extension:
+                        content_type = response.headers.get('content-type')
+                        if content_type and 'image' in content_type:
+                            file_extension = '.' + content_type.split('/')[1]
+                        else:
+                            file_extension = '.jpg'
+
+                    filename = f"{uuid.uuid4()}{file_extension}"
+                    image_path = os.path.join('static', 'img', filename)
+
+                    with open(image_path, 'wb') as f:
+                        for chunk in response.iter_content(chunk_size=8192):
+                            f.write(chunk)
+
+                    detail_img_path = image_path.replace('\\', '/')
+            except requests.exceptions.RequestException as e:
+                print(f"이미지 다운로드 오류: {e}")
+                detail_img_path = None
+
 
             # 6. 카테고리
             try:
@@ -124,6 +155,7 @@ for a in ['01','02', '07', '10', '09', '06']:
                 By.XPATH,
                 "/html/body/div[4]/div/div[2]/div/div[1]/div[2]/div[1]/a"
             ).text
+
             # 카테고리 ID 매핑
             category_id=''
             if category == "사료":
@@ -139,6 +171,7 @@ for a in ['01','02', '07', '10', '09', '06']:
             else:
                 category_id = "206"
             initial_stock = "100"
+            
             # 수집 리스트 추가
             data.append({
                 'category_id': category_id,
@@ -147,7 +180,7 @@ for a in ['01','02', '07', '10', '09', '06']:
                 'brand' : brand,
                 'initial_stock' : initial_stock,
                 'detail': detail_text,
-                'detail_img_url': detail_img_url,
+                'detail_img_url': detail_img_path,
                 'image_url': image_url,
             })
             # DB 저장
@@ -159,7 +192,7 @@ for a in ['01','02', '07', '10', '09', '06']:
                 brand,
                 initial_stock,
                 detail_text,
-                detail_img_url,
+                detail_img_path,
                 image_url
             )
             time.sleep(0.1)

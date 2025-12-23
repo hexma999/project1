@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상품등록 - 경수오빠못해조</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/common.css" rel="stylesheet">
+
+    <style>
+        /* --- 게시판 전용 스타일 --- */
+        
+        .board-title {
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+            font-size: 1.8rem;
+        }
+        .board-title::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 4px;
+            background: #e74c3c;
+            border-radius: 2px;
+            margin-top: 5px;
+        }
+
+        /* 검색 및 필터 박스 */
+        .filter-box {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* 글쓰기 카드 */
+        .write-box {
+            background: #fff5f5;
+            border: 2px dashed #ffdcdc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 40px;
+            transition: all 0.3s;
+        }
+        .write-box:focus-within {
+            background: white;
+            border-color: #e74c3c;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.1);
+        }
+        .write-input {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+              .write-input:focus {
+                border-color: #e74c3c;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+              }
+              #new-product-detail {
+                overflow-y: hidden; /* 세로 스크롤바 숨기기 */
+                resize: none; /* 사용자가 크기 조절 못하게 막기 */
+              }
+        /* 메모 카드 리스트 */
+        .memo-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 0;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: none;
+            transition: transform 0.3s;
+        }
+        .memo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .memo-header {
+            background: #fcfcfc;
+            padding: 15px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .memo-author {
+            font-weight: 700;
+            color: #555;
+            display: flex; align-items: center;
+        }
+        .memo-author i { margin-right: 8px; color: #e74c3c; font-size: 1.2rem; }
+        .memo-id { font-size: 0.85rem; color: #aaa; }
+
+        .memo-body { padding: 25px; }
+        .memo-title-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 15px;
+            display: block;
+            width: 100%;
+            border: none;
+            background: transparent;
+        }
+        .memo-content-text {
+            line-height: 1.6;
+            color: #666;
+            width: 100%;
+            border: none;
+            background: transparent;
+            resize: none;
+            min-height: 80px;
+        }
+
+        /* 수정 모드 스타일 */
+        .editing .memo-title-text, .editing .memo-content-text {
+            border: 1px solid #ddd;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .editing .memo-title-text:focus, .editing .memo-content-text:focus {
+            border-color: #e74c3c; outline: none;
+        }
+
+        /* 버튼 그룹 */
+        .btn-action-group button {
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 5px 15px;
+            margin-left: 5px;
+        }
+        .btn-edit-custom { background: #fff; border: 1px solid #ddd; color: #555; }
+        .btn-edit-custom:hover { background: #333; color: white; border-color: #333; }
+        
+        .btn-delete-custom { background: #fff; border: 1px solid #ffcccc; color: #e74c3c; }
+        .btn-delete-custom:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
+
+        /* 등록 버튼 */
+        .btn-regist {
+            background: #e74c3c; color: white; border: none; padding: 12px;
+            border-radius: 12px; font-weight: bold; width: 100%; transition: 0.3s;
+        }
+        .btn-regist:hover { background: #c0392b; transform: translateY(-2px); }
+
+        /* 토글 스위치 커스텀 */
+        .custom-control-input:checked ~ .custom-control-label::before {
+            border-color: #e74c3c;
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    {% include "navbar.html" %}
+
+    <div class="container my-5" style="max-width: 900px;">
+        <h2 class="board-title"><i class="fas fa-clipboard-list"></i> 상품등록</h2>
+
+        <!-- <div class="filter-box">
+            <form id="searchForm" method="GET" action="/inputProducts/" class="w-100 d-flex justify-content-between align-items-center flex-wrap">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="showMineCheck" onchange="toggleMyPosts()" 
+                           {% if show_mine %}checked{% endif %}>
+
+                    <label class="custom-control-label font-weight-bold text-secondary" for="showMineCheck">
+                        <i class="fas fa-user-check"></i> 내가 추가한 상품만 보기
+                    </label>
+
+                </div>
+
+                <div class="input-group" style="max-width: 400px;">
+                    <div class="input-group-prepend">
+                        <select name="search_type" class="custom-select border-0 bg-light" style="border-radius: 20px 0 0 20px;">
+                            <option value="title" {% if search_type == 'title' %}selected{% endif %}>상품명</option>
+                            <option value="username" {% if search_type == 'username' %}selected{% endif %}>작성자</option>
+                            <option value="content" {% if search_type == 'content' %}selected{% endif %}>내용</option>
+                        </select>
+                    </div>
+                    <input type="text" name="keyword" class="form-control border-0 bg-light" placeholder="조회할 상품을 입력하세요" value="{{ keyword }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-dark" type="submit" style="border-radius: 0 20px 20px 0;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div> -->
+
+        <div class="write-box">
+            <h5 class="font-weight-bold text-danger mb-3"><i class="fas fa-pen-fancy"></i> 새로운 상품 등록</h5>
+            <form  id="inputProducts">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="main_cat">대분류</label>
+                        <select id="main_cat" name="main_cat" class="form-control" onchange="updateSubCategories()">
+                            <option selected disabled>선택...</option>
+                            <option value="dog">강아지</option>
+                            <option value="cat">고양이</option>
+                            <option value="bird">새</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="sub_cat">소분류</label>
+                        <select id="sub_cat" name="sub_cat" class="form-control">
+                            <option selected disabled>대분류를 먼저 선택하세요</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="text" id="new-product-name" name="name" placeholder="상품명을 입력해 주세요" class="write-input font-weight-bold" required>
+          <input
+            type="text"
+            id="new-product-brand"
+            name="brand"
+            placeholder="브랜드를 입력해 주세요"
+            class="write-input"
+            required
+          />
+          
+                <input type="number" id="new-product-price" name="price" placeholder="가격을 입력해 주세요" class="write-input" required>
+                <input type="number" id="new-product-stock" name="stock" placeholder="수량을 입력해 주세요" class="write-input" required>
+                <div class="custom-file mb-2">
+                    <input type="file" class="custom-file-input" id="new-product-image" name="image" accept="image/png, image/jpeg" required>
+                    <label class="custom-file-label" for="new-product-image">상품 이미지 (jpg, png)</label>
+                </div>
+                <div class="custom-file mb-2">
+                    <input type="file" class="custom-file-input" id="new-product-detail-image" name="detail_image" accept="image/png, image/jpeg" required>
+                    <label class="custom-file-label" for="new-product-detail-image">상품 상세설명 이미지 (jpg, png)</label>
+                </div>
+                <textarea id="new-product-detail" name="detail" placeholder="상세설명을 입력해 주세요" class="write-input" rows="4" required></textarea>
+            </form>
+            <div class="text-right mt-2">
+                <button onclick="createProduct()" class="btn-regist">
+                    <i class="fas fa-paper-plane"></i> 상품등록하기
+                </button>
+            </div>
+        </div>
+
+        <!-- <hr class="mb-4">
+
+        {% if not inputProducts %}
+            <div class="text-center py-5 text-muted">
+                <i class="far fa-folder-open fa-3x mb-3" style="opacity: 0.3;"></i>
+                <p>등록된 상품이 없습니다.<br>첫 번째 글을 남겨보세요!</p>
+            </div>
+        {% endif %}
+
+        {% for inputProduct in inputProducts %}
+        <div class="card memo-card" id="card-{{ memo.id }}">
+            <div class="memo-header">
+                <div class="memo-author">
+                    <i class="fas fa-user-circle"></i> {{ memo.username }}
+                </div>
+                <div class="memo-id">No. {{ memo.id }}</div>
+            </div>
+            
+            <div class="memo-body">
+                <input type="text" id="title-{{ memo.id }}" value="{{ memo.title }}" class="memo-title-text" readonly>
+                <textarea id="content-{{ memo.id }}" class="memo-content-text" readonly>{{ memo.content }}</textarea>
+                
+                {% if memo.user_id == current_user_id %}
+                <div class="text-right mt-3 btn-action-group" id="btn-group-{{ memo.id }}">
+                    <button onclick="toggleEdit({{ memo.id }})" class="btn btn-edit-custom">
+                        <i class="fas fa-edit"></i> 수정
+                    </button>
+                    <button onclick="deleteMemo({{ memo.id }})" class="btn btn-delete-custom">
+                        <i class="fas fa-trash-alt"></i> 삭제
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div> -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+      // Auto-growing textarea for product detail
+      const detailTextarea = document.getElementById('new-product-detail');
+      if (detailTextarea) {
+        detailTextarea.addEventListener('input', () => {
+            detailTextarea.style.height = 'auto';
+            detailTextarea.style.height = (detailTextarea.scrollHeight) + 'px';
+        });
+      }
+
+      // Bootstrap custom file input label updater
+      $(".custom-file-input").on("change", function () {
+           var fileName = $(this).val().split('\\').pop();
+           $(this).next('.custom-file-label').addClass("selected").html(fileName);
+        });
+
+        // 로그아웃
+        function logout() {
+            fetch('/auth/logout', { method: 'POST' })
+            .then(() => window.location.href = '/');
+        }
+
+        
+        function updateSubCategories() {
+            const mainCat = document.getElementById('main_cat').value;
+            const subCat = document.getElementById('sub_cat');
+            
+            // 소분류 목록 초기화
+            subCat.innerHTML = '<option selected disabled>대분류를 먼저 선택하세요</option>';
+            
+            const categories = {
+                'dog': [
+                    { code: 101, name: '사료' }, { code: 102, name: '간식' }, { code: 103, name: '장난감' },
+                    { code: 104, name: '하우스/울타리' }, { code: 105, name: '의류/악세서리' }, { code: 106, name: '기타' }
+                ],
+                'cat': [
+                    { code: 201, name: '사료' }, { code: 202, name: '간식' }, { code: 203, name: '장난감' },
+                    { code: 204, name: '하우스/울타리' }, { code: 205, name: '의류/악세서리' }, { code: 206, name: '기타' }
+                ],
+                'bird': [
+                    { code: 301, name: '먹이' }, { code: 302, name: '간식' }, { code: 303, name: '새장' },
+                    { code: 304, name: '용품' }, { code: 305, name: '영양/치료제' }, { code: 306, name: '기타' }
+                ]
+            };
+
+            if (mainCat && categories[mainCat]) {
+                subCat.disabled = false;
+                subCat.innerHTML = '<option selected disabled>선택...</option>';
+                categories[mainCat].forEach(function(category) {
+                    const option = document.createElement('option');
+                    option.value = category.code;
+                    option.textContent = category.name;
+                    subCat.appendChild(option);
+                });
+            } else {
+                subCat.disabled = true;
+            }
+        }
+
+      // 메모 작성 (상품 등록)
+      function createProduct() {
+        // 1. 폼 요소에서 모든 값 가져오기
+        const mainCat = document.getElementById("main_cat").value;
+        const subCat = document.getElementById("sub_cat").value;
+        const name = document.getElementById("new-product-name").value;
+        const brand = document.getElementById("new-product-brand").value;
+        const detail = document.getElementById("new-product-detail").value;
+        const price = document.getElementById("new-product-price").value;
+        const stock = document.getElementById("new-product-stock").value;
+        const imageFile = document.getElementById("new-product-image").files[0];
+        const detailImageFile = document.getElementById(
+          "new-product-detail-image"
+        ).files[0];
+
+        // 2. 유효성 검사
+        if (
+          !mainCat ||
+          !subCat ||
+          !name ||
+          !brand ||
+          !detail ||
+          !price ||
+          !stock ||
+          !imageFile ||
+          !detailImageFile
+        ) {
+          alert("모든 필드를 채워주세요.");
+          return;
+        }
+        if (
+          mainCat === "선택..." ||
+          subCat === "대분류를 먼저 선택하세요" ||
+          subCat === "선택..."
+        ) {
+          alert("카테고리를 올바르게 선택해주세요.");
+          return;
+        }
+
+        // 3. FormData 생성
+        const formData = new FormData();
+        formData.append("main_cat", mainCat);
+        formData.append("sub_cat", subCat);
+        formData.append("name", name);
+        formData.append("brand", brand);
+        formData.append("detail", detail);
+        formData.append("price", price);
+        formData.append("initial_stock", stock); // 백엔드 파라미터 이름은 initial_stock 입니다
+        formData.append("image", imageFile);
+        formData.append("detail_image", detailImageFile);
+
+
+        // 4. 서버로 전송
+        fetch("/products/", {
+          method: "POST",
+          // headers: { "Content-Type": "multipart/form-data" } // fetch가 FormData 사용 시 알아서 설정하므로 불필요
+          body: formData,
+        }).then((res) => {
+            if (res.ok) { // res.status === 200 대신 res.ok 사용 (200-299 범위)
+                alert("상품이 성공적으로 등록되었습니다.");
+                window.location.reload(); // 성공 시 페이지 새로고침
+            } else {
+                // 서버에서 오는 에러 메시지를 보여주면 더 좋습니다.
+                res.json().then(data => {
+                    alert(`상품 등록에 실패했습니다: ${data.detail || '알 수 없는 오류'}`);
+                }).catch(() => {
+                    alert("상품 등록에 실패했습니다. 다시 시도해주세요.");
+                });
+            }
+        }).catch(error => {
+            console.error("Error during product creation:", error);
+            alert("상품 등록 중 오류가 발생했습니다.");
+        });
+      }
+
+        // 수정 모드 전환
+        function toggleEdit(id) {
+            var card = document.getElementById('card-' + id);
+            var titleEl = document.getElementById('title-' + id);
+            var contentEl = document.getElementById('content-' + id);
+            var btnGroup = document.getElementById('btn-group-' + id);
+            
+            var isReadOnly = titleEl.readOnly;
+            
+            // 상태 토글
+            titleEl.readOnly = !isReadOnly;
+            contentEl.readOnly = !isReadOnly;
+
+            if (!isReadOnly) {
+                updateMemo(id);
+            } else {
+                card.classList.add('editing');
+                titleEl.focus();
+                
+                var editBtn = btnGroup.querySelector('.btn-edit-custom');
+                editBtn.innerHTML = '<i class="fas fa-save"></i> 저장';
+                editBtn.classList.remove('btn-edit-custom');
+                editBtn.classList.add('btn-dark'); 
+            }
+        }
+
+        // 메모 업데이트
+        function updateMemo(id) {
+            var title = document.getElementById('title-' + id).value;
+            var content = document.getElementById('content-' + id).value;
+
+            fetch('/inputProducts/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: title, content: content })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('메모가 수정되었습니다.');
+                    window.location.reload();
+                } else {
+                    alert('수정 권한이 없습니다.');
+                    window.location.reload();
+                }
+            });
+        }
+
+        // 메모 삭제
+        function deleteMemo(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+
+            fetch('/inputProducts/' + id, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('삭제 권한이 없습니다.');
+                }
+            });
+        }
+
+        // 내 글만 보기 필터
+        function toggleMyPosts() {
+            const checkBox = document.getElementById('showMineCheck');
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (checkBox.checked) {
+                urlParams.set('show_mine', 'true');
+            } else {
+                urlParams.delete('show_mine');
+            }
+            window.location.search = urlParams.toString();
+        }
+    </script>
+</body>
+</html>
