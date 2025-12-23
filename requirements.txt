@@ -10,3 +10,4 @@ passlib[bcrypt]
 bcrypt==3.2.0
 python-dotenv
 openai
+python-multipart
