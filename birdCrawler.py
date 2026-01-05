@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from database import SessionLocal
 # -----------------------------------------------------------
-# 1. DB 설정
+#  !!!!step6 : db 테이블 저장
 # -----------------------------------------------------------
 db = SessionLocal()
 
@@ -59,8 +59,9 @@ def create_products(db: Session, category_id: str, name: str, price: int, brand:
         db.rollback()
 
 
-# 옷 사료 간식 방석 집 자료 뽑아오기
-
+# -----------------------------------------------------------
+# !!!!! step1: 카테고리별 URL 순회/ 301~306 ID 부여
+# -----------------------------------------------------------
 
 TARGET_URLS = [
     # 301: bird_food 
@@ -78,7 +79,7 @@ TARGET_URLS = [
 ]
 
 # -----------------------------------------------------------
-# 3. 크롤링 실행
+# !!!!!step2: 크롤링 실행 이중 for문 
 # -----------------------------------------------------------
 
 
@@ -94,13 +95,13 @@ for url, category_id in TARGET_URLS:
     driver.get(url)
 
     try:
-    # 이 부분은 실제 웹사이트의 팝업 닫기 버튼의 CSS Selector에 맞춰야 합니다.
+        # 팝업 닫기 시도
         close_button = driver.find_element(By.CSS_SELECTOR, "#wrap > div.rightQuick > div > div > div.toggle-click > div")
         close_button.click()
         time.sleep(1)
             
     except:
-    # 팝업이 없거나 찾지 못해도 무시하고 진행
+    
             pass
     
 
@@ -125,7 +126,13 @@ for url, category_id in TARGET_URLS:
             # li 내부의 실제 클릭 가능한 <a> 태그를 찾아서 클릭
             target_link = items[i].find_element(By.CSS_SELECTOR, "a")
             
-            # 스크롤 이동 (요소가 화면 밖에 있으면 클릭이 안 될 수 있음)
+
+        
+# -----------------------------------------------------------
+# !!!!step3: 크롤링 실행 이중 for문 
+# -----------------------------------------------------------
+        
+            # !! step2: 팝업 닫기 기능 구현/ scrollIntoView로 안정적 클릭
             driver.execute_script("arguments[0].scrollIntoView(true);", target_link)
             time.sleep(1) 
             
@@ -135,9 +142,10 @@ for url, category_id in TARGET_URLS:
             # --- 여기서 상세 페이지 데이터 크롤링 logic 수행 ---
             time.sleep(2) 
 
-            # ==========================
-            # 데이터 추출 시작
-            # ==========================
+# -----------------------------------------------------------
+# !!!!!step4:  데이터 파싱 & 가공
+# -----------------------------------------------------------
+
 
             # 1. 이름
             try:
@@ -148,7 +156,7 @@ for url, category_id in TARGET_URLS:
             
             #2. 가격
             try:
-                price = driver.find_element(By.CSS_SELECTOR, "#span_product_price_text").text.split("원")[0]
+                price = driver.find_element(By.CSS_SELECTOR, "#span_product_price_text").text.split("원")[0] 
                 price_text =price.replace(",","")
                 price_text = int(price_text)
             except:
@@ -167,7 +175,7 @@ for url, category_id in TARGET_URLS:
                 brand = '향유고래'
             elif price_text <45000:
                 brand = '쿠로미'
-            elif price_text <35000:
+            elif price_text <55000:
                 brand = '와조스키'
             else:
                 brand = '경수오빠못해조' 
@@ -178,7 +186,7 @@ for url, category_id in TARGET_URLS:
             stock = 100
             # 6. 판매량
             sales_count = 0
-            # 7. 상세
+            # 7. 상품 설명
             try:
                 detail = driver.find_element(By.CSS_SELECTOR, "#contents > div.mall_width > div.xans-element-.xans-product.xans-product-detail > div.detailArea > div.infoArea > div > div.xans-element-.xans-product.xans-product-detaildesign.item_detail_info.display_hide.display_show > table > tbody > tr:nth-child(3) > td > span").text
                 
@@ -191,7 +199,7 @@ for url, category_id in TARGET_URLS:
             except:
                 detail = "이름 없음"
             # print(detail)
-            # 8. 상세이미지 URL
+            # 8. 상품 설명 이미지
             try:
                 detail_img_element = driver.find_elements(By.CSS_SELECTOR, "#prdDetail > div > div > div > img")[-2]
                 detail_img_url = detail_img_element.get_attribute("src")
@@ -199,7 +207,7 @@ for url, category_id in TARGET_URLS:
                 detail_img_url = "이름 없음"
             # print(detail_img_url)
 
-            # 9. 이미지 URL
+            # 9. 이미지 썸네일
             try:
                 image_url1= driver.find_element(By.CSS_SELECTOR, "#contents > div.mall_width > div.xans-element-.xans-product.xans-product-detail > div.detailArea > div.xans-element-.xans-product.xans-product-image.imgArea > div:nth-child(1) > div > img")
                 image_url  = image_url1.get_attribute("src")
@@ -209,6 +217,11 @@ for url, category_id in TARGET_URLS:
 
             # 10. 만료기한
             expiration_days = -1
+
+
+# -----------------------------------------------------------
+# !!!!!step5:  db 저장 함수 실행 
+# -----------------------------------------------------------
 
             create_products(db, category_id, name, price_text, brand,initial_stock, stock, sales_count, detail, detail_img_url, image_url, expiration_days)
 
